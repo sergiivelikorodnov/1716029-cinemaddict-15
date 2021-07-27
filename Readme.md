@@ -1,7 +1,7 @@
 # Проект «Киноман»
 
 * Студент: [Velykorodnov Sergii](https://up.htmlacademy.ru/ecmascript/15/user/1716029).
-* Наставник: `Неизвестно`.
+* Наставник: `Антон Попов`.
 
 ---
 
