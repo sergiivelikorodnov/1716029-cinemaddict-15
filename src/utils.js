@@ -14,9 +14,9 @@ const shuffle = (arr) =>
     .sort()
     .map((i) => i[1]);
 
-const timeConvertor = (num) => {
-  const hours = Math.floor(num / 60);
-  const minutes = num % 60;
+const timeConvertor = (totalMinutes) => {
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
   return `${hours}h ${minutes} min`;
 };
 

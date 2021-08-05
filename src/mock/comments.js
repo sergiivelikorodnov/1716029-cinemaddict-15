@@ -1,8 +1,11 @@
-import { TEXT_DESCRIPTION } from '../const.js';
 import { getRandomInteger, shuffle } from '../utils';
 import dayjs from 'dayjs';
 
-const textGenerator = TEXT_DESCRIPTION.split('. ');
+const TEXT_COMMENTS =
+  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus';
+
+
+const textGenerator = TEXT_COMMENTS.split('. ');
 const generateCommentText = (textArray) =>
   `${shuffle(textArray).slice(0, 1).join('. ')}.`;
 
@@ -11,7 +14,7 @@ const generateID = () =>
     Date.now().toString(36) + Math.random().toString(36).substr(2, 5)
   ).toUpperCase();
 
-const generateCoomentDate = () => {
+const generateCommentDate = () => {
   const date1 = dayjs().add(getRandomInteger(-200, 0), 'days');
   const now = dayjs();
   if (now.diff(date1, 'years') > 1) {
@@ -49,10 +52,18 @@ const getEmotion = () => {
   return emotions[getRandomIndex];
 };
 
-export const generateComment = () => ({
+const generateComment = () => ({
   id: generateID(),
   author: getAuthor(),
   comment: generateCommentText(textGenerator),
-  date: generateCoomentDate(),
+  date: generateCommentDate(),
   emotion: getEmotion(),
 });
+
+/**
+ * All Comments
+ */
+const COMMENTS_TOTAL_COUNT = 20;
+const allComments = new Array(COMMENTS_TOTAL_COUNT).fill().map(generateComment);
+
+export { allComments };

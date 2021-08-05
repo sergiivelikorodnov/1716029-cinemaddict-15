@@ -1,10 +1,16 @@
-const generateFilters = (allMovies) => ({
-  watchedMovies: allMovies.filter((movie) => movie.userDetails.watchList)
+const movieToFilterMap = {
+  watchedMovies: (movies) => movies.filter((movie) => movie.userDetails.watchList)
     .length,
-  historyList: allMovies.filter((movie) => movie.userDetails.alreadyWatched)
+  historyList: (movies) => movies.filter((movie) => movie.userDetails.alreadyWatched)
     .length,
-  favoriteMovies: allMovies.filter((movie) => movie.userDetails.favorite)
+  favoriteMovies: (movies) => movies.filter((movie) => movie.userDetails.favorite)
     .length,
-});
+};
 
-export { generateFilters };
+const generateFilter = (movies) => Object.entries(movieToFilterMap).map(
+  ([filterName, countMovies]) => ({
+    name: filterName,
+    count: countMovies(movies),
+  }),
+);
+export { generateFilter };

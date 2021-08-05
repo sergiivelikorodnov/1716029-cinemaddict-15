@@ -1,3 +1,7 @@
+import {
+  timeConvertor
+} from '../utils.js';
+
 export const createFilmDetails = (movie) => {
   const {
     title,
@@ -13,7 +17,9 @@ export const createFilmDetails = (movie) => {
     genre,
     description,
   } = movie.filmInfo;
+
   const comments = movie.comments.size;
+  const runTimeMins = timeConvertor(runTime);
   const renderGenre = (arr) => {
     let text = '';
     arr.forEach(
@@ -68,7 +74,7 @@ export const createFilmDetails = (movie) => {
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Runtime</td>
-              <td class="film-details__cell">${runTime}</td>
+              <td class="film-details__cell">${runTimeMins}</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Country</td>

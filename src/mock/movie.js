@@ -1,13 +1,19 @@
-import { TEXT_DESCRIPTION } from '../const.js';
+import { allComments } from './comments.js';
 import {
   getRandomFloat,
   getRandomInteger,
-  shuffle,
-  timeConvertor
+  shuffle
 } from '../utils';
 import dayjs from 'dayjs';
 
-const getMovieTitle = () => {
+const TEXT_DESCRIPTION =
+  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus';
+
+/**
+ * All Movies Map
+ */
+
+const generateMovieTitle = () => {
   const titles = [
     'The Dance of Life',
     'Sagebrush Trail',
@@ -20,7 +26,7 @@ const getMovieTitle = () => {
   return titles[getRandomIndex];
 };
 
-const getAltMovieTitle = () => {
+const generateAltMovieTitle = () => {
   const titles = [
     'Alt The Dance of Life',
     'Alt Sagebrush Trail',
@@ -33,7 +39,7 @@ const getAltMovieTitle = () => {
   return titles[getRandomIndex];
 };
 
-const getMoviePoster = () => {
+const generateMoviePoster = () => {
   const posters = [
     './images/posters/made-for-each-other.png',
     './images/posters/popeye-meets-sinbad.png',
@@ -48,13 +54,13 @@ const getMoviePoster = () => {
 
 const textGenerator = TEXT_DESCRIPTION.split('. ');
 
-const getMovieDescription = (textArray) =>
+const generateMovieDescription = (textArray) =>
   `${shuffle(textArray).slice(0, 5).join('. ')}.`;
 
-const generateRating = () => getRandomFloat(2, 10, 1);
+const generateRating = () => getRandomFloat(0, 10, 1);
 
 const generateComments = (comments) => {
-  const getRandomIndex = getRandomInteger(1, 4);
+  const getRandomIndex = getRandomInteger(1, 5);
   return new Set(
     shuffle(comments)
       .slice(0, getRandomIndex)
@@ -71,7 +77,7 @@ const generateDateRelease = () =>
   dayjs().add(getRandomInteger(-100, 0), 'year').format('DD MMMM YYYY');
 
 const generateRuntime = () =>
-  timeConvertor(dayjs().toDate().getMinutes() + getRandomInteger(60, 120));
+  dayjs().toDate().getMinutes() + getRandomInteger(60, 120);
 
 const generateDate = () => {
   const isDate = Boolean(getRandomInteger());
@@ -82,21 +88,21 @@ const generateDate = () => {
   return dayjs().add(getRandomInteger(-100, 0), 'year').toDate();
 };
 
-const getCountry = () => {
+const generateCountry = () => {
   const titles = ['USA', 'Canada', 'Finland', 'Germany', 'Spain'];
 
   const getRandomIndex = getRandomInteger(0, titles.length - 1);
   return titles[getRandomIndex];
 };
 
-const getAgeRating = () => {
+const generateAgeRating = () => {
   const titles = [0, 3, 6, 12, 18];
 
   const getRandomIndex = getRandomInteger(0, titles.length - 1);
   return titles[getRandomIndex];
 };
 
-const getDirector = () => {
+const generateDirector = () => {
   const titles = [
     'David Fincher',
     'Christopher Nolan',
@@ -109,7 +115,7 @@ const getDirector = () => {
   return titles[getRandomIndex];
 };
 
-const getScreenWriters = () => {
+const generateScreenWriters = () => {
   const titles = [
     'Billy Wilder',
     'Ethan Coen and Joel Coen',
@@ -127,7 +133,7 @@ const getScreenWriters = () => {
   return shuffle(titles).slice(0, getRandomIndex);
 };
 
-const getActors = () => {
+const generateActors = () => {
   const titles = [
     'Robin Williams',
     'Betty White',
@@ -145,7 +151,7 @@ const getActors = () => {
   return shuffle(titles).slice(0, getRandomIndex);
 };
 
-const getGenres = () => {
+const generateGenres = () => {
   const titles = [
     'Comedy',
     'Detective',
@@ -163,29 +169,29 @@ const getGenres = () => {
   return shuffle(titles).slice(0, getRandomIndex);
 };
 
-export const generateMovie = (allComments) => {
+export const generateMovie = (allCommentsList) => {
   const dueDate = generateDate();
   const isWatchedStatus = dueDate !== null;
 
   return {
     id: generateID(),
-    comments: generateComments(allComments),
+    comments: generateComments(allCommentsList),
     filmInfo: {
-      title: getMovieTitle(),
-      alternativeTitle: getAltMovieTitle(),
+      title: generateMovieTitle(),
+      alternativeTitle: generateAltMovieTitle(),
       totalRating: generateRating(),
-      poster: getMoviePoster(),
-      ageRating: getAgeRating(),
-      director: getDirector(),
-      writers: getScreenWriters(),
-      actors: getActors(),
+      poster: generateMoviePoster(),
+      ageRating: generateAgeRating(),
+      director: generateDirector(),
+      writers: generateScreenWriters(),
+      actors: generateActors(),
       release: {
         date: generateDateRelease(),
-        country: getCountry(),
+        country: generateCountry(),
       },
       runTime: generateRuntime(),
-      genre: getGenres(),
-      description: getMovieDescription(textGenerator),
+      genre: generateGenres(),
+      description: generateMovieDescription(textGenerator),
     },
     userDetails: {
       watchList: Boolean(getRandomInteger()),
@@ -195,3 +201,14 @@ export const generateMovie = (allComments) => {
     },
   };
 };
+
+/**
+ * All Movies Map
+ */
+
+const MOVIES_TOTAL_COUNT = 18;
+const allMovies = new Array(MOVIES_TOTAL_COUNT)
+  .fill()
+  .map(() => generateMovie(allComments));
+
+export { allMovies };

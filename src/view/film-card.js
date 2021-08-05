@@ -1,7 +1,9 @@
+import { MAX_SHORT_DESCRIPTION_LENGTH } from '../const.js';
+
 export const createFilmCard = (movie) => {
   const { title, poster, totalRating, release, runTime, genre, description } =
     movie.filmInfo;
-  const shortDescripton = `${description.slice(0, 139)}...`;
+  const shortDescripton = `${description.slice(0, MAX_SHORT_DESCRIPTION_LENGTH)}...`;
   const comments = movie.comments.size;
   const releaseDate = new Date(release.date).getFullYear();
 
