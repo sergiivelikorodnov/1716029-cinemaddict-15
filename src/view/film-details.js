@@ -1,8 +1,9 @@
 import {
   timeConvertor
 } from '../utils.js';
+import { createElement } from '../utils.js';
 
-export const createFilmDetails = (movie) => {
+const createFilmDetails = (movie) => {
   const {
     title,
     alternativeTitle,
@@ -142,3 +143,26 @@ export const createFilmDetails = (movie) => {
   </form>
 </section>`;
 };
+
+export default class FilmDetails {
+  constructor(movie) {
+    this._movie = movie;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createFilmDetails(this._movie);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
