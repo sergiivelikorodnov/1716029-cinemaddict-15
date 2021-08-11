@@ -19,26 +19,3 @@ export const timeConvertor = (totalMinutes) => {
   const minutes = totalMinutes % 60;
   return `${hours}h ${minutes} min`;
 };
-
-export const RenderPosition = {
-  AFTERBEGIN: 'afterbegin',
-  BEFOREBEGIN: 'beforebegin',
-};
-
-export const render = (container, element, place) => {
-  switch (place) {
-    case RenderPosition.AFTERBEGIN:
-      container.prepend(element);
-      break;
-    case RenderPosition.BEFOREBEGIN:
-      container.append(element);
-      break;
-  }
-};
-
-export const createElement = (template) => {
-  const newElement = document.createElement('div');
-  newElement.innerHTML = template;
-
-  return newElement.firstChild;
-};

@@ -1,4 +1,4 @@
-import { getRandomInteger, shuffle } from '../utils';
+import { getRandomInteger, shuffle } from '../utils/common.js';
 import dayjs from 'dayjs';
 
 const TEXT_COMMENTS =

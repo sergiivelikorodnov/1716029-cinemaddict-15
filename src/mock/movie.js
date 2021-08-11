@@ -1,9 +1,5 @@
 import { allComments } from './comments.js';
-import {
-  getRandomFloat,
-  getRandomInteger,
-  shuffle
-} from '../utils';
+import { getRandomFloat, getRandomInteger, shuffle } from '../utils/common.js';
 import dayjs from 'dayjs';
 
 const TEXT_DESCRIPTION =
