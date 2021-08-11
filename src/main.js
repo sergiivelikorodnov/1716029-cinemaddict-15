@@ -26,6 +26,10 @@ const headerProfile = document.querySelector('.header');
 const footerStatistics = document.querySelector('.footer');
 const body = document.querySelector('body');
 
+const films = new ListMoviesLayoutView();
+const featureList = films.getElement().querySelector('.films-list');
+const featureListContainer = films.getElement().querySelector('.films-list__container');
+
 render(
   headerProfile,
   new HeaderProfileView().getElement(),
@@ -43,13 +47,9 @@ render(
 );
 render(
   siteMainElement,
-  new ListMoviesLayoutView().getElement(),
+  films.getElement(),
   RenderPosition.BEFOREBEGIN,
 );
-
-const films = document.querySelector('.films');
-const featureList = films.querySelector('.films-list');
-const featureListContainer = featureList.querySelector('.films-list__container');
 
 /**
  * Movie Details
@@ -67,7 +67,7 @@ const renderFilmDetails = (someFilm) => {
     currentMovie = newMovie;
   }
 
-  const filmDetailsCommentList = document.querySelector(
+  const filmDetailsCommentList = currentMovie.querySelector(
     '.film-details__comments-list',
   );
   const filterComments = (obj, key, value) =>
@@ -150,15 +150,15 @@ if (allMovies.length === 0) {
  */
 
 if (topMoviesList.length > 0) {
-  const topRatedListContainer = new ExtraListMoviesLayoutView('Top rated').getElement();
+  const topRatedListContainer = new ExtraListMoviesLayoutView('Top rated');
   render(
-    films,
-    topRatedListContainer,
+    films.getElement(),
+    topRatedListContainer.getElement(),
     RenderPosition.BEFOREBEGIN,
   );
 
   for (let i = 0; i < Math.min(topMoviesList.length, 2); i++) {
-    renderMovie(topRatedListContainer.querySelector('.films-list__container'), topMoviesList[i]);
+    renderMovie(topRatedListContainer.getElement().querySelector('.films-list__container'), topMoviesList[i]);
   }
 }
 
@@ -167,14 +167,14 @@ if (topMoviesList.length > 0) {
  */
 
 if (mostCommentedMoviesList.length > 0) {
-  const mostCommentedListContainer = new ExtraListMoviesLayoutView('Most commented').getElement();
+  const mostCommentedListContainer = new ExtraListMoviesLayoutView('Most commented');
   render(
-    films,
-    mostCommentedListContainer,
+    films.getElement(),
+    mostCommentedListContainer.getElement(),
     RenderPosition.BEFOREBEGIN,
   );
   for (let i = 0; i < Math.min(mostCommentedMoviesList.length, 2); i++) {
-    renderMovie(mostCommentedListContainer.querySelector('.films-list__container'), mostCommentedMoviesList[i]);
+    renderMovie(mostCommentedListContainer.getElement().querySelector('.films-list__container'), mostCommentedMoviesList[i]);
   }
 }
 
@@ -183,14 +183,15 @@ if (mostCommentedMoviesList.length > 0) {
  */
 if (allMovies.length > MOVIES_COUNT_PER_STEP) {
   let renderedMoviesCount = MOVIES_COUNT_PER_STEP;
+  const showMore = new ShowMoreButtonView();
   render(
     featureList,
-    new ShowMoreButtonView().getElement(),
+    showMore.getElement(),
     RenderPosition.BEFOREBEGIN,
   );
-  const showMore = featureList.querySelector('.films-list__show-more');
+  const showMoreButton = showMore.getElement();
 
-  showMore.addEventListener('click', (evt) => {
+  showMoreButton.addEventListener('click', (evt) => {
     evt.preventDefault();
     allMovies
       .slice(renderedMoviesCount, renderedMoviesCount + MOVIES_COUNT_PER_STEP)
@@ -203,7 +204,7 @@ if (allMovies.length > MOVIES_COUNT_PER_STEP) {
       );
     renderedMoviesCount += MOVIES_COUNT_PER_STEP;
     if (renderedMoviesCount > allMovies.length) {
-      showMore.remove();
+      showMoreButton.remove();
     }
   });
 }
