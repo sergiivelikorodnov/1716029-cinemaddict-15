@@ -81,7 +81,7 @@ const renderFilmDetails = (someFilm) => {
   );
 
   body.classList.add('hide-overflow');
-  const closeButton = document.querySelector('.film-details__close-btn');
+  const closeButton = currentMovie.querySelector('.film-details__close-btn');
   const closeButtonHandler = (evt) => {
     evt.preventDefault();
     closeButton.removeEventListener('click', closeButtonHandler);
