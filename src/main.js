@@ -196,11 +196,7 @@ if (allMovies.length > MOVIES_COUNT_PER_STEP) {
     allMovies
       .slice(renderedMoviesCount, renderedMoviesCount + MOVIES_COUNT_PER_STEP)
       .forEach((movie) =>
-        render(
-          featureListContainer,
-          new FilmCardView(movie).getElement(),
-          RenderPosition.BEFOREBEGIN,
-        ),
+        renderMovie(featureListContainer, movie),
       );
     renderedMoviesCount += MOVIES_COUNT_PER_STEP;
     if (renderedMoviesCount > allMovies.length) {
