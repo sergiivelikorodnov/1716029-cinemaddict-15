@@ -1,6 +1,7 @@
 import { MAX_SHORT_DESCRIPTION_LENGTH } from '../const.js';
+import { createElement } from '../utils.js';
 
-export const createFilmCard = (movie) => {
+const createFilmCard = (movie) => {
   const { title, poster, totalRating, release, runTime, genre, description } =
     movie.filmInfo;
   const shortDescripton = `${description.slice(0, MAX_SHORT_DESCRIPTION_LENGTH)}...`;
@@ -25,3 +26,26 @@ export const createFilmCard = (movie) => {
   </div>
 </article>`;
 };
+
+export default class FilmCard {
+  constructor(movie) {
+    this._movie = movie;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createFilmCard(this._movie);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
