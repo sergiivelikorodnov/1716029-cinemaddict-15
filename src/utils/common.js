@@ -1,3 +1,5 @@
+
+
 export const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
   const upper = Math.floor(Math.max(a, b));
@@ -18,4 +20,8 @@ export const timeConvertor = (totalMinutes) => {
   const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
   return `${hours}h ${minutes} min`;
+};
+
+export const removeMyListener = (container, evt, handler) => {
+  container.removeEventListener(evt, handler);
 };
