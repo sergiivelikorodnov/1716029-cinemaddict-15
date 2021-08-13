@@ -45,23 +45,23 @@ let openedMovieDetails;
 
 const renderFilmDetails = (someFilm) => {
   if (!isOpen) {
-    openedMovieDetails = new FilmDetailsView(someFilm).getElement();
-    body.appendChild(openedMovieDetails);
+    openedMovieDetails = new FilmDetailsView(someFilm);
+    body.appendChild(openedMovieDetails.getElement());
     isOpen = true;
   } else {
-    const newOpenedMovie = new FilmDetailsView(someFilm).getElement();
-    body.replaceChild(newOpenedMovie, openedMovieDetails);
+    const newOpenedMovie = new FilmDetailsView(someFilm);
+    body.replaceChild(newOpenedMovie.getElement(), openedMovieDetails.getElement());
     openedMovieDetails = newOpenedMovie;
   }
 
-  const filmDetailsCommentList = openedMovieDetails.querySelector('.film-details__comments-list' );
+  const filmDetailsCommentList = openedMovieDetails.getElement().querySelector('.film-details__comments-list' );
   const filterComments = (someComments, commentKey, commentValue) => someComments.filter((comment) => comment[commentKey] === commentValue);
   someFilm.comments.forEach((index) =>
     render(filmDetailsCommentList, new CommentView(filterComments(allComments, 'id', index)),  RenderPosition.BEFOREBEGIN ),
   );
 
   body.classList.add('hide-overflow');
-  const closeButton = openedMovieDetails.querySelector('.film-details__close-btn');
+  //const closeButton = openedMovieDetails.querySelector('.film-details__close-btn');
 
 
   /**
@@ -77,19 +77,18 @@ const renderFilmDetails = (someFilm) => {
     }
   };
 
-  const closeButtonHandler = (evt) => {
-    evt.preventDefault();
+  const closeButtonHandler = () => {
     body.removeEventListener('keydown', onEscKeyDown);
     body.classList.remove('hide-overflow');
     isOpen = false;
-    body.removeChild(openedMovieDetails);
+    body.removeChild(openedMovieDetails.getElement());
   };
 
   /**
    * Close Listeners
    */
   body.addEventListener('keydown', onEscKeyDown);
-  closeButton.addEventListener('click', closeButtonHandler);
+  openedMovieDetails.setClickHandler(closeButtonHandler);
 
 
 };
@@ -101,11 +100,8 @@ const renderMovie = (movieElement, movie) => {
   const movieComponent = new FilmCardView(movie);
   render(movieElement, movieComponent, RenderPosition.BEFOREBEGIN);
 
-  movieComponent.getElement().addEventListener('click', (evt) => {
-    if (evt.target.matches('.film-card__poster') || evt.target.matches('.film-card__title') || evt.target.matches('.film-card__comments') ) {
-      evt.preventDefault();
-      renderFilmDetails(movie);
-    }
+  movieComponent.setClickHandler(() => {
+    renderFilmDetails(movie);
   });
 };
 
