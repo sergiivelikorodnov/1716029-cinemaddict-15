@@ -154,14 +154,12 @@ export default class FilmDetails extends AbstractView {
   }
 
   _clickHandler(evt) {
-    if (evt.target.matches('.film-details__close-btn')) {
-      evt.preventDefault();
-      this._callback.click();
-    }
+    evt.preventDefault();
+    this._callback.click();
   }
 
   setClickHandler(callback) {
     this._callback.click = callback;
-    this.getElement().addEventListener('click', this._clickHandler);
+    this.getElement().querySelector('.film-details__close-btn').addEventListener('click', this._clickHandler);
   }
 }

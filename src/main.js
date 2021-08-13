@@ -25,7 +25,6 @@ const filters = generateFilter(allMovies);
 const siteMainElement = document.querySelector('.main');
 const headerProfile = document.querySelector('.header');
 const footerStatistics = document.querySelector('.footer');
-const body = document.querySelector('body');
 
 const films = new ListMoviesLayoutView();
 const featureList = films.getElement().querySelector('.films-list');
@@ -44,6 +43,8 @@ let isOpen;
 let openedMovieDetails;
 
 const renderFilmDetails = (someFilm) => {
+  const body = document.querySelector('body');
+
   if (!isOpen) {
     openedMovieDetails = new FilmDetailsView(someFilm);
     body.appendChild(openedMovieDetails.getElement());
@@ -61,8 +62,6 @@ const renderFilmDetails = (someFilm) => {
   );
 
   body.classList.add('hide-overflow');
-  //const closeButton = openedMovieDetails.querySelector('.film-details__close-btn');
-
 
   /**
    * Esc button
@@ -72,13 +71,13 @@ const renderFilmDetails = (someFilm) => {
       evt.preventDefault();
       body.classList.remove('hide-overflow');
       isOpen = false;
-      body.removeChild(openedMovieDetails);
+      body.removeChild(openedMovieDetails.getElement());
       body.removeEventListener('keydown', onEscKeyDown);
     }
   };
 
   const closeButtonHandler = () => {
-    body.removeEventListener('keydown', onEscKeyDown);
+    document.removeEventListener('keydown', onEscKeyDown);
     body.classList.remove('hide-overflow');
     isOpen = false;
     body.removeChild(openedMovieDetails.getElement());
@@ -87,7 +86,7 @@ const renderFilmDetails = (someFilm) => {
   /**
    * Close Listeners
    */
-  body.addEventListener('keydown', onEscKeyDown);
+  document.addEventListener('keydown', onEscKeyDown);
   openedMovieDetails.setClickHandler(closeButtonHandler);
 
 
