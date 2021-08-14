@@ -1,20 +1,23 @@
 import { MAX_SHORT_DESCRIPTION_LENGTH } from '../const.js';
+import { timeConvertor } from '../utils/common.js';
+
 import AbstractView from './abstract.js';
 
 const createFilmCard = (movie) => {
-  const { title, poster, totalRating, release, runTime, genre, description } =
+  const { title, poster, totalRating, release, runTime, genres, description } =
     movie.filmInfo;
   const shortDescripton = `${description.slice(0, MAX_SHORT_DESCRIPTION_LENGTH)}...`;
   const comments = movie.comments.size;
   const releaseDate = new Date(release.date).getFullYear();
+  const humanRunTime = timeConvertor(runTime);
 
   return `<article class="film-card">
   <h3 class="film-card__title">${title}</h3>
   <p class="film-card__rating">${totalRating}</p>
   <p class="film-card__info">
     <span class="film-card__year">${releaseDate}</span>
-    <span class="film-card__duration">${runTime}</span>
-    <span class="film-card__genre">${genre.join(', ')}</span>
+    <span class="film-card__duration">${humanRunTime}</span>
+    <span class="film-card__genre">${genres.join(', ')}</span>
   </p>
   <img src="${poster}" alt="" class="film-card__poster">
   <p class="film-card__description">${shortDescripton}</p>
@@ -41,12 +44,12 @@ export default class FilmCard extends AbstractView{
   _clickHandler(evt) {
     if (evt.target.matches('.film-card__poster') || evt.target.matches('.film-card__title') || evt.target.matches('.film-card__comments')) {
       evt.preventDefault();
-      this._callback.click();
+      this._callback.openFilmDetailsPopup();
     }
   }
 
   setClickHandler(callback) {
-    this._callback.click = callback;
+    this._callback.openFilmDetailsPopup = callback;
     this.getElement().addEventListener('click', this._clickHandler);
   }
 }

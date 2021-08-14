@@ -18,11 +18,11 @@ export default class ShowMoreButton extends AbstractView {
 
   _clickHandler(evt) {
     evt.preventDefault();
-    this._callback.click();
+    this._callback.showMoreMovies();
   }
 
   setClickHandler(callback) {
-    this._callback.click = callback;
+    this._callback.showMoreMovies = callback;
     this.getElement().addEventListener('click', this._clickHandler);
   }
 

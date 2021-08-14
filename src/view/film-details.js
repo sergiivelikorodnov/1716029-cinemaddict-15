@@ -13,7 +13,7 @@ const createFilmDetails = (movie) => {
     actors,
     director,
     runTime,
-    genre,
+    genres,
     description,
   } = movie.filmInfo;
 
@@ -27,7 +27,7 @@ const createFilmDetails = (movie) => {
     return text;
   };
 
-  const genreTitle = genre.length === 1 ? 'Genre' : 'Genres';
+  const genreTitle = genres.length === 1 ? 'Genre' : 'Genres';
 
   return `<section class="film-details">
   <form class="film-details__inner" action="" method="get">
@@ -82,7 +82,7 @@ const createFilmDetails = (movie) => {
             <tr class="film-details__row">
               <td class="film-details__term">${genreTitle}</td>
               <td class="film-details__cell">
-              ${renderGenre(genre)}
+              ${renderGenre(genres)}
             </tr>
           </table>
 
@@ -155,11 +155,11 @@ export default class FilmDetails extends AbstractView {
 
   _clickHandler(evt) {
     evt.preventDefault();
-    this._callback.click();
+    this._callback.closeFilmDetailsPopup();
   }
 
   setClickHandler(callback) {
-    this._callback.click = callback;
+    this._callback.closeFilmDetailsPopup = callback;
     this.getElement().querySelector('.film-details__close-btn').addEventListener('click', this._clickHandler);
   }
 }
