@@ -5,7 +5,7 @@ import {
   MAX_EXTRA_MOVIES
 } from './const.js';
 import FooterStatisticsView from './view/footer-statistics.js';
-import { render, RenderPosition } from './utils/render.js';
+import { removeComponent, render, RenderPosition } from './utils/render.js';
 import HeaderProfileView from './view/header-profile.js';
 import SiteMenuFiltersTemplateView from './view/site-menu.js';
 import SiteSortTemplateView from './view/site-sort.js';
@@ -25,6 +25,7 @@ const filters = generateFilter(allMovies);
 const siteMainElement = document.querySelector('.main');
 const headerProfile = document.querySelector('.header');
 const footerStatistics = document.querySelector('.footer');
+const body = document.querySelector('body');
 
 const films = new ListMoviesLayoutView();
 const featureList = films.getElement().querySelector('.films-list');
@@ -39,21 +40,15 @@ render( siteMainElement, films, RenderPosition.BEFOREBEGIN );
  * Movie Details
  */
 
-let isOpen;
-let openedMovieDetails;
-
 const renderFilmDetails = (someFilm) => {
-  const body = document.querySelector('body');
-
-  if (!isOpen) {
-    openedMovieDetails = new FilmDetailsView(someFilm);
-    body.appendChild(openedMovieDetails.getElement());
-    isOpen = true;
-  } else {
-    const newOpenedMovie = new FilmDetailsView(someFilm);
-    body.replaceChild(newOpenedMovie.getElement(), openedMovieDetails.getElement());
-    openedMovieDetails = newOpenedMovie;
+  const renderedMovieContainer = body.querySelector('.film-details');
+  if (renderedMovieContainer !== null) {
+    body.removeChild(renderedMovieContainer);
   }
+
+  const openedMovieDetails = new FilmDetailsView(someFilm);
+  body.appendChild(openedMovieDetails.getElement());
+
 
   const filmDetailsCommentList = openedMovieDetails.getElement().querySelector('.film-details__comments-list' );
   const filterComments = (someComments, commentKey, commentValue) => someComments.filter((comment) => comment[commentKey] === commentValue);
@@ -70,26 +65,23 @@ const renderFilmDetails = (someFilm) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
       body.classList.remove('hide-overflow');
-      isOpen = false;
-      body.removeChild(openedMovieDetails.getElement());
+      removeComponent(openedMovieDetails);
       body.removeEventListener('keydown', onEscKeyDown);
     }
   };
 
+
   const closeButtonHandler = () => {
     document.removeEventListener('keydown', onEscKeyDown);
     body.classList.remove('hide-overflow');
-    isOpen = false;
-    body.removeChild(openedMovieDetails.getElement());
+    removeComponent(openedMovieDetails);
   };
 
   /**
    * Close Listeners
    */
-  document.addEventListener('keydown', onEscKeyDown);
   openedMovieDetails.setClickHandler(closeButtonHandler);
-
-
+  document.addEventListener('keydown', onEscKeyDown);
 };
 
 /**
