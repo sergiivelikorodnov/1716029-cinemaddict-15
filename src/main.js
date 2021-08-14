@@ -52,6 +52,7 @@ const renderFilmDetails = (someFilm) => {
 
   const filmDetailsCommentList = openedMovieDetails.getElement().querySelector('.film-details__comments-list' );
   const filterComments = (someComments, commentKey, commentValue) => someComments.filter((comment) => comment[commentKey] === commentValue);
+
   someFilm.comments.forEach((index) =>
     render(filmDetailsCommentList, new CommentView(filterComments(allComments, 'id', index)),  RenderPosition.BEFOREBEGIN ),
   );
@@ -113,9 +114,11 @@ if (allMovies.length === 0) {
 
 if (topMoviesList.length > 0) {
   const topRatedListContainer = new ExtraListMoviesLayoutView('Top rated');
+
   render( films, topRatedListContainer, RenderPosition.BEFOREBEGIN );
 
   for (let i = 0; i < Math.min(topMoviesList.length, MAX_EXTRA_MOVIES); i++) {
+
     renderMovie(topRatedListContainer.getElement().querySelector('.films-list__container'), topMoviesList[i]);
   }
 }
@@ -126,8 +129,10 @@ if (topMoviesList.length > 0) {
 
 if (mostCommentedMoviesList.length > 0) {
   const mostCommentedListContainer = new ExtraListMoviesLayoutView('Most commented');
+
   render( films, mostCommentedListContainer, RenderPosition.BEFOREBEGIN );
   for (let i = 0; i < Math.min(mostCommentedMoviesList.length, MAX_EXTRA_MOVIES); i++) {
+
     renderMovie(mostCommentedListContainer.getElement().querySelector('.films-list__container'), mostCommentedMoviesList[i]);
   }
 }
@@ -138,6 +143,7 @@ if (mostCommentedMoviesList.length > 0) {
 if (allMovies.length > MOVIES_COUNT_PER_STEP) {
   let renderedMoviesCount = MOVIES_COUNT_PER_STEP;
   const showMore = new ShowMoreButtonView();
+
   render( featureList, showMore, RenderPosition.BEFOREBEGIN );
 
   showMore.setClickHandler(() => {
