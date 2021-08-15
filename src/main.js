@@ -1,6 +1,6 @@
 import { MOVIES_COUNT_PER_STEP } from './const.js';
 import { removeComponent, render, RenderPosition } from './utils/render.js';
-import { sortTopMoviesList, sortMostCommentedMoviesList } from './utils/sort.js';
+import { sortTopMoviesList, sortMostCommentedMoviesList, filterComments } from './utils/sort.js';
 import { generateComments } from './mock/comments.js';
 import { generateMovies } from './mock/movie.js';
 import { generateFilter } from './mock/filter.js';
@@ -49,10 +49,8 @@ const renderFilmDetails = (someFilm) => {
   bodyContainer.appendChild(openedMovieDetails.getElement());
 
   const filmDetailsCommentList = openedMovieDetails.getElement().querySelector('.film-details__comments-list' );
-  const filterComments = (someComments, commentKey, commentValue) => someComments.filter((comment) => comment[commentKey] === commentValue);
-
-  someFilm.comments.forEach((index) =>
-    render(filmDetailsCommentList, new FilmCommentView(filterComments(allComments, 'id', index)),  RenderPosition.BEFOREBEGIN ),
+  someFilm.comments.forEach((commentIndex) =>
+    render(filmDetailsCommentList, new FilmCommentView(filterComments(allComments, 'id', commentIndex)),  RenderPosition.BEFOREBEGIN ),
   );
 
   bodyContainer.classList.add('hide-overflow');
@@ -76,7 +74,7 @@ const renderFilmDetails = (someFilm) => {
   };
 
   /**
-   * Close Listeners
+   * Close Popup Listeners
    */
   openedMovieDetails.setClickHandler(closeButtonHandler);
   document.addEventListener('keydown', onEscKeyDown);
