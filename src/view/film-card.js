@@ -1,20 +1,23 @@
 import { MAX_SHORT_DESCRIPTION_LENGTH } from '../const.js';
-import { createElement } from '../utils.js';
+import { timeConvertor } from '../utils/common.js';
+
+import AbstractView from './abstract.js';
 
 const createFilmCard = (movie) => {
-  const { title, poster, totalRating, release, runTime, genre, description } =
+  const { title, poster, totalRating, release, runTime, genres, description } =
     movie.filmInfo;
   const shortDescripton = `${description.slice(0, MAX_SHORT_DESCRIPTION_LENGTH)}...`;
   const comments = movie.comments.size;
   const releaseDate = new Date(release.date).getFullYear();
+  const humanRunTime = timeConvertor(runTime);
 
   return `<article class="film-card">
   <h3 class="film-card__title">${title}</h3>
   <p class="film-card__rating">${totalRating}</p>
   <p class="film-card__info">
     <span class="film-card__year">${releaseDate}</span>
-    <span class="film-card__duration">${runTime}</span>
-    <span class="film-card__genre">${genre.join(', ')}</span>
+    <span class="film-card__duration">${humanRunTime}</span>
+    <span class="film-card__genre">${genres.join(', ')}</span>
   </p>
   <img src="${poster}" alt="" class="film-card__poster">
   <p class="film-card__description">${shortDescripton}</p>
@@ -27,25 +30,26 @@ const createFilmCard = (movie) => {
 </article>`;
 };
 
-export default class FilmCard {
+export default class FilmCard extends AbstractView{
   constructor(movie) {
+    super();
     this._movie = movie;
-    this._element = null;
+    this._clickHandler = this._clickHandler.bind(this);
   }
 
   getTemplate() {
     return createFilmCard(this._movie);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
+  _clickHandler(evt) {
+    if (evt.target.matches('.film-card__poster') || evt.target.matches('.film-card__title') || evt.target.matches('.film-card__comments')) {
+      evt.preventDefault();
+      this._callback.openFilmDetailsPopup();
     }
-
-    return this._element;
   }
 
-  removeElement() {
-    this._element = null;
+  setClickHandler(callback) {
+    this._callback.openFilmDetailsPopup = callback;
+    this.getElement().addEventListener('click', this._clickHandler);
   }
 }

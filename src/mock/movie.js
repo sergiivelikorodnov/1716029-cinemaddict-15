@@ -1,9 +1,8 @@
-import { allComments } from './comments.js';
 import {
   getRandomFloat,
   getRandomInteger,
   shuffle
-} from '../utils';
+} from './utils.js';
 import dayjs from 'dayjs';
 
 const TEXT_DESCRIPTION =
@@ -169,7 +168,7 @@ const generateGenres = () => {
   return shuffle(titles).slice(0, getRandomIndex);
 };
 
-export const generateMovie = (allCommentsList) => {
+const generateMovie = (allCommentsList) => {
   const dueDate = generateDate();
   const isWatchedStatus = dueDate !== null;
 
@@ -190,7 +189,7 @@ export const generateMovie = (allCommentsList) => {
         country: generateCountry(),
       },
       runTime: generateRuntime(),
-      genre: generateGenres(),
+      genres: generateGenres(),
       description: generateMovieDescription(textGenerator),
     },
     userDetails: {
@@ -202,13 +201,5 @@ export const generateMovie = (allCommentsList) => {
   };
 };
 
-/**
- * All Movies Map
- */
+export const generateMovies = (allComments, moviesTotalCount) => new Array(moviesTotalCount).fill().map(() => generateMovie(allComments));
 
-const MOVIES_TOTAL_COUNT = 18;
-const allMovies = new Array(MOVIES_TOTAL_COUNT)
-  .fill()
-  .map(() => generateMovie(allComments));
-
-export { allMovies };

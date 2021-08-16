@@ -1,4 +1,4 @@
-import { createElement } from '../utils.js';
+import AbstractView from './abstract.js';
 
 const createComment = (commentDetails) => {
 
@@ -19,25 +19,13 @@ const createComment = (commentDetails) => {
           `;
 };
 
-export default class Comment {
+export default class Comment extends AbstractView {
   constructor(commentDetails) {
+    super();
     this._commentDetails = commentDetails;
-    this._element = null;
   }
 
   getTemplate() {
     return createComment(this._commentDetails);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

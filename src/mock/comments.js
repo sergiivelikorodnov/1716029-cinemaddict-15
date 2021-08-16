@@ -1,4 +1,4 @@
-import { getRandomInteger, shuffle } from '../utils';
+import { getRandomInteger, shuffle } from './utils.js';
 import dayjs from 'dayjs';
 
 const TEXT_COMMENTS =
@@ -60,10 +60,4 @@ const generateComment = () => ({
   emotion: getEmotion(),
 });
 
-/**
- * All Comments
- */
-const COMMENTS_TOTAL_COUNT = 20;
-const allComments = new Array(COMMENTS_TOTAL_COUNT).fill().map(generateComment);
-
-export { allComments };
+export const generateComments = (commentsTotalCount) => new Array(commentsTotalCount).fill().map(generateComment);

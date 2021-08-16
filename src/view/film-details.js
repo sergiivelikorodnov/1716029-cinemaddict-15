@@ -1,7 +1,5 @@
-import {
-  timeConvertor
-} from '../utils.js';
-import { createElement } from '../utils.js';
+import { timeConvertor } from '../utils/common.js';
+import AbstractView from './abstract.js';
 
 const createFilmDetails = (movie) => {
   const {
@@ -15,7 +13,7 @@ const createFilmDetails = (movie) => {
     actors,
     director,
     runTime,
-    genre,
+    genres,
     description,
   } = movie.filmInfo;
 
@@ -29,7 +27,7 @@ const createFilmDetails = (movie) => {
     return text;
   };
 
-  const genreTitle = genre.length === 1 ? 'Genre' : 'Genres';
+  const genreTitle = genres.length === 1 ? 'Genre' : 'Genres';
 
   return `<section class="film-details">
   <form class="film-details__inner" action="" method="get">
@@ -84,7 +82,7 @@ const createFilmDetails = (movie) => {
             <tr class="film-details__row">
               <td class="film-details__term">${genreTitle}</td>
               <td class="film-details__cell">
-              ${renderGenre(genre)}
+              ${renderGenre(genres)}
             </tr>
           </table>
 
@@ -144,25 +142,24 @@ const createFilmDetails = (movie) => {
 </section>`;
 };
 
-export default class FilmDetails {
+export default class FilmDetails extends AbstractView {
   constructor(movie) {
+    super();
     this._movie = movie;
-    this._element = null;
+    this._clickHandler = this._clickHandler.bind(this);
   }
 
   getTemplate() {
     return createFilmDetails(this._movie);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _clickHandler(evt) {
+    evt.preventDefault();
+    this._callback.closeFilmDetailsPopup();
   }
 
-  removeElement() {
-    this._element = null;
+  setClickHandler(callback) {
+    this._callback.closeFilmDetailsPopup = callback;
+    this.getElement().querySelector('.film-details__close-btn').addEventListener('click', this._clickHandler);
   }
 }
