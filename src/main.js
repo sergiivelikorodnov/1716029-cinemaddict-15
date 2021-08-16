@@ -17,10 +17,11 @@ import FilmDetailsView from './view/film-details.js';
 import FilmCommentView from './view/film-comment.js';
 
 const COMMENTS_TOTAL_COUNT = 20;
-const allComments = generateComments(COMMENTS_TOTAL_COUNT);
-
 const MOVIES_TOTAL_COUNT = 18;
 const MAX_EXTRA_MOVIES = 2;
+
+const allComments = generateComments(COMMENTS_TOTAL_COUNT);
+
 const allMovies = generateMovies(allComments, MOVIES_TOTAL_COUNT);
 
 const filters = generateFilter(allMovies);
