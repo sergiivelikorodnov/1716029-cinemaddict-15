@@ -59,8 +59,20 @@ export default class ListMoviesPresenter {
     this._movieComponent = new FilmCardView(movie);
     render(movieElement, this._movieComponent);
 
-    this._movieComponent.setClickHandler(() => {
+    this._movieComponent.setOpenFilmDetailsPopupHandler(() => {
       this._renderFilmDetails(movie);
+    });
+
+    this._movieComponent.setAddToWatchlistHandler(() => {
+      //this._renderFilmDetails(movie);
+    });
+
+    this._movieComponent.setMarkAsWatchedHandler(() => {
+      //this._renderFilmDetails(movie);
+    });
+
+    this._movieComponent.setAddFavoriteHandler(() => {
+      //this._renderFilmDetails(movie);
     });
   }
 
@@ -100,8 +112,20 @@ export default class ListMoviesPresenter {
       removeComponent(this._openedMovieDetailsComponent);
     };
 
-    this._openedMovieDetailsComponent.setClickHandler(this._closeButtonHandler);
+    this._openedMovieDetailsComponent.setCloseFilmDetailsPopupHandler(this._closeButtonHandler);
     document.addEventListener('keydown', this._onEscKeyDown);
+
+    this._openedMovieDetailsComponent.setAddToWatchlistHandler(() => {
+
+    });
+
+    this._openedMovieDetailsComponent.setMarkAsWatchedHandler(() => {
+
+    });
+
+    this._openedMovieDetailsComponent.setAddFavoriteHandler(() => {
+
+    });
   }
 
   /**
@@ -162,7 +186,7 @@ export default class ListMoviesPresenter {
       this._featureList = this._listMoviesElement.getElement().querySelector('.films-list');
       render( this._featureList, this._showMore );
 
-      this._showMore.setClickHandler(() => {
+      this._showMore.setShowMoreMoviesHandler(() => {
         this._allMovies
           .slice(this._renderedMoviesCount, this._renderedMoviesCount + MOVIES_COUNT_PER_STEP)
           .forEach((movie) =>
