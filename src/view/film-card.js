@@ -41,13 +41,14 @@ const createFilmCard = (movie) => {
 };
 
 export default class FilmCard extends AbstractView{
-  constructor(movie) {
+  constructor(movie, changeData) {
     super();
     this._movie = movie;
     this._openFilmDetailsPopupHandler = this._openFilmDetailsPopupHandler.bind(this);
     this._addToWatchlistHandler = this._addToWatchlistHandler.bind(this);
     this._markAsWatchedHandler = this._markAsWatchedHandler.bind(this);
     this._addFavoriteHandler = this._addFavoriteHandler.bind(this);
+    this._changeData = changeData;
   }
 
   getTemplate() {
@@ -61,9 +62,18 @@ export default class FilmCard extends AbstractView{
     }
   }
 
-  _addToWatchlistHandler(evt) {
-    evt.preventDefault();
-    this._callback.addToWatchlist();
+  _addToWatchlistHandler() {
+    this._changeData(
+      Object.assign(
+        {},
+        this._movie.userDetails,
+        {
+          watchList: !this._movie.userDetails.watchList,
+        },
+      ),
+    );
+    // console.log(this._movie.userDetails.watchList);
+    //this._callback.addToWatchlist();
   }
 
   _markAsWatchedHandler(evt) {
@@ -81,8 +91,8 @@ export default class FilmCard extends AbstractView{
     this.getElement().addEventListener('click', this._openFilmDetailsPopupHandler);
   }
 
-  setAddToWatchlistHandler(callback) {
-    this._callback.addToWatchlist = callback;
+  setAddToWatchlistHandler() {
+    //this._callback.addToWatchlist = callback;
     this.getElement().querySelector('.film-card__controls-item--add-to-watchlist').addEventListener('click', this._addToWatchlistHandler);
   }
 

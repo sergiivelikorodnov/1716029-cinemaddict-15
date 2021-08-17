@@ -1,6 +1,7 @@
 import { removeComponent, render, RenderPosition } from '../utils/render.js';
 import { MOVIES_COUNT_PER_STEP } from '../const.js';
 import { sortTopMoviesList, sortMostCommentedMoviesList, filterComments } from '../utils/sort.js';
+import { updateItem } from '../mock/utils.js';
 import FilmCardView from '../view/film-card.js';
 import ListMoviesView from '../view/list-movies.js';
 import NoFilmView from '../view//no-film.js';
@@ -44,6 +45,16 @@ export default class ListMoviesPresenter {
   }
 
   /**
+  * Update data
+  */
+
+  _handleMovieChange(updatedFilm) {
+    console.log(this._allMovies);
+    this._allMovies = updateItem(this._allMovies, updatedFilm);
+    //this._listMoviesMap.get(updatedFilm.id).init(updatedFilm);
+  }
+
+  /**
   * Header Profile
   */
 
@@ -56,7 +67,7 @@ export default class ListMoviesPresenter {
   * Single Movie Card
   */
   _renderMovie(movieElement, movie) {
-    const movieComponent = new FilmCardView(movie);
+    const movieComponent = new FilmCardView(movie, this._handleMovieChange);
     this._listMoviesMap.set(movie.id, movieComponent);
     render(movieElement, movieComponent);
 
