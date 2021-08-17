@@ -26,6 +26,7 @@ export default class ListMoviesPresenter {
     this._mostCommentedListContainer = new ListExtraMoviesView('Most commented');
     this._siteSortComponent = new SiteSortView();
     this._headerProfileComponent = new HeaderProfileView();
+    this._listMovies = new Map();
   }
 
   init(allMovies, allComments, filters) {
@@ -54,9 +55,9 @@ export default class ListMoviesPresenter {
   /**
   * Single Movie Card
   */
-
   _renderMovie(movieElement, movie) {
     this._movieComponent = new FilmCardView(movie);
+
     render(movieElement, this._movieComponent);
 
     this._movieComponent.setOpenFilmDetailsPopupHandler(() => {
@@ -64,16 +65,19 @@ export default class ListMoviesPresenter {
     });
 
     this._movieComponent.setAddToWatchlistHandler(() => {
-      //this._renderFilmDetails(movie);
+      this._clearTaskList();
     });
 
     this._movieComponent.setMarkAsWatchedHandler(() => {
-      //this._renderFilmDetails(movie);
+      //console.log(this._movieComponent._movie.id);
+
     });
 
     this._movieComponent.setAddFavoriteHandler(() => {
       //this._renderFilmDetails(movie);
     });
+    this._listMovies.set(movie.id, this._listMovies);
+
   }
 
   /**
@@ -207,6 +211,23 @@ export default class ListMoviesPresenter {
   _renderfooterStatistics() {
     this._footerStatisticsContainer = document.querySelector('.footer');
     render( this._footerStatisticsContainer, new FooterStatisticsView(this._allMovies.length) );
+  }
+
+  /**
+  * Clear Movies List
+  */
+  _clearTaskList() {
+    this._listMovies.forEach((movie) => this._destroy(movie));
+    this._listMovies.clear();
+    this._renderedMoviesCount = MOVIES_COUNT_PER_STEP;
+    removeComponent(this._showMore);
+  }
+
+  /**
+  * Remove card
+  */
+  _destroy() {
+    removeComponent(this._movieComponent);
   }
 
   /**
