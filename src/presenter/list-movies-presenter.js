@@ -33,9 +33,9 @@ export default class ListMoviesPresenter {
     this._allComments = allComments.slice();
     this._filters = filters.slice();
 
-    render(this._siteMainContainer, new SiteMenuView(this._filters), RenderPosition.BEFOREBEGIN);
-    render(this._siteMainContainer, this._siteSortComponent, RenderPosition.BEFOREBEGIN);
-    render(this._siteMainContainer, this._listMoviesElement, RenderPosition.BEFOREBEGIN);
+    render(this._siteMainContainer, new SiteMenuView(this._filters));
+    render(this._siteMainContainer, this._siteSortComponent);
+    render(this._siteMainContainer, this._listMoviesElement);
 
     this._renderHeaderProfile();
     this._renderAllMovies();
@@ -48,7 +48,7 @@ export default class ListMoviesPresenter {
 
   _renderHeaderProfile() {
     this._headerProfileContainer = document.querySelector('.header');
-    render(this._headerProfileContainer, this._headerProfileComponent, RenderPosition.BEFOREBEGIN);
+    render(this._headerProfileContainer, this._headerProfileComponent);
   }
 
   /**
@@ -57,7 +57,7 @@ export default class ListMoviesPresenter {
 
   _renderMovie(movieElement, movie) {
     this._movieComponent = new FilmCardView(movie);
-    render(movieElement, this._movieComponent, RenderPosition.BEFOREBEGIN);
+    render(movieElement, this._movieComponent);
 
     this._movieComponent.setClickHandler(() => {
       this._renderFilmDetails(movie);
@@ -111,7 +111,7 @@ export default class ListMoviesPresenter {
   _renderFeaturedMoviesList() {
     this._featureListContainer = this._listMoviesElement.getElement().querySelector('.films-list__container');
     if (this._allMovies.length === 0) {
-      render( this._featureListContainer, this._noFilmComponent, RenderPosition.BEFOREBEGIN );
+      render( this._featureListContainer, this._noFilmComponent );
     } else {
       for (let i = 0; i < Math.min(this._allMovies.length, MOVIES_COUNT_PER_STEP); i++) {
         this._renderMovie(this._featureListContainer, this._allMovies[i]);
@@ -127,7 +127,7 @@ export default class ListMoviesPresenter {
     this._topMoviesList = sortTopMoviesList(this._allMovies);
 
     if (this._topMoviesList.length > 0) {
-      render( this._listMoviesElement, this._topRatedListContainer, RenderPosition.BEFOREBEGIN );
+      render( this._listMoviesElement, this._topRatedListContainer );
 
       for (let i = 0; i < Math.min(this._topMoviesList.length, MAX_EXTRA_MOVIES); i++) {
         this._renderMovie(this._topRatedListContainer.getElement().querySelector('.films-list__container'), this._topMoviesList[i]);
@@ -143,7 +143,7 @@ export default class ListMoviesPresenter {
     this._mostCommentedMoviesList = sortMostCommentedMoviesList(this._allMovies);
 
     if ( this._mostCommentedMoviesList.length > 0) {
-      render(this._listMoviesElement, this._mostCommentedListContainer, RenderPosition.BEFOREBEGIN);
+      render(this._listMoviesElement, this._mostCommentedListContainer);
 
       for (let i = 0; i < Math.min( this._mostCommentedMoviesList.length, MAX_EXTRA_MOVIES); i++) {
         this._renderMovie( this._mostCommentedListContainer.getElement().querySelector('.films-list__container'),  this._mostCommentedMoviesList[i]);
@@ -160,7 +160,7 @@ export default class ListMoviesPresenter {
       this._renderedMoviesCount = MOVIES_COUNT_PER_STEP;
 
       this._featureList = this._listMoviesElement.getElement().querySelector('.films-list');
-      render( this._featureList, this._showMore, RenderPosition.BEFOREBEGIN );
+      render( this._featureList, this._showMore );
 
       this._showMore.setClickHandler(() => {
         this._allMovies
@@ -182,7 +182,7 @@ export default class ListMoviesPresenter {
 
   _renderfooterStatistics() {
     this._footerStatisticsContainer = document.querySelector('.footer');
-    render( this._footerStatisticsContainer, new FooterStatisticsView(this._allMovies.length), RenderPosition.BEFOREBEGIN );
+    render( this._footerStatisticsContainer, new FooterStatisticsView(this._allMovies.length) );
   }
 
   /**
