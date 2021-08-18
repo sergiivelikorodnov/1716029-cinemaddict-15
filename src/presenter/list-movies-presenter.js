@@ -1,7 +1,7 @@
 import { removeComponent, render, RenderPosition } from '../utils/render.js';
 import { MOVIES_COUNT_PER_STEP } from '../const.js';
 import { sortTopMoviesList, sortMostCommentedMoviesList, filterComments } from '../utils/sort.js';
-import { updateItem } from '../mock/utils.js';
+import { updateMovie } from '../mock/utils.js';
 import FilmCardView from '../view/film-card.js';
 import ListMoviesView from '../view/list-movies.js';
 import NoFilmView from '../view//no-film.js';
@@ -45,16 +45,6 @@ export default class ListMoviesPresenter {
   }
 
   /**
-  * Update data
-  */
-
-  _handleMovieChange(updatedFilm) {
-    console.log(this._allMovies);
-    this._allMovies = updateItem(this._allMovies, updatedFilm);
-    //this._listMoviesMap.get(updatedFilm.id).init(updatedFilm);
-  }
-
-  /**
   * Header Profile
   */
 
@@ -63,6 +53,15 @@ export default class ListMoviesPresenter {
     render(this._headerProfileContainer, this._headerProfileComponent);
   }
 
+
+  /**
+  * Updated Card
+  */
+  /*  _handleMovieChange(updatedFilm){
+    this._allMovies = updateMovie(this._allMovies, updatedFilm);
+    this._listMoviesMap.get(updatedFilm.id).this._renderMovie(this._listMoviesComponent.getElement().querySelector('.films-list__container'), updatedFilm);
+  } */
+
   /**
   * Single Movie Card
   */
@@ -70,6 +69,11 @@ export default class ListMoviesPresenter {
     const movieComponent = new FilmCardView(movie, this._handleMovieChange);
     this._listMoviesMap.set(movie.id, movieComponent);
     render(movieElement, movieComponent);
+
+    this._handleMovieChange = (updatedFilm) => {
+      this._allMovies = updateMovie(this._allMovies, updatedFilm);
+      this._listMoviesMap.get(updatedFilm.id).this._renderMovie(movieElement, updatedFilm);
+    };
 
     movieComponent.setOpenFilmDetailsPopupHandler(() => {
       this._renderFilmDetails(movie);
@@ -251,6 +255,14 @@ export default class ListMoviesPresenter {
     this._renderAllMovies();
   }
 
+  /**
+  * Update data
+  */
+
+  // _handleMovieChange(updatedFilm) {
+  //   this._allMovies = updateMovie(this._allMovies, updatedFilm);
+  //   //this._listMoviesMap.get(updatedFilm.id).init(updatedFilm);
+  // }
   /**
   * Render All Movies List
   */

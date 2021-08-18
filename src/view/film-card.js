@@ -66,14 +66,10 @@ export default class FilmCard extends AbstractView{
     this._changeData(
       Object.assign(
         {},
-        this._movie.userDetails,
-        {
-          watchList: !this._movie.userDetails.watchList,
-        },
+        this._movie,
+        this._movie.userDetails.watchList = !this._movie.userDetails.watchList,
       ),
     );
-    // console.log(this._movie.userDetails.watchList);
-    //this._callback.addToWatchlist();
   }
 
   _markAsWatchedHandler(evt) {

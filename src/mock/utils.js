@@ -16,9 +16,8 @@ export const shuffle = (arr) =>
     .sort()
     .map((i) => i[1]);
 
-export const updateItem = (allMovies, updatedMovie) => {
-  console.log(`all Movies ${allMovies}`);
-  const index = allMovies.findIndex((item) => item.id === updatedMovie.id);
+export const updateMovie = (allMovies, updatedMovie) => {
+  const index = allMovies.findIndex((movie) => movie.id === updatedMovie.id);
   if (index === -1) {
     return allMovies;
   }
@@ -29,4 +28,3 @@ export const updateItem = (allMovies, updatedMovie) => {
     ...allMovies.slice(index + 1),
   ];
 };
-
