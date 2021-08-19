@@ -45,7 +45,6 @@ export default class FilmCard extends AbstractView{
     super();
     this._movie = movie;
     this._openFilmDetailsPopupHandler = this._openFilmDetailsPopupHandler.bind(this);
-    this._addToWatchlistHandler = this._addToWatchlistHandler.bind(this);
     this._markAsWatchedHandler = this._markAsWatchedHandler.bind(this);
     this._addFavoriteHandler = this._addFavoriteHandler.bind(this);
     this._changeData = changeData;
@@ -62,7 +61,7 @@ export default class FilmCard extends AbstractView{
     }
   }
 
-  _addToWatchlistHandler() {
+  /*   _addToWatchlistHandler() {
     this._changeData(
       Object.assign(
         {},
@@ -70,7 +69,7 @@ export default class FilmCard extends AbstractView{
         this._movie.userDetails.watchList = !this._movie.userDetails.watchList,
       ),
     );
-  }
+  } */
 
   _markAsWatchedHandler(evt) {
     evt.preventDefault();
@@ -89,7 +88,7 @@ export default class FilmCard extends AbstractView{
 
   setAddToWatchlistHandler() {
     //this._callback.addToWatchlist = callback;
-    this.getElement().querySelector('.film-card__controls-item--add-to-watchlist').addEventListener('click', this._addToWatchlistHandler);
+    //this.getElement().querySelector('.film-card__controls-item--add-to-watchlist').addEventListener('click', this._addToWatchlistHandler);
   }
 
   setMarkAsWatchedHandler(callback) {
