@@ -1,8 +1,7 @@
 import { remove, render, replace } from '../utils/render.js';
 import FilmCardView from '../view/film-card.js';
 import FilmDetailsView from '../view/film-details.js';
-import FilmCommentView from '../view/film-comment.js';
-import { filterComments } from '../utils/sort.js';
+//import FilmCommentView from '../view/film-comment.js';
 
 export default class MoviePresenter {
   constructor(listMoviesContainer, allComments, changeData) {
@@ -26,7 +25,11 @@ export default class MoviePresenter {
     const prevMovieComponent = this._movieComponent;
     const prevPopupComponent = this._popupComponent;
     this._movieComponent = new FilmCardView(movie);
-    this._popupComponent = new FilmDetailsView(movie);
+
+
+    // comments.forEach((value) => console.log(value[0]));
+
+    this._popupComponent = new FilmDetailsView(movie,this._movieComments());
     this._movieComponent.setOpenFilmDetailsPopupHandler(this._openPopupHandle);
     this._movieComponent.setAddToWatchlistHandler(this._handleAddToWatchlistClick);
     this._movieComponent.setMarkAsWatchedHandler(this._handleMarkAsWatchedClick);
@@ -52,6 +55,12 @@ export default class MoviePresenter {
     remove(this._popupComponent);
   }
 
+  _movieComments() {
+
+    const comments = this._allComments.filter((element) => this._movie.comments.has(element.id));
+    return comments;
+  }
+
   _renderPopup() {
     this._renderedMovieContainer = this._bodyElement.querySelector('.film-details');
     if (this._renderedMovieContainer !== null) {
@@ -59,13 +68,6 @@ export default class MoviePresenter {
     }
 
     render(this._bodyElement, this._popupComponent);
-
-    const filmDetailsCommentList = this._popupComponent.getElement().querySelector('.film-details__comments-list');
-
-
-    this._movie.comments.forEach((commentIndex) =>
-      render(filmDetailsCommentList, new FilmCommentView(filterComments(this._allComments, 'id', commentIndex))),
-    );
     this._bodyElement.classList.add('.hide-overflow');
     document.addEventListener('keydown', this._onEscKeyDownHandle);
     this._popupComponent.setCloseFilmDetailsPopupHandler(this._closeButtonHandler);

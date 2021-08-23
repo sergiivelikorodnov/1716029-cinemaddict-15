@@ -1,7 +1,23 @@
 import { timeConvertor } from '../utils/common.js';
 import AbstractView from './abstract.js';
 
-const createFilmDetails = (movie) => {
+const createFilmDetails = (movie, comments) => {
+
+  const createCommentTemplate = (allComments) =>Object.values(allComments).map(({id, author, comment, emotion, date}) => `<li class="film-details__comment" id="${id}">
+    <span class="film-details__comment-emoji">
+      <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">
+    </span>
+    <div>
+      <p class="film-details__comment-text">${comment}</p>
+      <p class="film-details__comment-info">
+        <span class="film-details__comment-author">${author}</span>
+        <span class="film-details__comment-day">${date}</span>
+        <button class="film-details__comment-delete">Delete</button>
+      </p>
+    </div>
+  </li>`).join('');
+
+
   const {
     title,
     alternativeTitle,
@@ -27,7 +43,11 @@ const createFilmDetails = (movie) => {
   const favoritedActive = favorite ? 'film-details__control-button--active' : '';
   const watchListActive = watchList ? 'film-details__control-button--active' : '';
 
-  const comments = movie.comments.size;
+  const commentsTemplate = createCommentTemplate(comments);
+  // console.log(commentsTemplate);
+
+
+  const commentsNumber = movie.comments.size;
   const runTimeMins = timeConvertor(runTime);
   const renderGenre = (arr) => {
     let text = '';
@@ -111,10 +131,10 @@ const createFilmDetails = (movie) => {
 
     <div class="film-details__bottom-container">
       <section class="film-details__comments-wrap">
-        <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments}</span></h3>
+        <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${commentsNumber}</span></h3>
 
         <ul class="film-details__comments-list">
-
+          ${commentsTemplate}
         </ul>
 
         <div class="film-details__new-comment">
@@ -153,9 +173,10 @@ const createFilmDetails = (movie) => {
 };
 
 export default class FilmDetails extends AbstractView {
-  constructor(movie) {
+  constructor(movie, comments) {
     super();
     this._movie = movie;
+    this._comments = comments;
     this._closeFilmDetailsPopupHandler = this._closeFilmDetailsPopupHandler.bind(this);
     this._addToWatchlistHandler = this._addToWatchlistHandler.bind(this);
     this._markAsWatchedHandler = this._markAsWatchedHandler.bind(this);
@@ -163,7 +184,7 @@ export default class FilmDetails extends AbstractView {
   }
 
   getTemplate() {
-    return createFilmDetails(this._movie);
+    return createFilmDetails(this._movie, this._comments);
   }
 
   _closeFilmDetailsPopupHandler(evt) {
