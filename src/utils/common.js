@@ -1,5 +1,7 @@
+import { MINUTES_IN_HOUR } from '../const.js';
+
 export const timeConvertor = (totalMinutes) => {
-  const hours = Math.floor(totalMinutes / 60);
-  const minutes = totalMinutes % 60;
+  const hours = Math.floor(totalMinutes / MINUTES_IN_HOUR);
+  const minutes = totalMinutes % MINUTES_IN_HOUR;
   return `${hours}h ${minutes} min`;
 };
