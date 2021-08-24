@@ -7,14 +7,14 @@ const createFilmCard = (movie) => {
   const { title, poster, totalRating, release, runTime, genres, description } =
     movie.filmInfo;
   const {
-    alreadyWatched,
-    favorite,
-    watchList,
+    isAlreadyWatched,
+    isFavorite,
+    isWatchList,
   } = movie.userDetails;
 
-  const alreadyWatchedActive = alreadyWatched ? 'film-card__controls-item--active' : '';
-  const favoritedActive = favorite ? 'film-card__controls-item--active' : '';
-  const watchListActive = watchList ? 'film-card__controls-item--active' : '';
+  const alreadyWatchedActive = isAlreadyWatched ? 'film-card__controls-item--active' : '';
+  const favoritedActive = isFavorite ? 'film-card__controls-item--active' : '';
+  const watchListActive = isWatchList ? 'film-card__controls-item--active' : '';
 
   const shortDescripton = `${description.slice(0, MAX_SHORT_DESCRIPTION_LENGTH)}...`;
 

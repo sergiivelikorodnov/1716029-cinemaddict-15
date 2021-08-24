@@ -98,7 +98,7 @@ export default class MoviePresenter {
       Object.assign(
         {},
         this._movie,
-        this._movie.userDetails.watchList = !this._movie.userDetails.watchList,
+        this._movie.userDetails.isWatchList = !this._movie.userDetails.isWatchList,
       ),
     );
   }
@@ -108,7 +108,7 @@ export default class MoviePresenter {
       Object.assign(
         {},
         this._movie,
-        this._movie.userDetails.alreadyWatched = !this._movie.userDetails.alreadyWatched,
+        this._movie.userDetails.isAlreadyWatched = !this._movie.userDetails.isAlreadyWatched,
       ),
     );
   }
@@ -118,7 +118,7 @@ export default class MoviePresenter {
       Object.assign(
         {},
         this._movie,
-        this._movie.userDetails.favorite = !this._movie.userDetails.favorite,
+        this._movie.userDetails.isFavorite = !this._movie.userDetails.isFavorite,
       ),
     );
   }

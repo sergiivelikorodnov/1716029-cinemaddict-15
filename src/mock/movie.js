@@ -193,10 +193,10 @@ const generateMovie = (allCommentsList) => {
       description: generateMovieDescription(textGenerator),
     },
     userDetails: {
-      watchList: Boolean(getRandomInteger()),
+      isWatchList: Boolean(getRandomInteger()),
       watchingDate: dueDate,
-      alreadyWatched: isWatchedStatus,
-      favorite: Boolean(getRandomInteger()),
+      isAlreadyWatched: isWatchedStatus,
+      isFavorite: Boolean(getRandomInteger()),
     },
   };
 };

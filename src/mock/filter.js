@@ -1,9 +1,9 @@
 const movieToFilterMap = {
-  watchedMovies: (movies) => movies.filter((movie) => movie.userDetails.watchList)
+  watchedMovies: (movies) => movies.filter((movie) => movie.userDetails.isWatchList)
     .length,
-  historyList: (movies) => movies.filter((movie) => movie.userDetails.alreadyWatched)
+  historyList: (movies) => movies.filter((movie) => movie.userDetails.isAlreadyWatched)
     .length,
-  favoriteMovies: (movies) => movies.filter((movie) => movie.userDetails.favorite)
+  favoriteMovies: (movies) => movies.filter((movie) => movie.userDetails.isFavorite)
     .length,
 };
 

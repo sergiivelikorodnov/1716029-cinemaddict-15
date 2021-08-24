@@ -1,5 +1,5 @@
 import { timeConvertor } from '../utils/common.js';
-import AbstractView from './abstract.js';
+import Smart from './smart.js';
 
 const createFilmDetails = (movie, comments) => {
 
@@ -34,14 +34,14 @@ const createFilmDetails = (movie, comments) => {
   } = movie.filmInfo;
 
   const {
-    alreadyWatched,
-    favorite,
-    watchList,
+    isAlreadyWatched,
+    isFavorite,
+    isWatchList,
   } = movie.userDetails;
 
-  const alreadyWatchedActive = alreadyWatched ? 'film-details__control-button--active' : '';
-  const favoritedActive = favorite ? 'film-details__control-button--active' : '';
-  const watchListActive = watchList ? 'film-details__control-button--active' : '';
+  const alreadyWatchedActive = isAlreadyWatched ? 'film-details__control-button--active' : '';
+  const favoritedActive = isFavorite ? 'film-details__control-button--active' : '';
+  const watchListActive = isWatchList ? 'film-details__control-button--active' : '';
 
   const commentsTemplate = createCommentTemplate(comments);
 
@@ -170,7 +170,7 @@ const createFilmDetails = (movie, comments) => {
 </section>`;
 };
 
-export default class FilmDetails extends AbstractView {
+export default class FilmDetails extends Smart {
   constructor(movie, comments) {
     super();
     this._movie = movie;
