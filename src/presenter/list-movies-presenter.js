@@ -1,6 +1,6 @@
 import { remove, render, RenderPosition } from '../utils/render.js';
 import { MOVIES_COUNT_PER_STEP, SortType } from '../const.js';
-//import { sortTopMoviesList, sortMostCommentedMoviesList } from '../utils/sort.js';
+// import { sortTopMoviesList, sortMostCommentedMoviesList } from '../utils/sort.js';
 import { updateMovie } from '../mock/utils.js';
 import ListMoviesView from '../view/list-movies.js';
 import MoviesContainerView from '../view/movies-container.js';
@@ -16,8 +16,7 @@ import { sortMoviesByDate, sortMoviesByRating } from '../utils/sort.js';
 import { generateFilter } from '../mock/filter.js';
 
 
-//const MAX_EXTRA_MOVIES = 2;
-//const bodyElement = document.querySelector('body');
+// const MAX  _EXTRA_MOVIES = 2;
 export default class ListMoviesPresenter {
   constructor(siteMainContainer) {
     this._siteMainContainer = siteMainContainer;
@@ -147,14 +146,14 @@ export default class ListMoviesPresenter {
       .forEach((movie) => this._renderMovie(movie));
   }
 
-  //   _renderTopRatedMovie(movie) {
-  //   const moviePresenter = new MoviePresenter(this._topRatedListComponent.getElement().querySelector('.films-list__container'), this._handleMovieChange);
+  // _renderTopRatedMovie(movie) {
+  //   const moviePresenter = new MoviePresenter(this._topRatedListComponent.getElement().querySelector('.films-list__container'), this._allComments, this._handleMovieChange);
   //   moviePresenter.init(movie);
   //   this._listMoviesMap.set(movie.id, this.moviePresenter);
   // }
 
   // _renderMostCommentedMovie(movie) {
-  //   const moviePresenter = new MoviePresenter(this._mostCommentedListComponent.getElement().querySelector('.films-list__container'), this._handleMovieChange);
+  //   const moviePresenter = new MoviePresenter(this._mostCommentedListComponent.getElement().querySelector('.films-list__container'), this._allComments, this._handleMovieChange);
   //   moviePresenter.init(movie);
   //   this._listMoviesMap.set(movie.id, this.moviePresenter);
   // }

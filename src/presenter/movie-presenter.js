@@ -31,6 +31,7 @@ export default class MoviePresenter {
 
     this._popupComponent = new FilmDetailsView(movie,this._movieComments());
     this._movieComponent.setOpenFilmDetailsPopupHandler(this._openPopupHandle);
+    this._popupComponent.setCloseFilmDetailsPopupHandler(this._closeButtonHandler);
     this._movieComponent.setAddToWatchlistHandler(this._handleAddToWatchlistClick);
     this._movieComponent.setMarkAsWatchedHandler(this._handleMarkAsWatchedClick);
     this._movieComponent.setAddFavoriteHandler(this._handleFavoriteClick);
@@ -56,7 +57,6 @@ export default class MoviePresenter {
   }
 
   _movieComments() {
-
     const comments = this._allComments.filter((element) => this._movie.comments.has(element.id));
     return comments;
   }
