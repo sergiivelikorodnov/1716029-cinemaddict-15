@@ -4,9 +4,8 @@ import FilmDetailsView from '../view/film-details.js';
 //import FilmCommentView from '../view/film-comment.js';
 
 export default class MoviePresenter {
-  constructor(listMoviesContainer, movieComments, changeData) {
+  constructor(listMoviesContainer, changeData) {
     this._changeData = changeData;
-    this._movieComments = movieComments;
     this._listMoviesComponent = listMoviesContainer.getElement().querySelector('.films-list__container');
     this._bodyElement = document.querySelector('body');
     this._onEscKeyDownHandle = this._onEscKeyDownHandle.bind(this);
@@ -29,7 +28,7 @@ export default class MoviePresenter {
 
     // comments.forEach((value) => console.log(value[0]));
 
-    this._popupComponent = new FilmDetailsView(movie,this._movieComments);
+    this._popupComponent = new FilmDetailsView(movie);
     this._movieComponent.setOpenFilmDetailsPopupHandler(this._openPopupHandle);
     this._popupComponent.setCloseFilmDetailsPopupHandler(this._closeButtonHandler);
     this._movieComponent.setAddToWatchlistHandler(this._handleAddToWatchlistClick);

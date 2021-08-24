@@ -104,15 +104,23 @@ export default class ListMoviesPresenter {
 
   }
 
-  _movieComments(movie) {
-    const comments = this._allComments.filter((element) => movie.comments.has(element.id));
-    return comments;
+  _movieWithComments(movie) {
+    //const comments = this._allComments.filter((element) => movie.comments.has(element.id));
+    movie = Object.assign(
+      {},
+      movie,
+      {
+        commentDetails: this._allComments.filter((element) => movie.comments.has(element.id)),
+      },
+    );
+    //console.log(movie);
+
+    return movie;
   }
 
   _renderMovie(movie) {
-
-    const moviePresenter = new MoviePresenter(this._listMoviesComponent, this._movieComments(movie), this._handleMovieChange);
-    moviePresenter.init(movie);
+    const moviePresenter = new MoviePresenter(this._listMoviesComponent, this._handleMovieChange);
+    moviePresenter.init(this._movieWithComments(movie));
     this._moviePresenter.set(movie.id, moviePresenter);
   }
 

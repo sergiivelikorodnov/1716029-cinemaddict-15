@@ -1,7 +1,7 @@
 import { timeConvertor } from '../utils/common.js';
 import Smart from './smart.js';
 
-const createFilmDetails = (movie, comments) => {
+const createFilmDetails = (movie) => {
 
   const createCommentTemplate = (allComments) =>Object.values(allComments).map(({id, author, comment, emotion, date}) => `<li class="film-details__comment" id="${id}">
     <span class="film-details__comment-emoji">
@@ -39,13 +39,17 @@ const createFilmDetails = (movie, comments) => {
     isWatchList,
   } = movie.userDetails;
 
+  const {
+    commentDetails,
+  } = movie;
+
   const alreadyWatchedActive = isAlreadyWatched ? 'film-details__control-button--active' : '';
   const favoritedActive = isFavorite ? 'film-details__control-button--active' : '';
   const watchListActive = isWatchList ? 'film-details__control-button--active' : '';
 
-  const commentsTemplate = createCommentTemplate(comments);
+  const commentsTemplate = createCommentTemplate(commentDetails);
 
-  const commentsNumber = movie.comments.size;
+  const commentsNumber = commentDetails.length;
   const runTimeMins = timeConvertor(runTime);
   const renderGenre = (arr) => {
     let text = '';
@@ -171,18 +175,29 @@ const createFilmDetails = (movie, comments) => {
 };
 
 export default class FilmDetails extends Smart {
-  constructor(movie, comments) {
+  constructor(movie) {
     super();
-    this._movie = movie;
-    this._comments = comments;
+    this._data = FilmDetails.parseMovieToData(movie);
+    this._comments = this._data.commentDetails;
     this._closeFilmDetailsPopupHandler = this._closeFilmDetailsPopupHandler.bind(this);
     this._addToWatchlistHandler = this._addToWatchlistHandler.bind(this);
     this._markAsWatchedHandler = this._markAsWatchedHandler.bind(this);
     this._addFavoriteHandler = this._addFavoriteHandler.bind(this);
+    this._removeCommentHandler = this._removeCommentHandler.bind(this);
+
+
+    this.getElement().querySelectorAll('.film-details__comment-delete').forEach((deleteComment) =>
+      deleteComment.addEventListener('click', this._removeCommentHandler));
+
   }
 
   getTemplate() {
-    return createFilmDetails(this._movie, this._comments);
+    return createFilmDetails(this._data);
+  }
+
+  _removeCommentHandler(evt) {
+    evt.preventDefault();
+
   }
 
   _closeFilmDetailsPopupHandler(evt) {
@@ -223,5 +238,21 @@ export default class FilmDetails extends Smart {
   setAddFavoriteHandler(callback) {
     this._callback.addFavoriteHandler = callback;
     this.getElement().querySelector('.film-details__control-button--favorite').addEventListener('click', this._addFavoriteHandler);
+  }
+
+  static parseMovieToData(movie) {
+    return Object.assign(
+      {},
+      movie,
+    );
+  }
+
+  static parseDataToMovie(data) {
+    data = Object.assign(
+      {},
+      data,
+    );
+
+    return data;
   }
 }
