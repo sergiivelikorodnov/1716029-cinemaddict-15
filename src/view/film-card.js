@@ -17,6 +17,7 @@ const createFilmCard = (movie) => {
   const watchListActive = watchList ? 'film-card__controls-item--active' : '';
 
   const shortDescripton = `${description.slice(0, MAX_SHORT_DESCRIPTION_LENGTH)}...`;
+
   const comments = movie.comments.size;
   const releaseDate = new Date(release.date).getFullYear();
   const humanRunTime = timeConvertor(runTime);

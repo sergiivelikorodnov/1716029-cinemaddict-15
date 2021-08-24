@@ -4,10 +4,10 @@ import FilmDetailsView from '../view/film-details.js';
 //import FilmCommentView from '../view/film-comment.js';
 
 export default class MoviePresenter {
-  constructor(listMoviesContainer, allComments, changeData) {
+  constructor(listMoviesContainer, movieComments, changeData) {
     this._changeData = changeData;
-    this._allComments = allComments;
-    this._listMoviesComponent = listMoviesContainer;
+    this._movieComments = movieComments;
+    this._listMoviesComponent = listMoviesContainer.getElement().querySelector('.films-list__container');
     this._bodyElement = document.querySelector('body');
     this._onEscKeyDownHandle = this._onEscKeyDownHandle.bind(this);
     this._openPopupHandle = this._openPopupHandle.bind(this);
@@ -29,7 +29,7 @@ export default class MoviePresenter {
 
     // comments.forEach((value) => console.log(value[0]));
 
-    this._popupComponent = new FilmDetailsView(movie,this._movieComments());
+    this._popupComponent = new FilmDetailsView(movie,this._movieComments);
     this._movieComponent.setOpenFilmDetailsPopupHandler(this._openPopupHandle);
     this._popupComponent.setCloseFilmDetailsPopupHandler(this._closeButtonHandler);
     this._movieComponent.setAddToWatchlistHandler(this._handleAddToWatchlistClick);
@@ -51,15 +51,11 @@ export default class MoviePresenter {
     remove(prevPopupComponent);
   }
 
-  removeMoviesComponents() {
+  removeCardMovie() {
     remove(this._movieComponent);
     remove(this._popupComponent);
   }
 
-  _movieComments() {
-    const comments = this._allComments.filter((element) => this._movie.comments.has(element.id));
-    return comments;
-  }
 
   _renderPopup() {
     this._renderedMovieContainer = this._bodyElement.querySelector('.film-details');
