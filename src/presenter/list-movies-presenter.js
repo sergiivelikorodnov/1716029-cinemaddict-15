@@ -13,7 +13,7 @@ import HeaderProfileView from '../view/header-profile.js';
 import SiteMenuView from '../view/site-menu.js';
 import MoviePresenter from './movie-presenter.js';
 import { sortMoviesByDate, sortMoviesByRating } from '../utils/sort.js';
-import { generateFilter } from '../mock/filter.js';
+import { generateFilter } from '../utils/filter.js';
 
 
 //const MAX_EXTRA_MOVIES = 2;
@@ -34,6 +34,8 @@ export default class ListMoviesPresenter {
     this._handleMovieChange = this._handleMovieChange.bind(this);
     this._handleShowMoreButtonClick = this._handleShowMoreButtonClick.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
+    this._handlePopupMode = this._handlePopupMode.bind(this);
+
     this._currentSortType = SortType.DEFAULT;
   }
 
@@ -105,8 +107,12 @@ export default class ListMoviesPresenter {
 
   }
 
+  _handlePopupMode() {
+    this._listMoviesMap.forEach((presenter) => presenter.resetView());
+  }
+
   _renderMovie(movie) {
-    const moviePresenter = new MoviePresenter(this._listMoviesComponent.getElement().querySelector('.films-list__container'), this._allComments, this._handleMovieChange);
+    const moviePresenter = new MoviePresenter(this._listMoviesComponent.getElement().querySelector('.films-list__container'), this._allComments, this._handleMovieChange, this._handlePopupMode);
     moviePresenter.init(movie);
     this._listMoviesMap.set(movie.id, moviePresenter);
   }

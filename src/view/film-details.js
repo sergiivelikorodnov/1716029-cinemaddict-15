@@ -44,8 +44,6 @@ const createFilmDetails = (movie, comments) => {
   const watchListActive = watchList ? 'film-details__control-button--active' : '';
 
   const commentsTemplate = createCommentTemplate(comments);
-  // console.log(commentsTemplate);
-
 
   const commentsNumber = movie.comments.size;
   const runTimeMins = timeConvertor(runTime);
