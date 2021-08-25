@@ -1,7 +1,7 @@
 import { timeConvertor } from '../utils/common.js';
 import Smart from './smart.js';
 
-const createFilmDetails = (movie) => {
+const createFilmDetails = (data) => {
 
   const createCommentTemplate = (allComments) =>Object.values(allComments).map(({id, author, comment, emotion, date}) => `<li class="film-details__comment" id="${id}">
     <span class="film-details__comment-emoji">
@@ -16,7 +16,7 @@ const createFilmDetails = (movie) => {
       </p>
     </div>
   </li>`).join('');
-
+  console.log(data);
 
   const {
     title,
@@ -31,17 +31,21 @@ const createFilmDetails = (movie) => {
     runTime,
     genres,
     description,
-  } = movie.filmInfo;
+    emoji,
+  } = data.filmInfo;
 
   const {
     isAlreadyWatched,
     isFavorite,
     isWatchList,
-  } = movie.userDetails;
+  } = data.userDetails;
 
   const {
     commentDetails,
-  } = movie;
+  } = data;
+
+  //console.log(movie.commentDetails.emotion);
+
 
   const alreadyWatchedActive = isAlreadyWatched ? 'film-details__control-button--active' : '';
   const favoritedActive = isFavorite ? 'film-details__control-button--active' : '';
@@ -140,7 +144,9 @@ const createFilmDetails = (movie) => {
         </ul>
 
         <div class="film-details__new-comment">
-          <div class="film-details__add-emoji-label"></div>
+          <div class="film-details__add-emoji-label">
+          ${emoji ? `<img src="images/emoji/${emoji}.png" width="55" height="55" alt="emoji-${emoji}"></img>` : ''}
+          </div>
 
           <label class="film-details__comment-label">
             <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
@@ -184,15 +190,42 @@ export default class FilmDetails extends Smart {
     this._markAsWatchedHandler = this._markAsWatchedHandler.bind(this);
     this._addFavoriteHandler = this._addFavoriteHandler.bind(this);
     this._removeCommentHandler = this._removeCommentHandler.bind(this);
-
-
-    this.getElement().querySelectorAll('.film-details__comment-delete').forEach((deleteComment) =>
-      deleteComment.addEventListener('click', this._removeCommentHandler));
+    this._emojiChooseHandler = this._emojiChooseHandler.bind(this);
+    this._setInnerHandlers();
 
   }
 
   getTemplate() {
     return createFilmDetails(this._data);
+  }
+
+  _setInnerHandlers() {
+    this.getElement().querySelectorAll('.film-details__emoji-item').forEach((emojiItem) =>
+      emojiItem.addEventListener('click', this._emojiChooseHandler));
+    this.getElement().querySelector('.film-details__comment-input').addEventListener('click', this._commentInputTextHandler);
+    this.getElement().querySelectorAll('.film-details__comment-delete').forEach((deleteComment) =>
+      deleteComment.addEventListener('click', this._removeCommentHandler));
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this.setCloseFilmDetailsPopupHandler(this._callback.closeFilmDetailsPopup);
+    this.setAddToWatchlistHandler(this._callback.addToWatchlist);
+    this.setMarkAsWatchedHandler(this._callback.markAsWatchedHandler);
+    this.setAddFavoriteHandler(this._callback.addFavoriteHandler);
+
+  }
+
+  _emojiChooseHandler(evt) {
+    evt.preventDefault();
+
+    this.updateData({
+      emoji: evt.target.value,
+    });
+  }
+
+  _commentInputTextHandler(evt) {
+    evt.preventDefault();
   }
 
   _removeCommentHandler(evt) {
