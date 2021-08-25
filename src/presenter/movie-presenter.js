@@ -50,7 +50,7 @@ export default class MoviePresenter {
 
   removeCardMovie() {
     remove(this._movieComponent);
-    remove(this._popupComponent);
+    //remove(this._popupComponent);
   }
 
   resetView() {

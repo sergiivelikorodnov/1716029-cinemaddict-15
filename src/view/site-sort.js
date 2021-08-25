@@ -28,7 +28,6 @@ export default class SiteSortTemplate extends AbstractView {
     evt.preventDefault();
     this.getElement().querySelector('.sort__button--active').classList.remove('sort__button--active');
     this._callback.sortTypeChange(evt.target.dataset.sortType);
-
     evt.target.classList.add('sort__button--active');
   }
 
