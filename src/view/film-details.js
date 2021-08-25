@@ -44,7 +44,6 @@ const createFilmDetails = (data) => {
     runTime,
     genres,
     description,
-    commentData,
   } = data.filmInfo;
 
   const {
@@ -56,6 +55,7 @@ const createFilmDetails = (data) => {
   const {
     commentDetails,
     emojiData,
+    commentData,
   } = data;
 
 
@@ -202,7 +202,7 @@ export default class FilmDetails extends Smart {
   _setInnerHandlers() {
     this.getElement().querySelectorAll('.film-details__emoji-item').forEach((emojiItem) =>
       emojiItem.addEventListener('click', this._emojiChooseHandler));
-    this.getElement().querySelector('.film-details__comment-input').addEventListener('click', this._commentInputTextHandler);
+    this.getElement().querySelector('.film-details__comment-input').addEventListener('input', this._commentInputTextHandler);
     this.getElement().querySelectorAll('.film-details__comment-delete').forEach((deleteComment) =>
       deleteComment.addEventListener('click', this._removeCommentHandler));
   }
@@ -228,8 +228,6 @@ export default class FilmDetails extends Smart {
     this.updateData({
       commentData: evt.target.value,
     }, true);
-    console.log(this._data);
-
   }
 
   _removeCommentHandler(evt) {
