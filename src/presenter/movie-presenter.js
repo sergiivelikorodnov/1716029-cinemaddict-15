@@ -28,12 +28,12 @@ export default class MoviePresenter {
 
     // comments.forEach((value) => console.log(value[0]));
 
-    this._popupComponent = new FilmDetailsView(movie);
     this._movieComponent.setOpenFilmDetailsPopupHandler(this._openPopupHandle);
-    this._popupComponent.setCloseFilmDetailsPopupHandler(this._closeButtonHandler);
     this._movieComponent.setAddToWatchlistHandler(this._handleAddToWatchlistClick);
     this._movieComponent.setMarkAsWatchedHandler(this._handleMarkAsWatchedClick);
     this._movieComponent.setAddFavoriteHandler(this._handleFavoriteClick);
+    this._popupComponent = new FilmDetailsView(movie);
+    this._popupComponent.setCloseFilmDetailsPopupHandler(this._closeButtonHandler);
     this._popupComponent.setAddToWatchlistHandler(this._handleAddToWatchlistClick);
     this._popupComponent.setMarkAsWatchedHandler(this._handleMarkAsWatchedClick);
     this._popupComponent.setAddFavoriteHandler(this._handleFavoriteClick);

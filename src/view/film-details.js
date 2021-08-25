@@ -1,7 +1,20 @@
 import { timeConvertor } from '../utils/common.js';
 import Smart from './smart.js';
 
+const EMOJI = [
+  'smile',
+  'sleeping',
+  'puke',
+  'angry',
+];
+
 const createFilmDetails = (data) => {
+
+  const createEmojiTemplate = (choosedEmoji) => Object.values(EMOJI).map((emotion) => (`<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emotion}" value="${emotion}">
+    <label class="film-details__emoji-label" for="emoji-${emotion}">
+      <img src="./images/emoji/${emotion}.png" width="30" height="30" alt="emoji">
+    </label>`)).join('');
+
 
   const createCommentTemplate = (allComments) =>Object.values(allComments).map(({id, author, comment, emotion, date}) => `<li class="film-details__comment" id="${id}">
     <span class="film-details__comment-emoji">
@@ -16,7 +29,7 @@ const createFilmDetails = (data) => {
       </p>
     </div>
   </li>`).join('');
-  console.log(data);
+
 
   const {
     title,
@@ -31,7 +44,8 @@ const createFilmDetails = (data) => {
     runTime,
     genres,
     description,
-    emoji,
+    emojiData,
+    commentData,
   } = data.filmInfo;
 
   const {
@@ -145,33 +159,15 @@ const createFilmDetails = (data) => {
 
         <div class="film-details__new-comment">
           <div class="film-details__add-emoji-label">
-          ${emoji ? `<img src="images/emoji/${emoji}.png" width="55" height="55" alt="emoji-${emoji}"></img>` : ''}
+          ${emojiData ? `<img src="images/emoji/${emojiData}.png" width="55" height="55" alt="emoji-${emojiData}"></img>` : ''}
           </div>
 
           <label class="film-details__comment-label">
-            <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+            <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"> ${commentData ? `${commentData}` : ''} </textarea>
           </label>
 
           <div class="film-details__emoji-list">
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile">
-            <label class="film-details__emoji-label" for="emoji-smile">
-              <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
-            </label>
-
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
-            <label class="film-details__emoji-label" for="emoji-sleeping">
-              <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
-            </label>
-
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke">
-            <label class="film-details__emoji-label" for="emoji-puke">
-              <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
-            </label>
-
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
-            <label class="film-details__emoji-label" for="emoji-angry">
-              <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
-            </label>
+            ${createEmojiTemplate()}
           </div>
         </div>
       </section>
@@ -191,6 +187,7 @@ export default class FilmDetails extends Smart {
     this._addFavoriteHandler = this._addFavoriteHandler.bind(this);
     this._removeCommentHandler = this._removeCommentHandler.bind(this);
     this._emojiChooseHandler = this._emojiChooseHandler.bind(this);
+    this._commentInputTextHandler = this._commentInputTextHandler.bind(this);
     this._setInnerHandlers();
 
   }
@@ -218,14 +215,18 @@ export default class FilmDetails extends Smart {
 
   _emojiChooseHandler(evt) {
     evt.preventDefault();
-
     this.updateData({
-      emoji: evt.target.value,
+      emojiData: evt.target.value,
     });
   }
 
   _commentInputTextHandler(evt) {
     evt.preventDefault();
+    this.updateData({
+      commentData: evt.target.value,
+    }, true);
+    console.log(this._data);
+
   }
 
   _removeCommentHandler(evt) {
