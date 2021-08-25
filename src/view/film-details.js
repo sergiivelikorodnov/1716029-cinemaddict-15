@@ -61,9 +61,6 @@ const createFilmDetails = (data) => {
 
   const emojiTemplate = createEmojiTemplate(emojiData);
 
-  //console.log(movie.commentDetails.emotion);
-
-
   const alreadyWatchedActive = isAlreadyWatched ? 'film-details__control-button--active' : '';
   const favoritedActive = isFavorite ? 'film-details__control-button--active' : '';
   const watchListActive = isWatchList ? 'film-details__control-button--active' : '';
@@ -243,16 +240,28 @@ export default class FilmDetails extends Smart {
   _addToWatchlistHandler(evt) {
     evt.preventDefault();
     this._callback.addToWatchlist();
+
+    this.updateData({
+      isWatchList: !this._data.userDetails.isWatchList,
+    });
   }
 
   _markAsWatchedHandler(evt) {
     evt.preventDefault();
     this._callback.markAsWatchedHandler();
+
+    this.updateData({
+      isAlreadyWatched: !this._data.userDetails.isAlreadyWatched,
+    });
   }
 
   _addFavoriteHandler(evt) {
     evt.preventDefault();
     this._callback.addFavoriteHandler();
+
+    this.updateData({
+      isFavorite: !this._data.userDetails.isFavorite,
+    });
   }
 
   setCloseFilmDetailsPopupHandler(callback) {
@@ -287,6 +296,9 @@ export default class FilmDetails extends Smart {
       {},
       data,
     );
+
+    delete data.emojiData;
+    delete data.commentData;
 
     return data;
   }

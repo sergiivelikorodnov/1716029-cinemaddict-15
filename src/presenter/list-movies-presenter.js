@@ -105,7 +105,6 @@ export default class ListMoviesPresenter {
   }
 
   _movieWithComments(movie) {
-    //const comments = this._allComments.filter((element) => movie.comments.has(element.id));
     movie = Object.assign(
       {},
       movie,
@@ -113,8 +112,6 @@ export default class ListMoviesPresenter {
         commentDetails: this._allComments.filter((element) => movie.comments.has(element.id)),
       },
     );
-    //console.log(movie);
-
     return movie;
   }
 

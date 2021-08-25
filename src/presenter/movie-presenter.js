@@ -1,8 +1,6 @@
 import { remove, render, replace } from '../utils/render.js';
 import FilmCardView from '../view/film-card.js';
 import FilmDetailsView from '../view/film-details.js';
-//import FilmCommentView from '../view/film-comment.js';
-
 export default class MoviePresenter {
   constructor(listMoviesContainer, changeData) {
     this._changeData = changeData;
@@ -10,7 +8,7 @@ export default class MoviePresenter {
     this._bodyElement = document.querySelector('body');
     this._onEscKeyDownHandle = this._onEscKeyDownHandle.bind(this);
     this._openPopupHandle = this._openPopupHandle.bind(this);
-    this._closeButtonHandler = this._closeButtonHandler.bind(this);
+    this._removePopup = this._removePopup.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleAddToWatchlistClick = this._handleAddToWatchlistClick.bind(this);
     this._handleMarkAsWatchedClick = this._handleMarkAsWatchedClick.bind(this);
@@ -22,32 +20,30 @@ export default class MoviePresenter {
   init(movie) {
     this._movie = movie;
     const prevMovieComponent = this._movieComponent;
-    const prevPopupComponent = this._popupComponent;
+    //const prevPopupComponent = this._popupComponent;
     this._movieComponent = new FilmCardView(movie);
 
-
-    // comments.forEach((value) => console.log(value[0]));
+    // this._popupComponent = new FilmDetailsView(movie);
+    // this._popupComponent.setCloseFilmDetailsPopupHandler(this._closeButtonHandler);
+    // this._popupComponent.setAddToWatchlistHandler(this._handleAddToWatchlistClick);
+    // this._popupComponent.setMarkAsWatchedHandler(this._handleMarkAsWatchedClick);
+    // this._popupComponent.setAddFavoriteHandler(this._handleFavoriteClick);
 
     this._movieComponent.setOpenFilmDetailsPopupHandler(this._openPopupHandle);
     this._movieComponent.setAddToWatchlistHandler(this._handleAddToWatchlistClick);
     this._movieComponent.setMarkAsWatchedHandler(this._handleMarkAsWatchedClick);
     this._movieComponent.setAddFavoriteHandler(this._handleFavoriteClick);
-    this._popupComponent = new FilmDetailsView(movie);
-    this._popupComponent.setCloseFilmDetailsPopupHandler(this._closeButtonHandler);
-    this._popupComponent.setAddToWatchlistHandler(this._handleAddToWatchlistClick);
-    this._popupComponent.setMarkAsWatchedHandler(this._handleMarkAsWatchedClick);
-    this._popupComponent.setAddFavoriteHandler(this._handleFavoriteClick);
 
-    if (prevMovieComponent === null || prevPopupComponent === null) {
+    if (prevMovieComponent === null /* || prevPopupComponent === null */) {
       render(this._listMoviesComponent, this._movieComponent);
       return;
     }
 
     replace(this._movieComponent, prevMovieComponent);
-    replace(this._popupComponent, prevPopupComponent);
+    // replace(this._popupComponent, prevPopupComponent);
 
     remove(prevMovieComponent);
-    remove(prevPopupComponent);
+    // remove(prevPopupComponent);
   }
 
   removeCardMovie() {
@@ -57,6 +53,12 @@ export default class MoviePresenter {
 
 
   _renderPopup() {
+    this._popupComponent = new FilmDetailsView(this._movie);
+    this._popupComponent.setCloseFilmDetailsPopupHandler(this._removePopup);
+    this._popupComponent.setAddToWatchlistHandler(this._handleAddToWatchlistClick);
+    this._popupComponent.setMarkAsWatchedHandler(this._handleMarkAsWatchedClick);
+    this._popupComponent.setAddFavoriteHandler(this._handleFavoriteClick);
+
     this._renderedMovieContainer = this._bodyElement.querySelector('.film-details');
     if (this._renderedMovieContainer !== null) {
       this._bodyElement.removeChild(this._renderedMovieContainer);
@@ -65,12 +67,13 @@ export default class MoviePresenter {
     render(this._bodyElement, this._popupComponent);
     this._bodyElement.classList.add('.hide-overflow');
     document.addEventListener('keydown', this._onEscKeyDownHandle);
-    this._popupComponent.setCloseFilmDetailsPopupHandler(this._closeButtonHandler);
+    //this._popupComponent.setCloseFilmDetailsPopupHandler(this._removePopup);
   }
 
   _removePopup() {
-    this._popupComponent.getElement().remove();
+    remove(this._popupComponent);
     this._bodyElement.classList.remove('.hide-overflow');
+    document.removeEventListener('keydown', this._onEscKeyDownHandle);
   }
 
   _openPopupHandle() {
@@ -81,8 +84,7 @@ export default class MoviePresenter {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
       this._bodyElement.classList.remove('hide-overflow');
-      this._popupComponent.getElement().remove();
-      this._bodyElement.removeEventListener('keydown', this._onEscKeyDownHandle);
+      this._removePopup();
     }
   }
 
