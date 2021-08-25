@@ -33,6 +33,7 @@ export default class ListMoviesPresenter {
     this._handleMovieChange = this._handleMovieChange.bind(this);
     this._handleShowMoreButtonClick = this._handleShowMoreButtonClick.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
+    this._handlePopupMode = this._handlePopupMode.bind(this);
     this._currentSortType = SortType.DEFAULT;
   }
 
@@ -52,6 +53,9 @@ export default class ListMoviesPresenter {
     this._renderfooterStatistics();
   }
 
+  _handlePopupMode() {
+    this._moviePresenter.forEach((presenter) => presenter.resetView());
+  }
 
   _renderHeaderProfile() {
     this._headerProfileContainer = document.querySelector('.header');
@@ -116,7 +120,7 @@ export default class ListMoviesPresenter {
   }
 
   _renderMovie(movie) {
-    const moviePresenter = new MoviePresenter(this._listMoviesComponent, this._handleMovieChange);
+    const moviePresenter = new MoviePresenter(this._listMoviesComponent, this._handleMovieChange, this._handlePopupMode);
     moviePresenter.init(this._movieWithComments(movie));
     this._moviePresenter.set(movie.id, moviePresenter);
   }
