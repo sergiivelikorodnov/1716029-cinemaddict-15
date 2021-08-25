@@ -24,7 +24,7 @@ export default class MoviePresenter {
     this._movieComponent = new FilmCardView(movie);
 
     // this._popupComponent = new FilmDetailsView(movie);
-    // this._popupComponent.setCloseFilmDetailsPopupHandler(this._closeButtonHandler);
+    // this._popupCompgionent.setCloseFilmDetailsPopupHandler(this._closeButtonHandler);
     // this._popupComponent.setAddToWatchlistHandler(this._handleAddToWatchlistClick);
     // this._popupComponent.setMarkAsWatchedHandler(this._handleMarkAsWatchedClick);
     // this._popupComponent.setAddFavoriteHandler(this._handleFavoriteClick);
