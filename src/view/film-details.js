@@ -10,7 +10,7 @@ const EMOJI = [
 
 const createFilmDetails = (data) => {
 
-  const createEmojiTemplate = (choosedEmoji) => Object.values(EMOJI).map((emotion) => (`<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emotion}" value="${emotion}">
+  const createEmojiTemplate = (choosedDataEmoji) => Object.values(EMOJI).map((emotion) => (`<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emotion}" value="${emotion}"  ${emotion === choosedDataEmoji ? 'checked' : ''}>
     <label class="film-details__emoji-label" for="emoji-${emotion}">
       <img src="./images/emoji/${emotion}.png" width="30" height="30" alt="emoji">
     </label>`)).join('');
@@ -44,7 +44,6 @@ const createFilmDetails = (data) => {
     runTime,
     genres,
     description,
-    emojiData,
     commentData,
   } = data.filmInfo;
 
@@ -56,7 +55,11 @@ const createFilmDetails = (data) => {
 
   const {
     commentDetails,
+    emojiData,
   } = data;
+
+
+  const emojiTemplate = createEmojiTemplate(emojiData);
 
   //console.log(movie.commentDetails.emotion);
 
@@ -167,7 +170,7 @@ const createFilmDetails = (data) => {
           </label>
 
           <div class="film-details__emoji-list">
-            ${createEmojiTemplate()}
+            ${emojiTemplate}
           </div>
         </div>
       </section>
