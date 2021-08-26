@@ -51,6 +51,7 @@ export default class ListMoviesPresenter {
     this._renderHeaderProfile();
     this._renderAllMovies();
     this._renderfooterStatistics();
+
   }
 
   _handlePopupMode() {
