@@ -13,7 +13,7 @@ import HeaderProfileView from '../view/header-profile.js';
 import SiteMenuView from '../view/site-menu.js';
 import MoviePresenter from './movie-presenter.js';
 import { sortMoviesByDate, sortMoviesByRating } from '../utils/sort.js';
-import { generateFilter } from '../mock/filter.js';
+import { generateFilter } from '../utils/filter.js';
 
 
 // const MAX  _EXTRA_MOVIES = 2;
@@ -54,7 +54,7 @@ export default class ListMoviesPresenter {
   }
 
   _handlePopupMode() {
-    this._moviePresenter.forEach((presenter) => presenter.resetView());
+    this._moviePresenter.forEach((presenter) => presenter.resetView);
   }
 
   _renderHeaderProfile() {

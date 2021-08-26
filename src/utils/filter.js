@@ -7,10 +7,14 @@ const movieToFilterMap = {
     .length,
 };
 
-const generateFilter = (movies) => Object.entries(movieToFilterMap).map(
+const generateFilter = (movies) => /* Object.entries(movieToFilterMap).map(
   ([filterName, countMovies]) => ({
     name: filterName,
     count: countMovies(movies),
-  }),
-);
+  }), */
+  console.log((movies) => movies.filter((movie) => movie.userDetails.isWatchList)
+    .length),
+//);
+
+
 export { generateFilter };
