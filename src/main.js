@@ -2,6 +2,7 @@ import { generateComments } from './mock/comments.js';
 import { generateMovies } from './mock/movie.js';
 import { generateFilter } from './utils/filter.js';
 import ListMoviesPresenter from './presenter/list-movies-presenter.js';
+import Movies from './model/movies.js';
 
 const COMMENTS_TOTAL_COUNT = 20;
 const MOVIES_TOTAL_COUNT = 18;
@@ -12,6 +13,9 @@ const filters = generateFilter(allMovies);
 
 const siteMainContainer = document.querySelector('.main');
 
-const moviesPresenter = new ListMoviesPresenter(siteMainContainer);
+const moviesModel = new Movies();
+moviesModel.setMovies(allMovies);
 
-moviesPresenter.init(allMovies, allComments, filters);
+const moviesPresenter = new ListMoviesPresenter(siteMainContainer, moviesModel);
+
+moviesPresenter.init(allComments, filters);

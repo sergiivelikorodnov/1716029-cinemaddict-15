@@ -16,15 +16,15 @@ export const shuffle = (arr) =>
     .sort()
     .map((i) => i[1]);
 
-export const updateMovie = (allMovies, updatedMovie) => {
-  const index = allMovies.findIndex((movie) => movie.id === updatedMovie.id);
-  if (index === -1) {
-    return allMovies;
-  }
+// export const updateMovie = (allMovies, updatedMovie) => {
+//   const index = allMovies.findIndex((movie) => movie.id === updatedMovie.id);
+//   if (index === -1) {
+//     return allMovies;
+//   }
 
-  return [
-    ...allMovies.slice(0, index),
-    updatedMovie,
-    ...allMovies.slice(index + 1),
-  ];
-};
+//   return [
+//     ...allMovies.slice(0, index),
+//     updatedMovie,
+//     ...allMovies.slice(index + 1),
+//   ];
+// };
