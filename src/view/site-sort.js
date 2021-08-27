@@ -14,7 +14,6 @@ export default class SiteSortTemplate extends AbstractView {
   constructor(currentSortType) {
     super();
     this._currentSortType = currentSortType;
-    //this.getElement().querySelector('.sort__button').classList.add('sort__button--active');
     this._sortTypeChangeHandler = this._sortTypeChangeHandler.bind(this);
   }
 
@@ -32,8 +31,6 @@ export default class SiteSortTemplate extends AbstractView {
       return;
     }
     evt.preventDefault();
-    // this.getElement().querySelector('.sort__button--active').classList.remove('sort__button--active');
     this._callback.sortTypeChange(evt.target.dataset.sortType);
-    // evt.target.classList.add('sort__button--active');
   }
 }

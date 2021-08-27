@@ -1,7 +1,6 @@
 import { remove, render, RenderPosition } from '../utils/render.js';
 import { MOVIES_COUNT_PER_STEP, SortType, UpdateType, UserAction } from '../const.js';
 // import { sortTopMoviesList, sortMostCommentedMoviesList } from '../utils/sort.js';
-//import { updateMovie } from '../mock/utils.js';
 import ListMoviesView from '../view/list-movies.js';
 import MoviesContainerView from '../view/movies-container.js';
 import NoFilmView from '../view//no-film.js';
@@ -25,11 +24,9 @@ export default class ListMoviesPresenter {
     this._noFilmComponent = new NoFilmView();
     this._moviesContainer = new MoviesContainerView();
     this._listMoviesComponent = new ListMoviesView();
-    // this._showMoreComponent = new ShowMoreButtonView();
     this._showMoreComponent = null;
     this._topRatedListComponent = new ListExtraMoviesView('Top rated');
     this._mostCommentedListComponent = new ListExtraMoviesView('Most commented');
-    // this._siteSortComponent = new SiteSortView();
     this._siteSortComponent = null;
     this._headerProfileComponent = new HeaderProfileView();
     this._moviePresenter = new Map();
@@ -44,8 +41,6 @@ export default class ListMoviesPresenter {
   }
 
   init(allComments, filters) {
-    //this._allMovies = allMovies.slice();
-    //this._originalAllMovies = allMovies.slice();
     this._allComments = allComments.slice();
     this._filters = filters.slice();
     this._siteMenuComponent = new SiteMenuView(this._filters);
@@ -111,9 +106,6 @@ export default class ListMoviesPresenter {
   }
 
   _handleMovieChange(updatedFilm){
-    //this._allMovies = updateMovie(this._allMovies, updatedFilm);
-    //this._originalAllMovies = updateMovie(this._originalAllMovies, updatedFilm);
-
     this._moviePresenter.get(updatedFilm.id).init(updatedFilm);
     this._updateFilters(generateFilter(this._allMovies));
   }
@@ -148,20 +140,6 @@ export default class ListMoviesPresenter {
     this._clearMovieList({resetRenderedMoviesCount: true});
     this._renderAllMovies();
   }
-
-  // _sortMovies(sortType) {
-  // switch (sortType) {
-  //   case SortType.BY_DATE:
-  //     this._allMovies.sort(sortMoviesByDate);
-  //     break;
-  //   case SortType.BY_RATING:
-  //     this._allMovies.sort(sortMoviesByRating);
-  //     break;
-  //   default: this._allMovies = this._originalAllMovies.slice();
-  // }
-  // this._currentSortType = sortType;
-
-  // }
 
   _movieWithComments(movie) {
     movie = Object.assign(
@@ -205,8 +183,6 @@ export default class ListMoviesPresenter {
   _handleShowMoreButtonClick() {
     const moviesCount = this._getMovies().length;
     const newRenderedMovies = Math.min(moviesCount, this._renderedMoviesCount + MOVIES_COUNT_PER_STEP);
-    // this._renderFeaturedMoviesList(this._renderedMoviesCount, this._renderedMoviesCount + MOVIES_COUNT_PER_STEP);
-    // this._renderedMoviesCount += MOVIES_COUNT_PER_STEP;
     const movies = this._getMovies().slice(this._renderedMoviesCount, newRenderedMovies);
     this._renderFeaturedMoviesList(movies);
     this._renderedMoviesCount = newRenderedMovies;
@@ -233,9 +209,6 @@ export default class ListMoviesPresenter {
 
 
   _renderFeaturedMoviesList(movies) {
-    // this._allMovies
-    //   .slice(from, to)
-    //   .forEach((movie) => this._renderMovie(movie));
     movies.forEach((movie) => this._renderMovie(movie));
   }
 
@@ -292,18 +265,9 @@ export default class ListMoviesPresenter {
   //   }
   // }
 
-  /*   _renderMovies() {
-    this._renderFeaturedMoviesList(0, Math.min(this._allMovies.length, MOVIES_COUNT_PER_STEP));
-    if (this._allMovies.length > MOVIES_COUNT_PER_STEP) {
-      this._renderShowMoreButton();
-    }
-  } */
-
   _renderAllMovies() {
     const movies = this._getMovies();
     const moviesCount = movies.length;
-    console.log(movies);
-
 
     if (moviesCount === 0) {
       this._renderNoMovies();
