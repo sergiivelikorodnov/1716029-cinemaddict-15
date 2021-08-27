@@ -55,6 +55,16 @@ export default class ListMoviesPresenter {
 
   }
 
+  _getMovies() {
+    switch (this._currentSortType) {
+      case SortType.BY_DATE:
+        return this._moviesModel.getMovies().slice().sort(sortMoviesByDate);
+      case SortType.BY_RATING:
+        return this._moviesModel.getMovies().slice().sort(sortMoviesByRating);
+    }
+    return this._moviesModel.getMovies();
+  }
+
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE_TASK:
@@ -86,59 +96,13 @@ export default class ListMoviesPresenter {
     }
   }
 
-  _getMovies() {
-    switch (this._currentSortType) {
-      case SortType.BY_DATE:
-        return this._moviesModel.getMovies().slice().sort(sortMoviesByDate);
-      case SortType.BY_RATING:
-        return this._moviesModel.getMovies().slice().sort(sortMoviesByRating);
-    }
-    return this._moviesModel.getMovies();
-  }
-
-  _handlePopupMode() {
-    this._moviePresenter.forEach((presenter) => presenter.resetView);
+  _renderNoMovies() {
+    render(this._listMoviesComponent, this._noFilmComponent);
   }
 
   _renderHeaderProfile() {
     this._headerProfileContainer = document.querySelector('.header');
     render(this._headerProfileContainer, this._headerProfileComponent);
-  }
-
-  _handleMovieChange(updatedFilm){
-    this._moviePresenter.get(updatedFilm.id).init(updatedFilm);
-    this._updateFilters(generateFilter(this._allMovies));
-  }
-
-  _updateFilters(filters) {
-    remove(this._siteMenuComponent);
-    this._siteMenuComponent = new SiteMenuView(filters);
-    render(this._siteMainContainer,this._siteMenuComponent, RenderPosition.AFTERBEGIN);
-  }
-
-  _renderNoMovies() {
-    render(this._listMoviesComponent, this._noFilmComponent);
-  }
-
-
-  _renderSort() {
-    if (this._siteSortComponent !== null) {
-      this._siteSortComponent = null;
-    }
-
-    this._siteSortComponent = new SiteSortView(this._currentSortType);
-    render(this._listMoviesComponent, this._siteSortComponent, RenderPosition.AFTERBEGIN);
-    this._siteSortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
-  }
-
-  _handleSortTypeChange(sortType) {
-    if (this._currentSortType === sortType) {
-      return;
-    }
-    this._currentSortType = sortType;
-
-    this._clearMovieList({resetRenderedMoviesCount: true});
-    this._renderAllMovies();
   }
 
   _movieWithComments(movie) {
@@ -158,6 +122,9 @@ export default class ListMoviesPresenter {
     this._moviePresenter.set(movie.id, moviePresenter);
   }
 
+  _renderFeaturedMoviesList(movies) {
+    movies.forEach((movie) => this._renderMovie(movie));
+  }
 
   _clearMovieList({ resetRenderedMoviesCount = false, resetSortType = false } = {}) {
     const moviesCount = this._getMovies().length;
@@ -179,19 +146,6 @@ export default class ListMoviesPresenter {
     }
   }
 
-
-  _handleShowMoreButtonClick() {
-    const moviesCount = this._getMovies().length;
-    const newRenderedMovies = Math.min(moviesCount, this._renderedMoviesCount + MOVIES_COUNT_PER_STEP);
-    const movies = this._getMovies().slice(this._renderedMoviesCount, newRenderedMovies);
-    this._renderFeaturedMoviesList(movies);
-    this._renderedMoviesCount = newRenderedMovies;
-
-    if (this._renderedMoviesCount >= moviesCount) {
-      remove(this._showMoreComponent);
-    }
-  }
-
   _renderShowMoreButton() {
     if (this._showMoreComponent !== null) {
       this._showMoreComponent = null;
@@ -207,21 +161,54 @@ export default class ListMoviesPresenter {
     render( this._footerStatisticsContainer, new FooterStatisticsView(this._getMovies().length) );
   }
 
+  _renderSort() {
+    if (this._siteSortComponent !== null) {
+      this._siteSortComponent = null;
+    }
 
-  _renderFeaturedMoviesList(movies) {
-    movies.forEach((movie) => this._renderMovie(movie));
+    this._siteSortComponent = new SiteSortView(this._currentSortType);
+    render(this._listMoviesComponent, this._siteSortComponent, RenderPosition.AFTERBEGIN);
+    this._siteSortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
   }
 
-  _renderMovieItems() {
+  _handleSortTypeChange(sortType) {
+    if (this._currentSortType === sortType) {
+      return;
+    }
+    this._currentSortType = sortType;
 
+    this._clearMovieList({resetRenderedMoviesCount: true});
+    this._renderAllMovies();
+  }
+
+  _updateFilters(filters) {
+    remove(this._siteMenuComponent);
+    this._siteMenuComponent = new SiteMenuView(filters);
+    render(this._siteMainContainer,this._siteMenuComponent, RenderPosition.AFTERBEGIN);
+  }
+
+  _handleMovieChange(updatedFilm){
+    this._moviePresenter.get(updatedFilm.id).init(updatedFilm);
+    this._updateFilters(generateFilter(this._allMovies));
+  }
+
+  _handlePopupMode() {
+    this._moviePresenter.forEach((presenter) => presenter.resetView());
+  }
+
+
+  _handleShowMoreButtonClick() {
     const moviesCount = this._getMovies().length;
-    const movies = this._getMovies().slice(0, Math.min(moviesCount, MOVIES_COUNT_PER_STEP));
+    const newRenderedMovies = Math.min(moviesCount, this._renderedMoviesCount + MOVIES_COUNT_PER_STEP);
+    const movies = this._getMovies().slice(this._renderedMoviesCount, newRenderedMovies);
     this._renderFeaturedMoviesList(movies);
+    this._renderedMoviesCount = newRenderedMovies;
 
     if (this._renderedMoviesCount >= moviesCount) {
       remove(this._showMoreComponent);
     }
   }
+
 
   // _renderTopRatedMovie(movie) {
   //   const moviePresenter = new MoviePresenter(this._topRatedListComponent, this._allComments, this._handleMovieChange);
