@@ -9,16 +9,16 @@ import ShowMoreButtonView from '../view/show-more-button.js';
 import SiteSortView from '../view/site-sort.js';
 import FooterStatisticsView from '../view/footer-statistics.js';
 import HeaderProfileView from '../view/header-profile.js';
-import SiteMenuView from '../view/site-menu.js';
 import MoviePresenter from './movie-presenter.js';
 import { sortMoviesByDate, sortMoviesByRating } from '../utils/sort.js';
-import { generateFilter } from '../utils/filter.js';
+import { filter } from '../utils/filter.js';
 
 
 // const MAX  _EXTRA_MOVIES = 2;
 export default class ListMoviesPresenter {
-  constructor(siteMainContainer, moviesModel) {
+  constructor(siteMainContainer, moviesModel, filtersModel) {
     this._moviesModel = moviesModel;
+    this._filtersModel = filtersModel;
     this._siteMainContainer = siteMainContainer;
     this._renderedMoviesCount = MOVIES_COUNT_PER_STEP;
     this._noFilmComponent = new NoFilmView();
@@ -30,22 +30,19 @@ export default class ListMoviesPresenter {
     this._siteSortComponent = null;
     this._headerProfileComponent = new HeaderProfileView();
     this._moviePresenter = new Map();
-    this._handleMovieChange = this._handleMovieChange.bind(this);
     this._handleShowMoreButtonClick = this._handleShowMoreButtonClick.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
     this._handlePopupMode = this._handlePopupMode.bind(this);
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._moviesModel.addObserver(this._handleModelEvent);
+    this._filtersModel.addObserver(this._handleModelEvent);
     this._currentSortType = SortType.DEFAULT;
   }
 
-  init(allComments, filters) {
+  init(allComments) {
     this._allComments = allComments.slice();
-    this._filters = filters.slice();
-    this._siteMenuComponent = new SiteMenuView(this._filters);
 
-    render(this._siteMainContainer, this._siteMenuComponent);
     render(this._siteMainContainer, this._moviesContainer);
     render(this._moviesContainer, this._listMoviesComponent);
 
@@ -55,14 +52,19 @@ export default class ListMoviesPresenter {
 
   }
 
+
   _getMovies() {
+    const filterType = this._filtersModel.getFilter();
+    const movies = this._moviesModel.getMovies().slice();
+    const filteredMovies = filter[filterType](movies);
+
     switch (this._currentSortType) {
       case SortType.BY_DATE:
-        return this._moviesModel.getMovies().slice().sort(sortMoviesByDate);
+        return filteredMovies.sort(sortMoviesByDate);
       case SortType.BY_RATING:
-        return this._moviesModel.getMovies().slice().sort(sortMoviesByRating);
+        return filteredMovies.sort(sortMoviesByRating);
     }
-    return this._moviesModel.getMovies();
+    return filteredMovies;
   }
 
   _handleViewAction(actionType, updateType, update) {
@@ -82,7 +84,6 @@ export default class ListMoviesPresenter {
   _handleModelEvent(updateType, data) {
     switch (updateType) {
       case UpdateType.PATCH:
-
         this._moviePresenter.get(data.id).init(data);
         break;
       case UpdateType.MINOR:
@@ -128,6 +129,7 @@ export default class ListMoviesPresenter {
 
   _clearMovieList({ resetRenderedMoviesCount = false, resetSortType = false } = {}) {
     const moviesCount = this._getMovies().length;
+
     this._moviePresenter.forEach((presenter) => presenter.removeCardMovie());
     this._moviePresenter.clear();
 
@@ -179,17 +181,6 @@ export default class ListMoviesPresenter {
 
     this._clearMovieList({resetRenderedMoviesCount: true});
     this._renderAllMovies();
-  }
-
-  _updateFilters(filters) {
-    remove(this._siteMenuComponent);
-    this._siteMenuComponent = new SiteMenuView(filters);
-    render(this._siteMainContainer,this._siteMenuComponent, RenderPosition.AFTERBEGIN);
-  }
-
-  _handleMovieChange(updatedFilm){
-    this._moviePresenter.get(updatedFilm.id).init(updatedFilm);
-    this._updateFilters(generateFilter(this._allMovies));
   }
 
   _handlePopupMode() {

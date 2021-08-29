@@ -1,15 +1,9 @@
-const movieToFilterMap = {
-  watchedMovies: 'isWatchList',
-  historyList: 'isAlreadyWatched',
-  favoriteMovies: 'isFavorite',
+import { FilterType } from '../const.js';
+// import { sortMoviesByDate, sortMoviesByRating } from './sort.js';
+
+export const filter = {
+  [FilterType.ALL]: (movies) => movies,
+  [FilterType.WATCHLIST]: (movies) => movies.filter((movie) => movie.userDetails.isWatchList),
+  [FilterType.HISTORY]: (movies) => movies.filter((movie) => movie.userDetails.isAlreadyWatched),
+  [FilterType.FAVORITES]: (movies) => movies.filter((movie) => movie.userDetails.isFavorite),
 };
-
-const generateFilter = (movies) => Object.entries(movieToFilterMap).map(
-  ([filterName, filterValue]) => ({
-    name: filterName,
-    count: movies.reduce((total, movie) => total + movie.userDetails[filterValue], 0),
-  }),
-
-);
-
-export { generateFilter };

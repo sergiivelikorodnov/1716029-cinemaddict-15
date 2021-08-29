@@ -20,11 +20,10 @@ export default class Movies extends AbstractObserver{
     if (index === -1) {
       throw new Error('Can\'t update unexisting movie');
     }
-
     this._allMovies = [
-      ...this._allMovies,
+      ...this._allMovies.slice(0, index),
       update,
-      ...this._allMovies,
+      ...this._allMovies.slice(index + 1),
     ];
 
     this._notify(updateType, update);
