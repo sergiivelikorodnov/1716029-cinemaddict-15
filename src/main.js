@@ -1,6 +1,6 @@
 import { generateComments } from './mock/comments.js';
 import { generateMovies } from './mock/movie.js';
-import { generateFilter } from './mock/filter.js';
+import { generateFilter } from './utils/filter.js';
 import ListMoviesPresenter from './presenter/list-movies-presenter.js';
 
 const COMMENTS_TOTAL_COUNT = 20;
