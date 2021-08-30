@@ -56,7 +56,7 @@ const generateComment = () => ({
   id: generateID(),
   author: getAuthor(),
   comment: generateCommentText(textGenerator),
-  date: generateCommentDate(),
+  dateComment: generateCommentDate(),
   emotion: getEmotion(),
 });
 

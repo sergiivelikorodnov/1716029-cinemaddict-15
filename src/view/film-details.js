@@ -9,6 +9,8 @@ const EMOJI = [
 ];
 
 const createFilmDetails = (data) => {
+  //console.log(data);
+
 
   const createEmojiTemplate = (choosedDataEmoji) => Object.values(EMOJI).map((emotion) => (`<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emotion}" value="${emotion}"  ${emotion === choosedDataEmoji ? 'checked' : ''}>
     <label class="film-details__emoji-label" for="emoji-${emotion}">
@@ -16,7 +18,7 @@ const createFilmDetails = (data) => {
     </label>`)).join('');
 
 
-  const createCommentTemplate = (allComments) =>Object.values(allComments).map(({id, author, comment, emotion, date}) => `<li class="film-details__comment" id="${id}">
+  const createCommentTemplate = (allComments) =>Object.values(allComments).map(({id, author, comment, emotion, dateComment}) => `<li class="film-details__comment" id="${id}">
     <span class="film-details__comment-emoji">
       <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">
     </span>
@@ -24,7 +26,7 @@ const createFilmDetails = (data) => {
       <p class="film-details__comment-text">${comment}</p>
       <p class="film-details__comment-info">
         <span class="film-details__comment-author">${author}</span>
-        <span class="film-details__comment-day">${date}</span>
+        <span class="film-details__comment-day">${dateComment}</span>
         <button class="film-details__comment-delete">Delete</button>
       </p>
     </div>
@@ -37,33 +39,29 @@ const createFilmDetails = (data) => {
     ageRating,
     poster,
     totalRating,
-    release,
+    date,
+    country,
     writers,
     actors,
     director,
     runTime,
     genres,
     description,
-  } = data.filmInfo;
-
-  const {
     isAlreadyWatched,
     isFavorite,
     isWatchList,
-  } = data.userDetails;
-
-  const {
     commentDetails,
     emojiData,
     commentData,
   } = data;
 
+  //console.log(isAlreadyWatched);
 
   const emojiTemplate = createEmojiTemplate(emojiData);
 
   const alreadyWatchedActive = isAlreadyWatched ? 'film-details__control-button--active' : '';
-  const favoritedActive = isFavorite ? 'film-details__control-button--active' : '';
   const watchListActive = isWatchList ? 'film-details__control-button--active' : '';
+  const favoritedActive = isFavorite ? 'film-details__control-button--active' : '';
 
   const commentsTemplate = createCommentTemplate(commentDetails);
 
@@ -119,7 +117,7 @@ const createFilmDetails = (data) => {
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Release Date</td>
-              <td class="film-details__cell">${release.date}</td>
+              <td class="film-details__cell">${date}</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Runtime</td>
@@ -127,7 +125,7 @@ const createFilmDetails = (data) => {
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Country</td>
-              <td class="film-details__cell">${release.country}</td>
+              <td class="film-details__cell">${country}</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">${genreTitle}</td>
@@ -261,7 +259,7 @@ export default class FilmDetails extends Smart {
     this._callback.addToWatchlist();
 
     this.updateData({
-      isWatchList: !this._data.userDetails.isWatchList,
+      isWatchList: !this._data.isWatchList,
     });
   }
 
@@ -270,7 +268,7 @@ export default class FilmDetails extends Smart {
     this._callback.markAsWatchedHandler();
 
     this.updateData({
-      isAlreadyWatched: !this._data.userDetails.isAlreadyWatched,
+      isAlreadyWatched: !this._data.isAlreadyWatched,
     });
   }
 
@@ -279,7 +277,7 @@ export default class FilmDetails extends Smart {
     this._callback.addFavoriteHandler();
 
     this.updateData({
-      isFavorite: !this._data.userDetails.isFavorite,
+      isFavorite: !this._data.isFavorite,
     });
   }
 

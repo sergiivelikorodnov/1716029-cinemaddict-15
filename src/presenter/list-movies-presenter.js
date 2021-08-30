@@ -69,14 +69,14 @@ export default class ListMoviesPresenter {
 
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
-      case UserAction.UPDATE_TASK:
+      case UserAction.UPDATE_MOVIE:
         this._moviesModel.updateMovie(updateType, update);
         break;
-      case UserAction.ADD_TASK:
-        this._moviesModel.addMovie(updateType, update);
+      case UserAction.ADD_COMMENT:
+
         break;
-      case UserAction.DELETE_TASK:
-        this._moviesModel.deleteMovie(updateType, update);
+      case UserAction.DELETE_COMMENT:
+
         break;
     }
   }
@@ -84,9 +84,13 @@ export default class ListMoviesPresenter {
   _handleModelEvent(updateType, data) {
     switch (updateType) {
       case UpdateType.PATCH:
+        //console.log(this._moviePresenter.get(data.id));
+        //console.log(data);
         this._moviePresenter.get(data.id).init(data);
         break;
       case UpdateType.MINOR:
+        //console.log(data);
+
         this._clearMovieList();
         this._renderAllMovies();
         break;

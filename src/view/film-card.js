@@ -4,22 +4,18 @@ import { timeConvertor } from '../utils/common.js';
 import AbstractView from './abstract.js';
 
 const createFilmCard = (movie) => {
-  const { title, poster, totalRating, release, runTime, genres, description } =
-    movie.filmInfo;
-  const {
-    isAlreadyWatched,
-    isFavorite,
-    isWatchList,
-  } = movie.userDetails;
+  const { title, poster, totalRating, date, runTime, genres, description, isAlreadyWatched, isFavorite, isWatchList } = movie;
 
   const alreadyWatchedActive = isAlreadyWatched ? 'film-card__controls-item--active' : '';
+
+
   const favoritedActive = isFavorite ? 'film-card__controls-item--active' : '';
   const watchListActive = isWatchList ? 'film-card__controls-item--active' : '';
 
   const shortDescripton = `${description.slice(0, MAX_SHORT_DESCRIPTION_LENGTH)}...`;
 
   const comments = movie.comments.size;
-  const releaseDate = new Date(release.date).getFullYear();
+  const releaseDate = new Date(date).getFullYear();
   const humanRunTime = timeConvertor(runTime);
 
   return `<article class="film-card">
@@ -42,14 +38,14 @@ const createFilmCard = (movie) => {
 };
 
 export default class FilmCard extends AbstractView{
-  constructor(movie, changeData) {
+  constructor(movie) {
     super();
     this._movie = movie;
     this._openFilmDetailsPopupHandler = this._openFilmDetailsPopupHandler.bind(this);
     this._addToWatchlistHandler = this._addToWatchlistHandler.bind(this);
     this._markAsWatchedHandler = this._markAsWatchedHandler.bind(this);
     this._addFavoriteHandler = this._addFavoriteHandler.bind(this);
-    this._changeData = changeData;
+    //console.log(movie);
   }
 
   getTemplate() {

@@ -12,13 +12,16 @@ export default class MoviePresenter {
     this._changeData = changeData;
     this._listMoviesComponent = listMoviesContainer.getElement().querySelector('.films-list__container');
     this._bodyElement = document.querySelector('body');
-    this._onEscKeyDownHandle = this._onEscKeyDownHandle.bind(this);
-    this._openPopupHandle = this._openPopupHandle.bind(this);
+    this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
+    this._openPopupHandler = this._openPopupHandler.bind(this);
     this._removePopup = this._removePopup.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleAddToWatchlistClick = this._handleAddToWatchlistClick.bind(this);
     this._handleMarkAsWatchedClick = this._handleMarkAsWatchedClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
+    this._handlePopupAddToWatchlistClick = this._handlePopupAddToWatchlistClick.bind(this);
+    this._handlePopupMarkAsWatchedClick = this._handlePopupMarkAsWatchedClick.bind(this);
+    this._handlePopupFavoriteClick = this._handlePopupFavoriteClick.bind(this);
     this._movieComponent = null;
     this._popupComponent = null;
     this._mode = Mode.CLOSED;
@@ -29,24 +32,35 @@ export default class MoviePresenter {
     const prevMovieComponent = this._movieComponent;
     const prevPopupComponent = this._popupComponent;
     this._movieComponent = new FilmCardView(movie);
+    // this._popupComponent = new FilmDetailsView(this._movie);
+    // this._popupComponent.setCloseFilmDetailsPopupHandler(this._removePopup);
+    // this._popupComponent.setAddToWatchlistHandler(this._handlePopupAddToWatchlistClick);
+    // this._popupComponent.setMarkAsWatchedHandler(this._handlePopupMarkAsWatchedClick);
+    // this._popupComponent.setAddFavoriteHandler(this._handlePopupFavoriteClick);
 
-    this._movieComponent.setOpenFilmDetailsPopupHandler(this._openPopupHandle);
+    this._movieComponent.setOpenFilmDetailsPopupHandler(this._openPopupHandler);
     this._movieComponent.setAddToWatchlistHandler(this._handleAddToWatchlistClick);
     this._movieComponent.setMarkAsWatchedHandler(this._handleMarkAsWatchedClick);
     this._movieComponent.setAddFavoriteHandler(this._handleFavoriteClick);
 
-    if (prevMovieComponent === null) {
+    if (prevMovieComponent === null || prevPopupComponent === null) {
       render(this._listMoviesComponent, this._movieComponent);
       return;
     }
 
-    replace(this._movieComponent, prevMovieComponent);
 
-    if (this._mode === Mode.OPENED) {
+    if (this._listMoviesComponent.contains(prevMovieComponent.getElement())) {
+
+      replace(this._movieComponent, prevMovieComponent);
+      this._movieComponent.setOpenFilmDetailsPopupHandler(this._openPopupHandler);
+    }
+
+    if (prevPopupComponent) {
       replace(this._popupComponent, prevPopupComponent);
     }
 
     remove(prevMovieComponent);
+    remove(prevPopupComponent);
   }
 
   removeCardMovie() {
@@ -59,38 +73,32 @@ export default class MoviePresenter {
     }
   }
 
-  _renderPopup() {
-    this._popupComponent = new FilmDetailsView(this._movie);
-    this._popupComponent.setCloseFilmDetailsPopupHandler(this._removePopup);
-    this._popupComponent.setAddToWatchlistHandler(this._handleAddToWatchlistClick);
-    this._popupComponent.setMarkAsWatchedHandler(this._handleMarkAsWatchedClick);
-    this._popupComponent.setAddFavoriteHandler(this._handleFavoriteClick);
-
+  _openPopupHandler() {
     this._changeMode();
     this._mode = Mode.OPENED;
-
+    this._popupComponent = new FilmDetailsView(this._movie);
+    this._popupComponent.setCloseFilmDetailsPopupHandler(this._removePopup);
+    this._popupComponent.setAddToWatchlistHandler(this._handlePopupAddToWatchlistClick);
+    this._popupComponent.setMarkAsWatchedHandler(this._handlePopupMarkAsWatchedClick);
+    this._popupComponent.setAddFavoriteHandler(this._handlePopupFavoriteClick);
     this._renderedMovieContainer = this._bodyElement.querySelector('.film-details');
     if (this._renderedMovieContainer !== null) {
       this._bodyElement.removeChild(this._renderedMovieContainer);
     }
 
     render(this._bodyElement, this._popupComponent);
-    this._bodyElement.classList.add('.hide-overflow');
-    document.addEventListener('keydown', this._onEscKeyDownHandle);
+    this._bodyElement.classList.add('hide-overflow');
+    document.addEventListener('keydown', this._escKeyDownHandler);
   }
 
   _removePopup() {
     remove(this._popupComponent);
-    this._bodyElement.classList.remove('.hide-overflow');
-    document.removeEventListener('keydown', this._onEscKeyDownHandle);
+    this._bodyElement.classList.remove('hide-overflow');
+    document.removeEventListener('keydown', this._escKeyDownHandler);
     this._mode = Mode.CLOSED;
   }
 
-  _openPopupHandle() {
-    this._renderPopup();
-  }
-
-  _onEscKeyDownHandle (evt){
+  _escKeyDownHandler (evt){
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
       this._bodyElement.classList.remove('hide-overflow');
@@ -106,36 +114,77 @@ export default class MoviePresenter {
 
   _handleAddToWatchlistClick() {
     this._changeData(
-      UserAction.UPDATE_TASK,
-      UpdateType.MINOR,
+      UserAction.UPDATE_MOVIE,
+      this._mode === Mode.CLOSED ? UpdateType.MINOR : UpdateType.PATCH,
+
       Object.assign(
         {},
         this._movie,
-        this._movie.userDetails.isWatchList = !this._movie.userDetails.isWatchList,
+        {
+          isWatchList: !this._movie.isWatchList,
+        },
       ),
     );
   }
 
   _handleMarkAsWatchedClick() {
     this._changeData(
-      UserAction.UPDATE_TASK,
-      UpdateType.MINOR,
+      UserAction.UPDATE_MOVIE,
+      this._mode === Mode.CLOSED ? UpdateType.MINOR : UpdateType.PATCH,
       Object.assign(
         {},
         this._movie,
-        this._movie.userDetails.isAlreadyWatched = !this._movie.userDetails.isAlreadyWatched,
+        {
+          isAlreadyWatched : !this._movie.isAlreadyWatched,
+        },
       ),
     );
   }
 
   _handleFavoriteClick() {
     this._changeData(
-      UserAction.UPDATE_TASK,
-      UpdateType.MINOR,
+      UserAction.UPDATE_MOVIE,
+      this._mode === Mode.CLOSED ? UpdateType.MINOR : UpdateType.PATCH,
       Object.assign(
         {},
         this._movie,
-        this._movie.userDetails.isFavorite = !this._movie.userDetails.isFavorite,
+        this._movie.isFavorite = !this._movie.isFavorite,
+      ),
+    );
+  }
+
+  _handlePopupAddToWatchlistClick() {
+    this._changeData(
+      UserAction.UPDATE_MOVIE,
+      UpdateType.PATCH,
+      Object.assign(
+        {},
+        this._movie,
+        this._movie.isWatchList = !this._movie.isWatchList,
+      ),
+    );
+  }
+
+  _handlePopupMarkAsWatchedClick() {
+    this._changeData(
+      UserAction.UPDATE_MOVIE,
+      UpdateType.PATCH,
+      Object.assign(
+        {},
+        this._movie,
+        this._movie.isAlreadyWatched = !this._movie.isAlreadyWatched,
+      ),
+    );
+  }
+
+  _handlePopupFavoriteClick() {
+    this._changeData(
+      UserAction.UPDATE_MOVIE,
+      UpdateType.PATCH,
+      Object.assign(
+        {},
+        this._movie,
+        this._movie.isFavorite = !this._movie.isFavorite,
       ),
     );
   }
