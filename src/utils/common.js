@@ -6,4 +6,5 @@ export const timeConvertor = (totalMinutes) => {
   return `${hours}h ${minutes} min`;
 };
 
-export const removeObjectFromSet = (set, obj) => new Set([...set].filter((el) => JSON.stringify(el) !== JSON.stringify(obj)));
+export const removeObjectFromSet = (set, obj) =>
+  new Set([...set].filter((el) => JSON.stringify(el) !== JSON.stringify(obj)));

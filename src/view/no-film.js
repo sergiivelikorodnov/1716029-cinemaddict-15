@@ -10,10 +10,9 @@ const NoMoviesTextType = {
 
 const createNoMovies = (filterType) => {
   const noMoviesText = NoMoviesTextType[filterType];
-  return (
-    `<h2 class="films-list__title">
+  return `<h2 class="films-list__title">
     ${noMoviesText}
-  </h2>`);
+  </h2>`;
 };
 
 export default class NoMovies extends AbstractView {

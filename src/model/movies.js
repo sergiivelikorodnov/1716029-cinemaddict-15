@@ -1,6 +1,6 @@
 import AbstractObserver from '../utils/abstract-observer';
 
-export default class Movies extends AbstractObserver{
+export default class Movies extends AbstractObserver {
   constructor() {
     super();
     this._allMovies = [];
@@ -28,5 +28,4 @@ export default class Movies extends AbstractObserver{
 
     this._notify(updateType, update);
   }
-
 }

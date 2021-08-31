@@ -11,17 +11,22 @@ export default class MoviePresenter {
   constructor(listMoviesContainer, changeData, changeMode) {
     this._changeMode = changeMode;
     this._changeData = changeData;
-    this._listMoviesComponent = listMoviesContainer.getElement().querySelector('.films-list__container');
+    this._listMoviesComponent = listMoviesContainer
+      .getElement()
+      .querySelector('.films-list__container');
     this._bodyElement = document.querySelector('body');
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
     this._openPopupHandler = this._openPopupHandler.bind(this);
     this._removePopup = this._removePopup.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
-    this._handleAddToWatchlistClick = this._handleAddToWatchlistClick.bind(this);
+    this._handleAddToWatchlistClick =
+      this._handleAddToWatchlistClick.bind(this);
     this._handleMarkAsWatchedClick = this._handleMarkAsWatchedClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
-    this._handlePopupAddToWatchlistClick = this._handlePopupAddToWatchlistClick.bind(this);
-    this._handlePopupMarkAsWatchedClick = this._handlePopupMarkAsWatchedClick.bind(this);
+    this._handlePopupAddToWatchlistClick =
+      this._handlePopupAddToWatchlistClick.bind(this);
+    this._handlePopupMarkAsWatchedClick =
+      this._handlePopupMarkAsWatchedClick.bind(this);
     this._handlePopupFavoriteClick = this._handlePopupFavoriteClick.bind(this);
     this._handleDeleteCommentClick = this._handleDeleteCommentClick.bind(this);
     this._movieComponent = null;
@@ -35,17 +40,19 @@ export default class MoviePresenter {
     const prevPopupComponent = this._popupComponent;
     this._movieComponent = new FilmCardView(movie);
 
-
     this._movieComponent.setOpenFilmDetailsPopupHandler(this._openPopupHandler);
-    this._movieComponent.setAddToWatchlistHandler(this._handleAddToWatchlistClick);
-    this._movieComponent.setMarkAsWatchedHandler(this._handleMarkAsWatchedClick);
+    this._movieComponent.setAddToWatchlistHandler(
+      this._handleAddToWatchlistClick,
+    );
+    this._movieComponent.setMarkAsWatchedHandler(
+      this._handleMarkAsWatchedClick,
+    );
     this._movieComponent.setAddFavoriteHandler(this._handleFavoriteClick);
 
     if (prevMovieComponent === null || prevPopupComponent === null) {
       render(this._listMoviesComponent, this._movieComponent);
       return;
     }
-
 
     //if (this._listMoviesComponent.contains(prevMovieComponent.getElement())) {
 
@@ -81,12 +88,19 @@ export default class MoviePresenter {
 
     this._popupComponent = new FilmDetailsView(movie);
     this._popupComponent.setCloseFilmDetailsPopupHandler(this._removePopup);
-    this._popupComponent.setAddToWatchlistHandler(this._handlePopupAddToWatchlistClick);
-    this._popupComponent.setMarkAsWatchedHandler(this._handlePopupMarkAsWatchedClick);
+    this._popupComponent.setAddToWatchlistHandler(
+      this._handlePopupAddToWatchlistClick,
+    );
+    this._popupComponent.setMarkAsWatchedHandler(
+      this._handlePopupMarkAsWatchedClick,
+    );
     this._popupComponent.setAddFavoriteHandler(this._handlePopupFavoriteClick);
-    this._popupComponent.setDeleteCommentHandler(this._handleDeleteCommentClick);
+    this._popupComponent.setDeleteCommentHandler(
+      this._handleDeleteCommentClick,
+    );
 
-    this._renderedMovieContainer = this._bodyElement.querySelector('.film-details');
+    this._renderedMovieContainer =
+      this._bodyElement.querySelector('.film-details');
     if (this._renderedMovieContainer !== null) {
       this._bodyElement.removeChild(this._renderedMovieContainer);
     }
@@ -102,12 +116,19 @@ export default class MoviePresenter {
 
     this._popupComponent = new FilmDetailsView(this._movie, this._comments);
     this._popupComponent.setCloseFilmDetailsPopupHandler(this._removePopup);
-    this._popupComponent.setAddToWatchlistHandler(this._handlePopupAddToWatchlistClick);
-    this._popupComponent.setMarkAsWatchedHandler(this._handlePopupMarkAsWatchedClick);
+    this._popupComponent.setAddToWatchlistHandler(
+      this._handlePopupAddToWatchlistClick,
+    );
+    this._popupComponent.setMarkAsWatchedHandler(
+      this._handlePopupMarkAsWatchedClick,
+    );
     this._popupComponent.setAddFavoriteHandler(this._handlePopupFavoriteClick);
-    this._popupComponent.setDeleteCommentHandler(this._handleDeleteCommentClick);
+    this._popupComponent.setDeleteCommentHandler(
+      this._handleDeleteCommentClick,
+    );
 
-    this._renderedMovieContainer = this._bodyElement.querySelector('.film-details');
+    this._renderedMovieContainer =
+      this._bodyElement.querySelector('.film-details');
     if (this._renderedMovieContainer !== null) {
       this._bodyElement.removeChild(this._renderedMovieContainer);
     }
@@ -117,20 +138,17 @@ export default class MoviePresenter {
     document.addEventListener('keydown', this._escKeyDownHandler);
   }
 
-
   _handleDeleteCommentClick(commentId) {
     const prevPopupScrollHeight = this._popupComponent.getElement().scrollTop;
     this._changeData(
       UserAction.DELETE_COMMENT,
       UpdateType.PATCH,
-      Object.assign(
-        {},
-        this._movie,
-        {
-          comments: removeObjectFromSet(this._movie.comments, commentId),
-          commentDetails: this._movie.commentDetails.filter((comment) => comment.id !== commentId),
-        },
-      ),
+      Object.assign({}, this._movie, {
+        comments: removeObjectFromSet(this._movie.comments, commentId),
+        commentDetails: this._movie.commentDetails.filter(
+          (comment) => comment.id !== commentId,
+        ),
+      }),
       commentId,
     );
     this._popupComponent.getElement().scrollTop = prevPopupScrollHeight;
@@ -143,7 +161,7 @@ export default class MoviePresenter {
     this._mode = Mode.CLOSED;
   }
 
-  _escKeyDownHandler (evt){
+  _escKeyDownHandler(evt) {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
       this._bodyElement.classList.remove('hide-overflow');
@@ -158,94 +176,98 @@ export default class MoviePresenter {
     this._popupComponent.getElement().remove();
   }
 
+  _getScrollY() {
+    if (this._mode === Mode.CLOSED) {
+      return;
+    }
+    return this._popupComponent.getElement().scrollTop;
+  }
+
+  _setScrollY(value) {
+    if (this._mode === Mode.CLOSED) {
+      return;
+    }
+    return (this._popupComponent.getElement().scrollTop = value);
+  }
+
   _handleAddToWatchlistClick() {
-    const prevPopupScrollHeight = this._popupComponent.getElement().scrollTop;
+    const prevPopupScrollHeight = this._getScrollY();
     this._changeData(
       UserAction.UPDATE_MOVIE,
       this._mode === Mode.CLOSED ? UpdateType.MINOR : UpdateType.PATCH,
 
-      Object.assign(
-        {},
-        this._movie,
-        {
-          isWatchList: !this._movie.isWatchList,
-        },
-      ),
+      Object.assign({}, this._movie, {
+        isWatchList: !this._movie.isWatchList,
+      }),
     );
-    this._popupComponent.getElement().scrollTop = prevPopupScrollHeight;
+    this._setScrollY(prevPopupScrollHeight);
   }
 
   _handleMarkAsWatchedClick() {
-    const prevPopupScrollHeight = this._popupComponent.getElement().scrollTop;
+    const prevPopupScrollHeight = this._getScrollY();
     this._changeData(
       UserAction.UPDATE_MOVIE,
       this._mode === Mode.CLOSED ? UpdateType.MINOR : UpdateType.PATCH,
-      Object.assign(
-        {},
-        this._movie,
-        {
-          isAlreadyWatched : !this._movie.isAlreadyWatched,
-        },
-      ),
+      Object.assign({}, this._movie, {
+        isAlreadyWatched: !this._movie.isAlreadyWatched,
+      }),
     );
-    this._popupComponent.getElement().scrollTop = prevPopupScrollHeight;
+    this._setScrollY(prevPopupScrollHeight);
   }
 
   _handleFavoriteClick() {
-    const prevPopupScrollHeight = this._popupComponent.getElement().scrollTop;
+    const prevPopupScrollHeight = this._getScrollY();
     this._changeData(
       UserAction.UPDATE_MOVIE,
       this._mode === Mode.CLOSED ? UpdateType.MINOR : UpdateType.PATCH,
       Object.assign(
         {},
         this._movie,
-        this._movie.isFavorite = !this._movie.isFavorite,
+        (this._movie.isFavorite = !this._movie.isFavorite),
       ),
     );
-    this._popupComponent.getElement().scrollTop = prevPopupScrollHeight;
+    this._setScrollY(prevPopupScrollHeight);
   }
 
   _handlePopupAddToWatchlistClick() {
-    const prevPopupScrollHeight = this._popupComponent.getElement().scrollTop;
+    const prevPopupScrollHeight = this._getScrollY();
     this._changeData(
       UserAction.UPDATE_MOVIE,
       UpdateType.PATCH,
       Object.assign(
         {},
         this._movie,
-        this._movie.isWatchList = !this._movie.isWatchList,
+        (this._movie.isWatchList = !this._movie.isWatchList),
       ),
     );
-    this._popupComponent.getElement().scrollTop = prevPopupScrollHeight;
+    this._setScrollY(prevPopupScrollHeight);
   }
 
   _handlePopupMarkAsWatchedClick() {
-    const prevPopupScrollHeight = this._popupComponent.getElement().scrollTop;
+    const prevPopupScrollHeight = this._getScrollY();
     this._changeData(
       UserAction.UPDATE_MOVIE,
       UpdateType.PATCH,
       Object.assign(
         {},
         this._movie,
-        this._movie.isAlreadyWatched = !this._movie.isAlreadyWatched,
+        (this._movie.isAlreadyWatched = !this._movie.isAlreadyWatched),
       ),
     );
-    this._popupComponent.getElement().scrollTop = prevPopupScrollHeight;
+    this._setScrollY(prevPopupScrollHeight);
   }
 
   _handlePopupFavoriteClick() {
-    const prevPopupScrollHeight = this._popupComponent.getElement().scrollTop;
+    const prevPopupScrollHeight = this._getScrollY();
     this._changeData(
       UserAction.UPDATE_MOVIE,
       UpdateType.PATCH,
       Object.assign(
         {},
         this._movie,
-        this._movie.isFavorite = !this._movie.isFavorite,
+        (this._movie.isFavorite = !this._movie.isFavorite),
       ),
     );
-    this._popupComponent.getElement().scrollTop = prevPopupScrollHeight;
+    this._setScrollY(prevPopupScrollHeight);
   }
 }
-
-

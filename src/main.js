@@ -19,8 +19,17 @@ const moviesModel = new Movies();
 moviesModel.setMovies(allMovies);
 const filterModel = new FiltersModel();
 
-const moviesPresenter = new ListMoviesPresenter(siteMainContainer, moviesModel, filterModel, commentsModel);
+const moviesPresenter = new ListMoviesPresenter(
+  siteMainContainer,
+  moviesModel,
+  filterModel,
+  commentsModel,
+);
 
-const filterPresenter = new FilterPresenter(siteMainContainer, filterModel, moviesModel);
+const filterPresenter = new FilterPresenter(
+  siteMainContainer,
+  filterModel,
+  moviesModel,
+);
 filterPresenter.init();
 moviesPresenter.init(allComments);

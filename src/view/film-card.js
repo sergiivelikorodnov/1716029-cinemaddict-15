@@ -4,15 +4,30 @@ import { timeConvertor } from '../utils/common.js';
 import AbstractView from './abstract.js';
 
 const createFilmCard = (movie) => {
-  const { title, poster, totalRating, date, runTime, genres, description, isAlreadyWatched, isFavorite, isWatchList } = movie;
+  const {
+    title,
+    poster,
+    totalRating,
+    date,
+    runTime,
+    genres,
+    description,
+    isAlreadyWatched,
+    isFavorite,
+    isWatchList,
+  } = movie;
 
-  const alreadyWatchedActive = isAlreadyWatched ? 'film-card__controls-item--active' : '';
-
+  const alreadyWatchedActive = isAlreadyWatched
+    ? 'film-card__controls-item--active'
+    : '';
 
   const favoritedActive = isFavorite ? 'film-card__controls-item--active' : '';
   const watchListActive = isWatchList ? 'film-card__controls-item--active' : '';
 
-  const shortDescripton = `${description.slice(0, MAX_SHORT_DESCRIPTION_LENGTH)}...`;
+  const shortDescripton = `${description.slice(
+    0,
+    MAX_SHORT_DESCRIPTION_LENGTH,
+  )}...`;
 
   const comments = movie.comments.size;
   const releaseDate = new Date(date).getFullYear();
@@ -37,15 +52,15 @@ const createFilmCard = (movie) => {
 </article>`;
 };
 
-export default class FilmCard extends AbstractView{
+export default class FilmCard extends AbstractView {
   constructor(movie) {
     super();
     this._movie = movie;
-    this._openFilmDetailsPopupHandler = this._openFilmDetailsPopupHandler.bind(this);
+    this._openFilmDetailsPopupHandler =
+      this._openFilmDetailsPopupHandler.bind(this);
     this._addToWatchlistHandler = this._addToWatchlistHandler.bind(this);
     this._markAsWatchedHandler = this._markAsWatchedHandler.bind(this);
     this._addFavoriteHandler = this._addFavoriteHandler.bind(this);
-    //console.log(movie);
   }
 
   getTemplate() {
@@ -54,26 +69,39 @@ export default class FilmCard extends AbstractView{
 
   setOpenFilmDetailsPopupHandler(callback) {
     this._callback.openFilmDetailsPopup = callback;
-    this.getElement().addEventListener('click', this._openFilmDetailsPopupHandler);
+    this.getElement().addEventListener(
+      'click',
+      this._openFilmDetailsPopupHandler,
+    );
   }
 
   setAddToWatchlistHandler(callback) {
     this._callback.addToWatchlistClick = callback;
-    this.getElement().querySelector('.film-card__controls-item--add-to-watchlist').addEventListener('click', this._addToWatchlistHandler);
+    this.getElement()
+      .querySelector('.film-card__controls-item--add-to-watchlist')
+      .addEventListener('click', this._addToWatchlistHandler);
   }
 
   setMarkAsWatchedHandler(callback) {
     this._callback.markAsWatchedHandler = callback;
-    this.getElement().querySelector('.film-card__controls-item--mark-as-watched').addEventListener('click', this._markAsWatchedHandler);
+    this.getElement()
+      .querySelector('.film-card__controls-item--mark-as-watched')
+      .addEventListener('click', this._markAsWatchedHandler);
   }
 
   setAddFavoriteHandler(callback) {
     this._callback.addFavoriteHandler = callback;
-    this.getElement().querySelector('.film-card__controls-item--favorite').addEventListener('click', this._addFavoriteHandler);
+    this.getElement()
+      .querySelector('.film-card__controls-item--favorite')
+      .addEventListener('click', this._addFavoriteHandler);
   }
 
   _openFilmDetailsPopupHandler(evt) {
-    if (evt.target.matches('.film-card__poster') || evt.target.matches('.film-card__title') || evt.target.matches('.film-card__comments')) {
+    if (
+      evt.target.matches('.film-card__poster') ||
+      evt.target.matches('.film-card__title') ||
+      evt.target.matches('.film-card__comments')
+    ) {
       evt.preventDefault();
       this._callback.openFilmDetailsPopup();
     }

@@ -1,6 +1,6 @@
 import AbstractObserver from '../utils/abstract-observer';
 
-export default class Comments extends AbstractObserver{
+export default class Comments extends AbstractObserver {
   constructor() {
     super();
     this._comments = [];
@@ -15,19 +15,15 @@ export default class Comments extends AbstractObserver{
   }
 
   addComment(updateType, update, comment) {
-    this._comments = [
-      comment,
-      ...this._comments,
-    ];
+    this._comments = [comment, ...this._comments];
 
     this._notify(updateType, update);
   }
 
   deleteComment(updateType, commentId) {
-    console.log(1);
-
-    this._comments = this._comments.filter(((comment) => comment.id !== commentId));
+    this._comments = this._comments.filter(
+      (comment) => comment.id !== commentId,
+    );
     this._notify(updateType);
   }
-
 }

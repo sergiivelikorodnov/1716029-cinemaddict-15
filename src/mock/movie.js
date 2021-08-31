@@ -1,8 +1,4 @@
-import {
-  getRandomFloat,
-  getRandomInteger,
-  shuffle
-} from './utils.js';
+import { getRandomFloat, getRandomInteger, shuffle } from './utils.js';
 import dayjs from 'dayjs';
 
 const TEXT_DESCRIPTION =
@@ -173,7 +169,6 @@ const generateMovie = (allCommentsList) => {
   const isWatchedStatus = dueDate !== null;
 
   return {
-
     // filmInfo: {
     //   title: generateMovieTitle(),
     //   alternativeTitle: generateAltMovieTitle(),
@@ -218,9 +213,8 @@ const generateMovie = (allCommentsList) => {
     watchingDate: dueDate,
     isAlreadyWatched: isWatchedStatus,
     isFavorite: Boolean(getRandomInteger()),
-
   };
 };
 
-export const generateMovies = (allComments, moviesTotalCount) => new Array(moviesTotalCount).fill().map(() => generateMovie(allComments));
-
+export const generateMovies = (allComments, moviesTotalCount) =>
+  new Array(moviesTotalCount).fill().map(() => generateMovie(allComments));
