@@ -1,4 +1,5 @@
 import { removeObjectFromSet, timeConvertor } from '../utils/common.js';
+import { nanoid } from 'nanoid';
 import Smart from './smart.js';
 
 const EMOJI = ['smile', 'sleeping', 'puke', 'angry'];
@@ -200,13 +201,14 @@ export default class FilmDetails extends Smart {
     this._data = FilmDetails.parseMovieToData(movie);
     this._comments = this._data.commentDetails;
     this._closeFilmDetailsPopupHandler =
-      this._closeFilmDetailsPopupHandler.bind(this);
+    this._closeFilmDetailsPopupHandler.bind(this);
     this._addToWatchlistHandler = this._addToWatchlistHandler.bind(this);
     this._markAsWatchedHandler = this._markAsWatchedHandler.bind(this);
     this._addFavoriteHandler = this._addFavoriteHandler.bind(this);
     this._deleteCommentHandler = this._deleteCommentHandler.bind(this);
     this._emojiChooseHandler = this._emojiChooseHandler.bind(this);
     this._commentInputTextHandler = this._commentInputTextHandler.bind(this);
+    this._submitNewCommentHandler = this._submitNewCommentHandler.bind(this);
     this._setInnerHandlers();
   }
 
@@ -216,7 +218,7 @@ export default class FilmDetails extends Smart {
 
   /*  reset(movie) {
     console.log(movie);
-    this.updateData(
+    this.updateState(
       FilmDetails.parseMovieToData(movie),
     );
   } */
@@ -228,6 +230,7 @@ export default class FilmDetails extends Smart {
     this.setMarkAsWatchedHandler(this._callback.markAsWatchedClick);
     this.setAddFavoriteHandler(this._callback.addFavoriteClick);
     this.setDeleteCommentHandler(this._callback.deleteCommentClick);
+    this.setCommentSubmitHandler(this._callback.commentSubmit);
   }
 
   setCloseFilmDetailsPopupHandler(callback) {
@@ -288,14 +291,19 @@ export default class FilmDetails extends Smart {
 
   _emojiChooseHandler(evt) {
     evt.preventDefault();
-    this.updateData({
+
+    if (evt.target.tagName !== 'INPUT') {
+      return;
+    }
+
+    this.updateState({
       emojiData: evt.target.value,
     });
   }
 
   _commentInputTextHandler(evt) {
     evt.preventDefault();
-    this.updateData(
+    this.updateState(
       {
         commentData: evt.target.value,
       },
@@ -303,10 +311,51 @@ export default class FilmDetails extends Smart {
     );
   }
 
+  setCommentSubmitHandler(callback) {
+    this._callback.commentSubmit = callback;
+    document.addEventListener('keydown', this._submitNewCommentHandler);
+  }
+
+  _submitNewCommentHandler(evt) {
+    if (evt.key === 'Enter' && evt.ctrlKey) {
+      evt.preventDefault();
+      const id = nanoid();
+      console.log( this._data.emojiData);
+      const newComment = {
+        emotion: this._data.emojiData,
+        comment: this._data.commentData,
+        dateComment: new Date(),
+        id: id,
+        author: 'Velykorodnov',
+      };
+
+      if (newComment.emotion === undefined || newComment.comment === undefined || newComment.emotion === null || newComment.comment === null) {
+        return;
+      }
+
+      this._data.comments.add(id);
+      const addedComment = this._data.commentDetails.push(newComment);
+      //comments: id,
+      // commentDetails: newComment,
+
+      // console.log(this._data.emojiData);
+      // console.log(this._data.commentData);
+      // console.log(new Date());
+      // console.log(nanoid());
+
+      console.log( this._data);
+
+
+      this._callback.commentSubmit(FilmDetails.parseDataToMovie(addedComment));
+      newComment.emojiData = null;
+      newComment.commentData = null;
+    }
+  }
+
   _deleteCommentHandler(evt) {
     evt.preventDefault();
 
-    this.updateData({
+    this.updateState({
       comments: removeObjectFromSet(this._data.comments, evt.target.dataset.id),
       commentDetails: this._data.commentDetails.filter(
         (comment) => comment.id !== evt.target.dataset.id,
@@ -325,7 +374,7 @@ export default class FilmDetails extends Smart {
     evt.preventDefault();
     this._callback.addToWatchlistClick();
 
-    this.updateData(
+    this.updateState(
       {
         isWatchList: !this._data.isWatchList,
       },
@@ -337,7 +386,7 @@ export default class FilmDetails extends Smart {
     evt.preventDefault();
     this._callback.markAsWatchedClick();
 
-    this.updateData({
+    this.updateState({
       isAlreadyWatched: !this._data.isAlreadyWatched,
     });
   }
@@ -346,7 +395,7 @@ export default class FilmDetails extends Smart {
     evt.preventDefault();
     this._callback.addFavoriteClick();
 
-    this.updateData(
+    this.updateState(
       {
         isFavorite: !this._data.isFavorite,
       },
@@ -359,6 +408,8 @@ export default class FilmDetails extends Smart {
   }
 
   static parseDataToMovie(data) {
+    //console.log(data);
+
     data = Object.assign({}, data);
 
     delete data.emojiData;

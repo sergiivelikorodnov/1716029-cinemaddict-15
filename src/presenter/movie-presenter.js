@@ -29,6 +29,7 @@ export default class MoviePresenter {
       this._handlePopupMarkAsWatchedClick.bind(this);
     this._handlePopupFavoriteClick = this._handlePopupFavoriteClick.bind(this);
     this._handleDeleteCommentClick = this._handleDeleteCommentClick.bind(this);
+    this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._movieComponent = null;
     this._popupComponent = null;
     this._mode = Mode.CLOSED;
@@ -98,6 +99,7 @@ export default class MoviePresenter {
     this._popupComponent.setDeleteCommentHandler(
       this._handleDeleteCommentClick,
     );
+    this._popupComponent.setCommentSubmitHandler(this._handleFormSubmit);
 
     this._renderedMovieContainer =
       this._bodyElement.querySelector('.film-details');
@@ -116,16 +118,11 @@ export default class MoviePresenter {
 
     this._popupComponent = new FilmDetailsView(this._movie, this._comments);
     this._popupComponent.setCloseFilmDetailsPopupHandler(this._removePopup);
-    this._popupComponent.setAddToWatchlistHandler(
-      this._handlePopupAddToWatchlistClick,
-    );
-    this._popupComponent.setMarkAsWatchedHandler(
-      this._handlePopupMarkAsWatchedClick,
-    );
+    this._popupComponent.setAddToWatchlistHandler(this._handlePopupAddToWatchlistClick);
+    this._popupComponent.setMarkAsWatchedHandler(this._handlePopupMarkAsWatchedClick);
     this._popupComponent.setAddFavoriteHandler(this._handlePopupFavoriteClick);
-    this._popupComponent.setDeleteCommentHandler(
-      this._handleDeleteCommentClick,
-    );
+    this._popupComponent.setDeleteCommentHandler(this._handleDeleteCommentClick);
+    this._popupComponent.setCommentSubmitHandler(this._handleFormSubmit);
 
     this._renderedMovieContainer =
       this._bodyElement.querySelector('.film-details');
@@ -145,9 +142,7 @@ export default class MoviePresenter {
       UpdateType.PATCH,
       Object.assign({}, this._movie, {
         comments: removeObjectFromSet(this._movie.comments, commentId),
-        commentDetails: this._movie.commentDetails.filter(
-          (comment) => comment.id !== commentId,
-        ),
+        commentDetails: this._movie.commentDetails.filter((comment) => comment.id !== commentId),
       }),
       commentId,
     );
@@ -267,6 +262,20 @@ export default class MoviePresenter {
         this._movie,
         (this._movie.isFavorite = !this._movie.isFavorite),
       ),
+    );
+    this._setScrollY(prevPopupScrollHeight);
+  }
+
+  _handleFormSubmit(newComment) {
+    const prevPopupScrollHeight = this._getScrollY();
+
+    //console.log(newComment);
+
+    this._changeData(
+      UserAction.ADD_COMMENT,
+      UpdateType.PATCH,
+      this._movie,
+      newComment,
     );
     this._setScrollY(prevPopupScrollHeight);
   }
