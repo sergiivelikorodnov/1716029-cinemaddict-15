@@ -8,17 +8,14 @@ const EMOJI = [
   'angry',
 ];
 
-const createFilmDetails = (data) => {
-  //console.log(data);
 
-
-  const createEmojiTemplate = (choosedDataEmoji) => Object.values(EMOJI).map((emotion) => (`<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emotion}" value="${emotion}"  ${emotion === choosedDataEmoji ? 'checked' : ''}>
+const createEmojiTemplate = (choosedDataEmoji) => Object.values(EMOJI).map((emotion) => (`<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emotion}" value="${emotion}"  ${emotion === choosedDataEmoji ? 'checked' : ''}>
     <label class="film-details__emoji-label" for="emoji-${emotion}">
       <img src="./images/emoji/${emotion}.png" width="30" height="30" alt="emoji">
     </label>`)).join('');
 
 
-  const createCommentTemplate = (allComments) =>Object.values(allComments).map(({id, author, comment, emotion, dateComment}) => `<li class="film-details__comment" id="${id}">
+const createCommentTemplate = (allComments) =>Object.values(allComments).map(({id, author, comment, emotion, dateComment}) => `<li class="film-details__comment" id="${id}">
     <span class="film-details__comment-emoji">
       <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">
     </span>
@@ -31,6 +28,9 @@ const createFilmDetails = (data) => {
       </p>
     </div>
   </li>`).join('');
+
+const createFilmDetails = (data) => {
+  //console.log(data);
 
 
   const {
@@ -194,12 +194,19 @@ export default class FilmDetails extends Smart {
     return createFilmDetails(this._data);
   }
 
+  /*  reset(movie) {
+    console.log(movie);
+    this.updateData(
+      FilmDetails.parseMovieToData(movie),
+    );
+  } */
+
   restoreHandlers() {
     this._setInnerHandlers();
     this.setCloseFilmDetailsPopupHandler(this._callback.closeFilmDetailsPopup);
-    this.setAddToWatchlistHandler(this._callback.addToWatchlist);
-    this.setMarkAsWatchedHandler(this._callback.markAsWatchedHandler);
-    this.setAddFavoriteHandler(this._callback.addFavoriteHandler);
+    this.setAddToWatchlistHandler(this._callback.addToWatchlistClick);
+    this.setMarkAsWatchedHandler(this._callback.markAsWatchedClick);
+    this.setAddFavoriteHandler(this._callback.addFavoriteClick);
   }
 
   setCloseFilmDetailsPopupHandler(callback) {
@@ -208,17 +215,17 @@ export default class FilmDetails extends Smart {
   }
 
   setAddToWatchlistHandler(callback) {
-    this._callback.addToWatchlist = callback;
+    this._callback.addToWatchlistClick = callback;
     this.getElement().querySelector('.film-details__control-button--watchlist').addEventListener('click', this._addToWatchlistHandler);
   }
 
   setMarkAsWatchedHandler(callback) {
-    this._callback.markAsWatchedHandler = callback;
+    this._callback.markAsWatchedClick= callback;
     this.getElement().querySelector('.film-details__control-button--watched').addEventListener('click', this._markAsWatchedHandler);
   }
 
   setAddFavoriteHandler(callback) {
-    this._callback.addFavoriteHandler = callback;
+    this._callback.addFavoriteClick = callback;
     this.getElement().querySelector('.film-details__control-button--favorite').addEventListener('click', this._addFavoriteHandler);
   }
 
@@ -256,7 +263,7 @@ export default class FilmDetails extends Smart {
 
   _addToWatchlistHandler(evt) {
     evt.preventDefault();
-    this._callback.addToWatchlist();
+    this._callback.addToWatchlistClick();
 
     this.updateData({
       isWatchList: !this._data.isWatchList,
@@ -265,7 +272,7 @@ export default class FilmDetails extends Smart {
 
   _markAsWatchedHandler(evt) {
     evt.preventDefault();
-    this._callback.markAsWatchedHandler();
+    this._callback.markAsWatchedClick();
 
     this.updateData({
       isAlreadyWatched: !this._data.isAlreadyWatched,
@@ -274,11 +281,11 @@ export default class FilmDetails extends Smart {
 
   _addFavoriteHandler(evt) {
     evt.preventDefault();
-    this._callback.addFavoriteHandler();
+    this._callback.addFavoriteClick();
 
     this.updateData({
       isFavorite: !this._data.isFavorite,
-    });
+    }, true);
   }
 
   static parseMovieToData(movie) {

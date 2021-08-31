@@ -1,5 +1,5 @@
 import { remove, render, RenderPosition } from '../utils/render.js';
-import { MOVIES_COUNT_PER_STEP, SortType, UpdateType, UserAction } from '../const.js';
+import { MOVIES_COUNT_PER_STEP, SortType, UpdateType, UserAction, FilterType } from '../const.js';
 // import { sortTopMoviesList, sortMostCommentedMoviesList } from '../utils/sort.js';
 import ListMoviesView from '../view/list-movies.js';
 import MoviesContainerView from '../view/movies-container.js';
@@ -21,7 +21,8 @@ export default class ListMoviesPresenter {
     this._filtersModel = filtersModel;
     this._siteMainContainer = siteMainContainer;
     this._renderedMoviesCount = MOVIES_COUNT_PER_STEP;
-    this._noFilmComponent = new NoFilmView();
+    this._filterType = FilterType.ALL;
+    this._noFilmComponent = null;
     this._moviesContainer = new MoviesContainerView();
     this._listMoviesComponent = new ListMoviesView();
     this._showMoreComponent = null;
@@ -54,9 +55,9 @@ export default class ListMoviesPresenter {
 
 
   _getMovies() {
-    const filterType = this._filtersModel.getFilter();
+    this._filterType = this._filtersModel.getFilter();
     const movies = this._moviesModel.getMovies().slice();
-    const filteredMovies = filter[filterType](movies);
+    const filteredMovies = filter[this._filterType](movies);
 
     switch (this._currentSortType) {
       case SortType.BY_DATE:
@@ -84,13 +85,9 @@ export default class ListMoviesPresenter {
   _handleModelEvent(updateType, data) {
     switch (updateType) {
       case UpdateType.PATCH:
-        //console.log(this._moviePresenter.get(data.id));
-        //console.log(data);
         this._moviePresenter.get(data.id).init(data);
         break;
       case UpdateType.MINOR:
-        //console.log(data);
-
         this._clearMovieList();
         this._renderAllMovies();
         break;
@@ -102,6 +99,7 @@ export default class ListMoviesPresenter {
   }
 
   _renderNoMovies() {
+    this._noFilmComponent = new NoFilmView(this._filterType);
     render(this._listMoviesComponent, this._noFilmComponent);
   }
 
@@ -138,8 +136,11 @@ export default class ListMoviesPresenter {
     this._moviePresenter.clear();
 
     remove(this._siteSortComponent);
-    remove(this._noFilmComponent);
     remove(this._showMoreComponent);
+
+    if (this._noFilmComponent) {
+      remove(this._noFilmComponent);
+    }
 
     if (resetRenderedMoviesCount) {
       this._renderedTaskCount = MOVIES_COUNT_PER_STEP;

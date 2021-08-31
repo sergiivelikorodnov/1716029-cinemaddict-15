@@ -32,11 +32,7 @@ export default class MoviePresenter {
     const prevMovieComponent = this._movieComponent;
     const prevPopupComponent = this._popupComponent;
     this._movieComponent = new FilmCardView(movie);
-    // this._popupComponent = new FilmDetailsView(this._movie);
-    // this._popupComponent.setCloseFilmDetailsPopupHandler(this._removePopup);
-    // this._popupComponent.setAddToWatchlistHandler(this._handlePopupAddToWatchlistClick);
-    // this._popupComponent.setMarkAsWatchedHandler(this._handlePopupMarkAsWatchedClick);
-    // this._popupComponent.setAddFavoriteHandler(this._handlePopupFavoriteClick);
+
 
     this._movieComponent.setOpenFilmDetailsPopupHandler(this._openPopupHandler);
     this._movieComponent.setAddToWatchlistHandler(this._handleAddToWatchlistClick);
@@ -49,18 +45,22 @@ export default class MoviePresenter {
     }
 
 
-    if (this._listMoviesComponent.contains(prevMovieComponent.getElement())) {
+    //if (this._listMoviesComponent.contains(prevMovieComponent.getElement())) {
 
-      replace(this._movieComponent, prevMovieComponent);
-      this._movieComponent.setOpenFilmDetailsPopupHandler(this._openPopupHandler);
-    }
+    replace(this._movieComponent, prevMovieComponent);
+    // this._movieComponent.setOpenFilmDetailsPopupHandler(this._openPopupHandler);
+    // }
 
     if (prevPopupComponent) {
       replace(this._popupComponent, prevPopupComponent);
     }
 
+    if (this._mode === Mode.OPENED) {
+      this._rerenderPopup(this._movie);
+    }
+
     remove(prevMovieComponent);
-    remove(prevPopupComponent);
+    //remove(prevPopupComponent);
   }
 
   removeCardMovie() {
@@ -73,14 +73,17 @@ export default class MoviePresenter {
     }
   }
 
-  _openPopupHandler() {
+  _rerenderPopup(movie) {
     this._changeMode();
     this._mode = Mode.OPENED;
-    this._popupComponent = new FilmDetailsView(this._movie);
+
+    this._popupComponent = new FilmDetailsView(movie);
     this._popupComponent.setCloseFilmDetailsPopupHandler(this._removePopup);
     this._popupComponent.setAddToWatchlistHandler(this._handlePopupAddToWatchlistClick);
     this._popupComponent.setMarkAsWatchedHandler(this._handlePopupMarkAsWatchedClick);
     this._popupComponent.setAddFavoriteHandler(this._handlePopupFavoriteClick);
+    this._handleModelEvent = this._handleModelEvent.bind(this);
+
     this._renderedMovieContainer = this._bodyElement.querySelector('.film-details');
     if (this._renderedMovieContainer !== null) {
       this._bodyElement.removeChild(this._renderedMovieContainer);
@@ -89,6 +92,36 @@ export default class MoviePresenter {
     render(this._bodyElement, this._popupComponent);
     this._bodyElement.classList.add('hide-overflow');
     document.addEventListener('keydown', this._escKeyDownHandler);
+  }
+
+  _openPopupHandler() {
+    this._changeMode();
+    this._mode = Mode.OPENED;
+
+    this._popupComponent = new FilmDetailsView(this._movie);
+    this._popupComponent.setCloseFilmDetailsPopupHandler(this._removePopup);
+    this._popupComponent.setAddToWatchlistHandler(this._handlePopupAddToWatchlistClick);
+    this._popupComponent.setMarkAsWatchedHandler(this._handlePopupMarkAsWatchedClick);
+    this._popupComponent.setAddFavoriteHandler(this._handlePopupFavoriteClick);
+    this._handleModelEvent = this._handleModelEvent.bind(this);
+
+    this._renderedMovieContainer = this._bodyElement.querySelector('.film-details');
+    if (this._renderedMovieContainer !== null) {
+      this._bodyElement.removeChild(this._renderedMovieContainer);
+    }
+
+    render(this._bodyElement, this._popupComponent);
+    this._bodyElement.classList.add('hide-overflow');
+    document.addEventListener('keydown', this._escKeyDownHandler);
+  }
+
+  _handleModelEvent() {
+    const prevPopupScrollHeight = this._popupComponent.getElement().scrollHeight;
+
+    this._removePopup();
+    this._openPopupHandler();
+
+    this._popupComponent.getElement().scrollTop = prevPopupScrollHeight;
   }
 
   _removePopup() {
@@ -102,6 +135,7 @@ export default class MoviePresenter {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
       this._bodyElement.classList.remove('hide-overflow');
+      //this._popupComponent.reset(this._movie);
       this._removePopup();
     }
   }
