@@ -1,4 +1,4 @@
-import { timeConvertor } from '../utils/common.js';
+import { removeObjectFromSet, timeConvertor } from '../utils/common.js';
 import Smart from './smart.js';
 
 const EMOJI = [
@@ -15,7 +15,7 @@ const createEmojiTemplate = (choosedDataEmoji) => Object.values(EMOJI).map((emot
     </label>`)).join('');
 
 
-const createCommentTemplate = (allComments) =>Object.values(allComments).map(({id, author, comment, emotion, dateComment}) => `<li class="film-details__comment" id="${id}">
+const createCommentTemplate = (allComments) =>Object.values(allComments).map(({id, author, comment, emotion, dateComment}) => `<li class="film-details__comment" data-id="${id}">
     <span class="film-details__comment-emoji">
       <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">
     </span>
@@ -24,7 +24,7 @@ const createCommentTemplate = (allComments) =>Object.values(allComments).map(({i
       <p class="film-details__comment-info">
         <span class="film-details__comment-author">${author}</span>
         <span class="film-details__comment-day">${dateComment}</span>
-        <button class="film-details__comment-delete">Delete</button>
+        <button class="film-details__comment-delete" data-id="${id}">Delete</button>
       </p>
     </div>
   </li>`).join('');
@@ -183,7 +183,7 @@ export default class FilmDetails extends Smart {
     this._addToWatchlistHandler = this._addToWatchlistHandler.bind(this);
     this._markAsWatchedHandler = this._markAsWatchedHandler.bind(this);
     this._addFavoriteHandler = this._addFavoriteHandler.bind(this);
-    this._removeCommentHandler = this._removeCommentHandler.bind(this);
+    this._deleteCommentHandler = this._deleteCommentHandler.bind(this);
     this._emojiChooseHandler = this._emojiChooseHandler.bind(this);
     this._commentInputTextHandler = this._commentInputTextHandler.bind(this);
     this._setInnerHandlers();
@@ -207,6 +207,7 @@ export default class FilmDetails extends Smart {
     this.setAddToWatchlistHandler(this._callback.addToWatchlistClick);
     this.setMarkAsWatchedHandler(this._callback.markAsWatchedClick);
     this.setAddFavoriteHandler(this._callback.addFavoriteClick);
+    this.setDeleteCommentHandler(this._callback.deleteCommentClick);
   }
 
   setCloseFilmDetailsPopupHandler(callback) {
@@ -229,12 +230,22 @@ export default class FilmDetails extends Smart {
     this.getElement().querySelector('.film-details__control-button--favorite').addEventListener('click', this._addFavoriteHandler);
   }
 
+  setDeleteCommentHandler(callback) {
+    this._callback.deleteCommentClick = callback;
+    // this.getElement().querySelectorAll('.film-details__comment-delete').forEach((deleteComment) =>
+    //   deleteComment.addEventListener('click', this._deleteCommentHandler));
+    const commentsElement = this.getElement().querySelectorAll('.film-details__comment');
+    commentsElement.forEach((element) => {
+      element.querySelector('.film-details__comment-delete').addEventListener('click', this._deleteCommentClickHandler);
+    });
+  }
+
   _setInnerHandlers() {
     this.getElement().querySelectorAll('.film-details__emoji-item').forEach((emojiItem) =>
       emojiItem.addEventListener('click', this._emojiChooseHandler));
     this.getElement().querySelector('.film-details__comment-input').addEventListener('input', this._commentInputTextHandler);
     this.getElement().querySelectorAll('.film-details__comment-delete').forEach((deleteComment) =>
-      deleteComment.addEventListener('click', this._removeCommentHandler));
+      deleteComment.addEventListener('click', this._deleteCommentHandler));
   }
 
   _emojiChooseHandler(evt) {
@@ -251,9 +262,16 @@ export default class FilmDetails extends Smart {
     }, true);
   }
 
-  _removeCommentHandler(evt) {
+  _deleteCommentHandler(evt) {
     evt.preventDefault();
 
+
+    this.updateData({
+      comments: removeObjectFromSet(this._data.comments, evt.target.dataset.id),
+      commentDetails: this._data.commentDetails.filter((comment) => comment.id !== evt.target.dataset.id),
+    });
+
+    this._callback.deleteCommentClick(evt.target.dataset.id);
   }
 
   _closeFilmDetailsPopupHandler(evt) {
@@ -267,7 +285,7 @@ export default class FilmDetails extends Smart {
 
     this.updateData({
       isWatchList: !this._data.isWatchList,
-    });
+    }, true);
   }
 
   _markAsWatchedHandler(evt) {

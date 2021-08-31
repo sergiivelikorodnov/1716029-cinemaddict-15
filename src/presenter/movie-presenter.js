@@ -1,4 +1,5 @@
 import { UpdateType, UserAction } from '../const.js';
+import { removeObjectFromSet } from '../utils/common.js';
 import { remove, render, replace } from '../utils/render.js';
 import FilmCardView from '../view/film-card.js';
 import FilmDetailsView from '../view/film-details.js';
@@ -22,6 +23,7 @@ export default class MoviePresenter {
     this._handlePopupAddToWatchlistClick = this._handlePopupAddToWatchlistClick.bind(this);
     this._handlePopupMarkAsWatchedClick = this._handlePopupMarkAsWatchedClick.bind(this);
     this._handlePopupFavoriteClick = this._handlePopupFavoriteClick.bind(this);
+    this._handleDeleteCommentClick = this._handleDeleteCommentClick.bind(this);
     this._movieComponent = null;
     this._popupComponent = null;
     this._mode = Mode.CLOSED;
@@ -82,6 +84,7 @@ export default class MoviePresenter {
     this._popupComponent.setAddToWatchlistHandler(this._handlePopupAddToWatchlistClick);
     this._popupComponent.setMarkAsWatchedHandler(this._handlePopupMarkAsWatchedClick);
     this._popupComponent.setAddFavoriteHandler(this._handlePopupFavoriteClick);
+    this._popupComponent.setDeleteCommentHandler(this._handleDeleteCommentClick);
     this._handleModelEvent = this._handleModelEvent.bind(this);
 
     this._renderedMovieContainer = this._bodyElement.querySelector('.film-details');
@@ -98,11 +101,12 @@ export default class MoviePresenter {
     this._changeMode();
     this._mode = Mode.OPENED;
 
-    this._popupComponent = new FilmDetailsView(this._movie);
+    this._popupComponent = new FilmDetailsView(this._movie, this._comments);
     this._popupComponent.setCloseFilmDetailsPopupHandler(this._removePopup);
     this._popupComponent.setAddToWatchlistHandler(this._handlePopupAddToWatchlistClick);
     this._popupComponent.setMarkAsWatchedHandler(this._handlePopupMarkAsWatchedClick);
     this._popupComponent.setAddFavoriteHandler(this._handlePopupFavoriteClick);
+    this._popupComponent.setDeleteCommentHandler(this._handleDeleteCommentClick);
     this._handleModelEvent = this._handleModelEvent.bind(this);
 
     this._renderedMovieContainer = this._bodyElement.querySelector('.film-details');
@@ -115,7 +119,27 @@ export default class MoviePresenter {
     document.addEventListener('keydown', this._escKeyDownHandler);
   }
 
+
+  _handleDeleteCommentClick(commentId) {
+    this._changeData(
+      UserAction.DELETE_COMMENT,
+      UpdateType.PATCH,
+      Object.assign(
+        {},
+        this._movie,
+        {
+          comments: removeObjectFromSet(this._movie.comments, commentId),
+          commentDetails: this._movie.commentDetails.filter((comment) => comment.id !== commentId),
+        },
+      ),
+      commentId,
+    );
+  }
+
+
   _handleModelEvent() {
+    console.log(1);
+
     const prevPopupScrollHeight = this._popupComponent.getElement().scrollHeight;
 
     this._removePopup();
