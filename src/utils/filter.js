@@ -1,5 +1,4 @@
 import { FilterType } from '../const.js';
-// import { sortMoviesByDate, sortMoviesByRating } from './sort.js';
 
 export const filter = {
   [FilterType.ALL]: (movies) => movies,

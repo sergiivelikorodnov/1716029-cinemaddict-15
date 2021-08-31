@@ -117,8 +117,6 @@ export default class ListMoviesPresenter {
   }
 
   _movieWithComments(movie) {
-    //console.log(movie);
-
     movie = Object.assign({}, movie, {
       commentDetails: this._commentsModel._comments.filter((element) =>
         movie.comments.has(element.id),

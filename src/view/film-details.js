@@ -1,6 +1,7 @@
-import { removeObjectFromSet, timeConvertor } from '../utils/common.js';
+import { humanTime, removeObjectFromSet, timeConvertor } from '../utils/common.js';
 import { nanoid } from 'nanoid';
 import Smart from './smart.js';
+import dayjs from 'dayjs';
 
 const EMOJI = ['smile', 'sleeping', 'puke', 'angry'];
 
@@ -35,7 +36,7 @@ const createCommentTemplate = (allComments) =>
       <p class="film-details__comment-text">${comment}</p>
       <p class="film-details__comment-info">
         <span class="film-details__comment-author">${author}</span>
-        <span class="film-details__comment-day">${dateComment}</span>
+        <span class="film-details__comment-day">${humanTime(dateComment)}</span>
         <button class="film-details__comment-delete" data-id="${id}">Delete</button>
       </p>
     </div>
@@ -216,13 +217,6 @@ export default class FilmDetails extends Smart {
     return createFilmDetails(this._data);
   }
 
-  /*  reset(movie) {
-    console.log(movie);
-    this.updateState(
-      FilmDetails.parseMovieToData(movie),
-    );
-  } */
-
   restoreHandlers() {
     this._setInnerHandlers();
     this.setCloseFilmDetailsPopupHandler(this._callback.closeFilmDetailsPopup);
@@ -320,11 +314,11 @@ export default class FilmDetails extends Smart {
     if (evt.key === 'Enter' && evt.ctrlKey) {
       evt.preventDefault();
       const id = nanoid();
-      console.log( this._data.emojiData);
+
       const newComment = {
         emotion: this._data.emojiData,
         comment: this._data.commentData,
-        dateComment: new Date(),
+        dateComment: dayjs(),
         id: id,
         author: 'Velykorodnov',
       };
@@ -335,16 +329,6 @@ export default class FilmDetails extends Smart {
 
       this._data.comments.add(id);
       const addedComment = this._data.commentDetails.push(newComment);
-      //comments: id,
-      // commentDetails: newComment,
-
-      // console.log(this._data.emojiData);
-      // console.log(this._data.commentData);
-      // console.log(new Date());
-      // console.log(nanoid());
-
-      console.log( this._data);
-
 
       this._callback.commentSubmit(FilmDetails.parseDataToMovie(addedComment));
       newComment.emojiData = null;
@@ -408,7 +392,6 @@ export default class FilmDetails extends Smart {
   }
 
   static parseDataToMovie(data) {
-    //console.log(data);
 
     data = Object.assign({}, data);
 

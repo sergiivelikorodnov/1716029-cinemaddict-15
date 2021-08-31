@@ -169,29 +169,6 @@ const generateMovie = (allCommentsList) => {
   const isWatchedStatus = dueDate !== null;
 
   return {
-    // filmInfo: {
-    //   title: generateMovieTitle(),
-    //   alternativeTitle: generateAltMovieTitle(),
-    //   totalRating: generateRating(),
-    //   poster: generateMoviePoster(),
-    //   ageRating: generateAgeRating(),
-    //   director: generateDirector(),
-    //   writers: generateScreenWriters(),
-    //   actors: generateActors(),
-    //   release: {
-    //     date: generateDateRelease(),
-    //     country: generateCountry(),
-    //   },
-    //   runTime: generateRuntime(),
-    //   genres: generateGenres(),
-    //   description: generateMovieDescription(textGenerator),
-    // },
-    // userDetails: {
-    //   isWatchList: Boolean(getRandomInteger()),
-    //   watchingDate: dueDate,
-    //   isAlreadyWatched: isWatchedStatus,
-    //   isFavorite: Boolean(getRandomInteger()),
-    // },
     id: generateID(),
     comments: generateComments(allCommentsList),
     title: generateMovieTitle(),

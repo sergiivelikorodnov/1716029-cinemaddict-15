@@ -55,11 +55,7 @@ export default class MoviePresenter {
       return;
     }
 
-    //if (this._listMoviesComponent.contains(prevMovieComponent.getElement())) {
-
     replace(this._movieComponent, prevMovieComponent);
-    // this._movieComponent.setOpenFilmDetailsPopupHandler(this._openPopupHandler);
-    // }
 
     if (prevPopupComponent) {
       replace(this._popupComponent, prevPopupComponent);
@@ -70,7 +66,6 @@ export default class MoviePresenter {
     }
 
     remove(prevMovieComponent);
-    //remove(prevPopupComponent);
   }
 
   removeCardMovie() {
@@ -160,7 +155,6 @@ export default class MoviePresenter {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
       this._bodyElement.classList.remove('hide-overflow');
-      //this._popupComponent.reset(this._movie);
       this._removePopup();
     }
   }
@@ -268,8 +262,6 @@ export default class MoviePresenter {
 
   _handleFormSubmit(newComment) {
     const prevPopupScrollHeight = this._getScrollY();
-
-    //console.log(newComment);
 
     this._changeData(
       UserAction.ADD_COMMENT,
