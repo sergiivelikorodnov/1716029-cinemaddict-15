@@ -85,7 +85,6 @@ export default class MoviePresenter {
     this._popupComponent.setMarkAsWatchedHandler(this._handlePopupMarkAsWatchedClick);
     this._popupComponent.setAddFavoriteHandler(this._handlePopupFavoriteClick);
     this._popupComponent.setDeleteCommentHandler(this._handleDeleteCommentClick);
-    this._handleModelEvent = this._handleModelEvent.bind(this);
 
     this._renderedMovieContainer = this._bodyElement.querySelector('.film-details');
     if (this._renderedMovieContainer !== null) {
@@ -107,7 +106,6 @@ export default class MoviePresenter {
     this._popupComponent.setMarkAsWatchedHandler(this._handlePopupMarkAsWatchedClick);
     this._popupComponent.setAddFavoriteHandler(this._handlePopupFavoriteClick);
     this._popupComponent.setDeleteCommentHandler(this._handleDeleteCommentClick);
-    this._handleModelEvent = this._handleModelEvent.bind(this);
 
     this._renderedMovieContainer = this._bodyElement.querySelector('.film-details');
     if (this._renderedMovieContainer !== null) {
@@ -121,6 +119,7 @@ export default class MoviePresenter {
 
 
   _handleDeleteCommentClick(commentId) {
+    const prevPopupScrollHeight = this._popupComponent.getElement().scrollTop;
     this._changeData(
       UserAction.DELETE_COMMENT,
       UpdateType.PATCH,
@@ -134,17 +133,6 @@ export default class MoviePresenter {
       ),
       commentId,
     );
-  }
-
-
-  _handleModelEvent() {
-    console.log(1);
-
-    const prevPopupScrollHeight = this._popupComponent.getElement().scrollHeight;
-
-    this._removePopup();
-    this._openPopupHandler();
-
     this._popupComponent.getElement().scrollTop = prevPopupScrollHeight;
   }
 
@@ -171,6 +159,7 @@ export default class MoviePresenter {
   }
 
   _handleAddToWatchlistClick() {
+    const prevPopupScrollHeight = this._popupComponent.getElement().scrollTop;
     this._changeData(
       UserAction.UPDATE_MOVIE,
       this._mode === Mode.CLOSED ? UpdateType.MINOR : UpdateType.PATCH,
@@ -183,9 +172,11 @@ export default class MoviePresenter {
         },
       ),
     );
+    this._popupComponent.getElement().scrollTop = prevPopupScrollHeight;
   }
 
   _handleMarkAsWatchedClick() {
+    const prevPopupScrollHeight = this._popupComponent.getElement().scrollTop;
     this._changeData(
       UserAction.UPDATE_MOVIE,
       this._mode === Mode.CLOSED ? UpdateType.MINOR : UpdateType.PATCH,
@@ -197,9 +188,11 @@ export default class MoviePresenter {
         },
       ),
     );
+    this._popupComponent.getElement().scrollTop = prevPopupScrollHeight;
   }
 
   _handleFavoriteClick() {
+    const prevPopupScrollHeight = this._popupComponent.getElement().scrollTop;
     this._changeData(
       UserAction.UPDATE_MOVIE,
       this._mode === Mode.CLOSED ? UpdateType.MINOR : UpdateType.PATCH,
@@ -209,9 +202,11 @@ export default class MoviePresenter {
         this._movie.isFavorite = !this._movie.isFavorite,
       ),
     );
+    this._popupComponent.getElement().scrollTop = prevPopupScrollHeight;
   }
 
   _handlePopupAddToWatchlistClick() {
+    const prevPopupScrollHeight = this._popupComponent.getElement().scrollTop;
     this._changeData(
       UserAction.UPDATE_MOVIE,
       UpdateType.PATCH,
@@ -221,9 +216,11 @@ export default class MoviePresenter {
         this._movie.isWatchList = !this._movie.isWatchList,
       ),
     );
+    this._popupComponent.getElement().scrollTop = prevPopupScrollHeight;
   }
 
   _handlePopupMarkAsWatchedClick() {
+    const prevPopupScrollHeight = this._popupComponent.getElement().scrollTop;
     this._changeData(
       UserAction.UPDATE_MOVIE,
       UpdateType.PATCH,
@@ -233,9 +230,11 @@ export default class MoviePresenter {
         this._movie.isAlreadyWatched = !this._movie.isAlreadyWatched,
       ),
     );
+    this._popupComponent.getElement().scrollTop = prevPopupScrollHeight;
   }
 
   _handlePopupFavoriteClick() {
+    const prevPopupScrollHeight = this._popupComponent.getElement().scrollTop;
     this._changeData(
       UserAction.UPDATE_MOVIE,
       UpdateType.PATCH,
@@ -245,6 +244,7 @@ export default class MoviePresenter {
         this._movie.isFavorite = !this._movie.isFavorite,
       ),
     );
+    this._popupComponent.getElement().scrollTop = prevPopupScrollHeight;
   }
 }
 
