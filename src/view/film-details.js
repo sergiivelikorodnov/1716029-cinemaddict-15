@@ -1,4 +1,5 @@
 import { humanTime, removeObjectFromSet, timeConvertor } from '../utils/common.js';
+import he from 'he';
 import { nanoid } from 'nanoid';
 import Smart from './smart.js';
 import dayjs from 'dayjs';
@@ -33,7 +34,7 @@ const createCommentTemplate = (allComments) =>
       <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">
     </span>
     <div>
-      <p class="film-details__comment-text">${comment}</p>
+      <p class="film-details__comment-text">${he.encode(comment)}</p>
       <p class="film-details__comment-info">
         <span class="film-details__comment-author">${author}</span>
         <span class="film-details__comment-day">${humanTime(dateComment)}</span>
@@ -181,8 +182,7 @@ const createFilmDetails = (data) => {
           </div>
 
           <label class="film-details__comment-label">
-            <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"> ${
-  commentData ? `${commentData}` : ''
+            <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"> ${ commentData ? `${commentData}` : ''
 } </textarea>
           </label>
 
