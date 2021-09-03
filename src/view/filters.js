@@ -4,13 +4,8 @@ import { FilterType } from '../const.js';
 const createFilterItemTemplate = (filter, currentFilterType) => {
   const { type, name, count } = filter;
 
-  return `<a href="#${type}" class="main-navigation__item ${
-    currentFilterType === type ? 'main-navigation__item--active' : ''
-  }" data-filter-type="${type}">${name} ${
-    type !== FilterType.ALL
-      ? `<span class="main-navigation__item-count">${count}</span>`
-      : ''
-  }</a>`;
+  return `<a href="#${type}" class="main-navigation__item ${currentFilterType === type ? 'main-navigation__item--active' : ''}"
+    data-filter-type="${type}"  data-menu="${type}" >${name} ${type !== FilterType.ALL ? `<span class="main-navigation__item-count">${count}</span>` : ''}</a>`;
 };
 
 const createSiteMenuFiltersTemplate = (filterItems, currentFilterType) => {
@@ -18,12 +13,9 @@ const createSiteMenuFiltersTemplate = (filterItems, currentFilterType) => {
     .map((filter) => createFilterItemTemplate(filter, currentFilterType))
     .join('');
 
-  return `<nav class="main-navigation">
-  <div class="main-navigation__items">
+  return `<div class="main-navigation__items">
     ${filterItemsTemplate}
-  </div>
-  <a href="#stats" class="main-navigation__additional">Stats</a>
-</nav>`;
+  </div>`;
 };
 
 export default class SiteMenuFiltersTemplate extends AbstractView {

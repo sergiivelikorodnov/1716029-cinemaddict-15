@@ -1,14 +1,13 @@
 import FilterView from '../view/filters.js';
 import { FilterType, UpdateType } from '../const.js';
 import { filter } from '../utils/filter.js';
-import { render, replace, remove } from '../utils/render.js';
+import { render, replace, remove, RenderPosition } from '../utils/render.js';
 
 export default class Filter {
   constructor(filterContainer, filterModel, moviesModel) {
     this._filterContainer = filterContainer;
     this._filterModel = filterModel;
     this._moviesModel = moviesModel;
-
     this._filterComponent = null;
 
     this._handleModelEvent = this._handleModelEvent.bind(this);
@@ -31,7 +30,7 @@ export default class Filter {
     );
 
     if (prevFilterComponent === null) {
-      render(this._filterContainer, this._filterComponent);
+      render(this._filterContainer, this._filterComponent, RenderPosition.AFTERBEGIN);
       return;
     }
     replace(this._filterComponent, prevFilterComponent);
@@ -56,7 +55,7 @@ export default class Filter {
     return [
       {
         type: FilterType.ALL,
-        name: 'All',
+        name: 'All movies',
         count: filter[FilterType.ALL](movies).length,
       },
       {

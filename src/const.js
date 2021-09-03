@@ -25,3 +25,19 @@ export const FilterType = {
   HISTORY: 'history',
   FAVORITES: 'favorites',
 };
+
+export const StatsFilterType = {
+  ALL: 'all-time',
+  TODAY: 'today',
+  WEEK: 'week',
+  MONTH: 'month',
+  YEAR: 'year',
+};
+
+export const MenuItem = {
+  ALL: 'all',
+  WATCHLIST: 'watchlist',
+  HISTORY: 'history',
+  FAVORITES: 'favorites',
+  STATISTICS: 'statistics',
+};

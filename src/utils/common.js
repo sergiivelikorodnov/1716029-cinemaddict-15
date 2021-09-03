@@ -7,6 +7,12 @@ export const timeConvertor = (totalMinutes) => {
   return `${hours}h ${minutes} min`;
 };
 
+export const minutesToHours = (totalMinutes) => {
+  const hours = Math.floor(totalMinutes / MINUTES_IN_HOUR);
+  const minutes = totalMinutes % MINUTES_IN_HOUR;
+  return { hours, minutes};
+};
+
 export const removeObjectFromSet = (set, obj) =>
   new Set([...set].filter((el) => JSON.stringify(el) !== JSON.stringify(obj)));
 

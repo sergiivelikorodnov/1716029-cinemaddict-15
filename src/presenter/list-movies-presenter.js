@@ -37,25 +37,34 @@ export default class ListMoviesPresenter {
     this._siteSortComponent = null;
     this._headerProfileComponent = new HeaderProfileView();
     this._moviePresenter = new Map();
-    this._handleShowMoreButtonClick =
-      this._handleShowMoreButtonClick.bind(this);
+    this._handleShowMoreButtonClick = this._handleShowMoreButtonClick.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
     this._handlePopupMode = this._handlePopupMode.bind(this);
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
-    this._moviesModel.addObserver(this._handleModelEvent);
-    this._filtersModel.addObserver(this._handleModelEvent);
     this._currentSortType = SortType.DEFAULT;
+    this._renderfooterStatistics();
   }
 
   init() {
     render(this._siteMainContainer, this._moviesContainer);
     render(this._moviesContainer, this._listMoviesComponent);
+    this._moviesModel.addObserver(this._handleModelEvent);
+    this._filtersModel.addObserver(this._handleModelEvent);
 
     this._renderHeaderProfile();
     this._renderAllMovies();
-    this._renderfooterStatistics();
+
   }
+
+  hideMoviesList() {
+    this._clearMovieList({ resetRenderedMoviesCount: true, resetSortType: true });
+    remove(this._listMoviesComponent);
+
+    this._moviesModel.removeObserver(this._handleModelEvent);
+    this._filtersModel.removeObserver(this._handleModelEvent);
+  }
+
 
   _getMovies() {
     this._filterType = this._filtersModel.getFilter();
