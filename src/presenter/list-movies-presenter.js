@@ -17,6 +17,7 @@ import HeaderProfileView from '../view/header-profile.js';
 import MoviePresenter from './movie-presenter.js';
 import { sortMoviesByDate, sortMoviesByRating } from '../utils/sort.js';
 import { filter } from '../utils/filter.js';
+import { getWatchedMoviesCount } from '../utils/statistics.js';
 
 export default class ListMoviesPresenter {
   constructor(siteMainContainer, moviesModel, filtersModel, commentsModel) {
@@ -26,6 +27,7 @@ export default class ListMoviesPresenter {
     this._siteMainContainer = siteMainContainer;
     this._renderedMoviesCount = MOVIES_COUNT_PER_STEP;
     this._filterType = FilterType.ALL;
+    this._headerProfileComponent = new HeaderProfileView(getWatchedMoviesCount(this._moviesModel.getMovies()));
     this._noFilmComponent = null;
     this._moviesContainer = new MoviesContainerView();
     this._listMoviesComponent = new ListMoviesView();
@@ -35,7 +37,6 @@ export default class ListMoviesPresenter {
       'Most commented',
     );
     this._siteSortComponent = null;
-    this._headerProfileComponent = new HeaderProfileView();
     this._moviePresenter = new Map();
     this._handleShowMoreButtonClick = this._handleShowMoreButtonClick.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
@@ -100,10 +101,12 @@ export default class ListMoviesPresenter {
     switch (updateType) {
       case UpdateType.PATCH:
         this._moviePresenter.get(data.id).init(data);
+        this._renderHeaderProfile();
         break;
       case UpdateType.MINOR:
         this._clearMovieList();
         this._renderAllMovies();
+        this._renderHeaderProfile();
         break;
       case UpdateType.MAJOR:
         this._clearMovieList({
@@ -121,6 +124,11 @@ export default class ListMoviesPresenter {
   }
 
   _renderHeaderProfile() {
+    if (this._headerProfileComponent !== null) {
+      remove(this._headerProfileComponent);
+    }
+
+    this._headerProfileComponent = new HeaderProfileView(getWatchedMoviesCount(this._moviesModel.getMovies()));
     this._headerProfileContainer = document.querySelector('.header');
     render(this._headerProfileContainer, this._headerProfileComponent);
   }

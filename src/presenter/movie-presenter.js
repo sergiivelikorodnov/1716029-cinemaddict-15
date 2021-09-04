@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { UpdateType, UserAction } from '../const.js';
 import { removeObjectFromSet } from '../utils/common.js';
 import { remove, render, replace } from '../utils/render.js';
@@ -199,6 +200,7 @@ export default class MoviePresenter {
       this._mode === Mode.CLOSED ? UpdateType.MINOR : UpdateType.PATCH,
       Object.assign({}, this._movie, {
         isAlreadyWatched: !this._movie.isAlreadyWatched,
+        watchingDate : dayjs(),
       }),
     );
     this._setScrollY(prevPopupScrollHeight);
@@ -241,6 +243,7 @@ export default class MoviePresenter {
         {},
         this._movie,
         (this._movie.isAlreadyWatched = !this._movie.isAlreadyWatched),
+        (this._movie.watchingDate = dayjs()),
       ),
     );
     this._setScrollY(prevPopupScrollHeight);

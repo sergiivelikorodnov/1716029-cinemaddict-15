@@ -2,82 +2,9 @@ import {Chart} from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { StatsFilterType } from '../const.js';
 import { minutesToHours } from '../utils/common.js';
-import { calcPopularGenres } from '../utils/statistics.js';
+import { calcPopularGenres, userRang, watchedMoviesByDateRange } from '../utils/statistics.js';
 import Smart from './smart.js';
 
-const BAR_HEIGHT = 50;
-// const statisticCtx = document.querySelector('.statistic__chart');
-
-// Обязательно рассчитайте высоту canvas, она зависит от количества элементов диаграммы
-// statisticCtx.height = BAR_HEIGHT * 5;
-
-const drawChart = () => new Chart(statisticCtx, {
-  plugins: [ChartDataLabels],
-  type: 'horizontalBar',
-  data: {
-    labels: ['Sci-Fi', 'Animation', 'Fantasy', 'Comedy', 'TV Series'],
-    datasets: [{
-      data: [11, 8, 7, 4, 3],
-      backgroundColor: '#ffe800',
-      hoverBackgroundColor: '#ffe800',
-      anchor: 'start',
-    }],
-  },
-  options: {
-    plugins: {
-      datalabels: {
-        font: {
-          size: 20,
-        },
-        color: '#ffffff',
-        anchor: 'start',
-        align: 'start',
-        offset: 40,
-      },
-    },
-    scales: {
-      yAxes: [{
-        ticks: {
-          fontColor: '#ffffff',
-          padding: 100,
-          fontSize: 20,
-        },
-        gridLines: {
-          display: false,
-          drawBorder: false,
-        },
-        barThickness: 24,
-      }],
-      xAxes: [{
-        ticks: {
-          display: false,
-          beginAtZero: true,
-        },
-        gridLines: {
-          display: false,
-          drawBorder: false,
-        },
-      }],
-    },
-    legend: {
-      display: false,
-    },
-    tooltips: {
-      enabled: false,
-    },
-  },
-});
-
-
-const createStatsRank = () =>
-//console.log();
-
-  (
-    `<p class="statistic__rank">
-    Your rank
-    <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
-    <span class="statistic__rank-label">Movie buff</span>
-  </p>`);
 const createStatsFilters = (filter, currentFilterType) => {
 
   const { type, name} = filter;
@@ -97,25 +24,84 @@ const createStatsFilterTemplate = (statsFilterItems, currentFilterType) => {
   </form>`);
 };
 
+const createChart = (statisticCtx, movies) => {
+  const BAR_HEIGHT = 50;
+
+  //Обязательно рассчитайте высоту canvas, она зависит от количества элементов диаграммы
+  statisticCtx.height = BAR_HEIGHT * 5;
+
+  return new Chart(statisticCtx, {
+    plugins: [ChartDataLabels],
+    type: 'horizontalBar',
+    data: {
+      labels: ['Sci-Fi', 'Animation', 'Fantasy', 'Comedy', 'TV Series'],
+      datasets: [{
+        data: [11, 8, 7, 4, 3],
+        backgroundColor: '#ffe800',
+        hoverBackgroundColor: '#ffe800',
+        anchor: 'start',
+      }],
+    },
+    options: {
+      plugins: {
+        datalabels: {
+          font: {
+            size: 20,
+          },
+          color: '#ffffff',
+          anchor: 'start',
+          align: 'start',
+          offset: 40,
+        },
+      },
+      scales: {
+        yAxes: [{
+          ticks: {
+            fontColor: '#ffffff',
+            padding: 100,
+            fontSize: 20,
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false,
+          },
+          barThickness: 24,
+        }],
+        xAxes: [{
+          ticks: {
+            display: false,
+            beginAtZero: true,
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false,
+          },
+        }],
+      },
+      legend: {
+        display: false,
+      },
+      tooltips: {
+        enabled: false,
+      },
+    },
+  });
+};
+
 const createStatsLayout = (state, currentFilterType) => {
   const { movies } = state;
+  const filteredMovies = watchedMoviesByDateRange(movies, currentFilterType);
 
-  const movieToFilterMap = {
-    runTime: 'isAlreadyWatched',
-  };
+  const topGenre = Object.keys(calcPopularGenres(filteredMovies))[0];
+  const watchedStats = filteredMovies.length;
+  const watchedTimeStats = minutesToHours(filteredMovies);
 
-  const generateStatsData = (films) => Object.entries(movieToFilterMap).map(
-    ([filterName, filterValue]) => ({
-      runTime: films.filter((movie) => movie[filterValue] === true).reduce((total, movie) => total + movie[filterName], 0),
-      watched: films.reduce((total, movie) => total + movie[filterValue], 0),
-    }),
-  );
-
-
-  const topGenres = calcPopularGenres(movies);
-  const watchedStats = generateStatsData(movies);
-  const watchedTimeStats = minutesToHours(watchedStats[0].runTime);
-
+  const createStatsRank = () =>(
+    `<p class="statistic__rank">
+    Your rank
+    <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
+    <span class="statistic__rank-label">${userRang(watchedStats)}</span>
+  </p>`);
 
   const filters = [
     {
@@ -149,7 +135,7 @@ const createStatsLayout = (state, currentFilterType) => {
   <ul class="statistic__text-list">
     <li class="statistic__text-item">
       <h4 class="statistic__item-title">You watched</h4>
-      <p class="statistic__item-text">${watchedStats[0].watched} <span class="statistic__item-description">movies</span></p>
+      <p class="statistic__item-text">${watchedStats} <span class="statistic__item-description">movies</span></p>
     </li>
     <li class="statistic__text-item">
       <h4 class="statistic__item-title">Total duration</h4>
@@ -157,12 +143,12 @@ const createStatsLayout = (state, currentFilterType) => {
     </li>
     <li class="statistic__text-item">
       <h4 class="statistic__item-title">Top genre</h4>
-      <p class="statistic__item-text">${Object.keys(topGenres)[0]}</p>
+      <p class="statistic__item-text">${topGenre === undefined? '': topGenre}</p>
     </li>
   </ul>
 
   <div class="statistic__chart-wrap">
-    <canvas class="statistic__chart" width="1000"></canvas>
+    <canvas class="statistic__chart" width="1000">${createChart()}</canvas>
   </div>
 
 </section>`
@@ -176,7 +162,6 @@ export default class ListMovieLayout extends Smart {
     this.state = {
       movies,
     };
-
     this._currentFilterType = StatsFilterType.ALL;
     this._filterChooseHandler = this._filterChooseHandler.bind(this);
     this._setInnerHandlers();
@@ -200,6 +185,15 @@ export default class ListMovieLayout extends Smart {
     this._currentFilterType = evt.target.value;
 
     this.updateState({});
+  }
+
+  _setChart() {
+    if (this._genresCharts !== null) {
+      this._genresCharts = null;
+    }
+    const statisticCtx = this.getElement().querySelector('.statistic__chart');
+
+    this._genresCharts = createChart(statisticCtx, this.state);
   }
 
 

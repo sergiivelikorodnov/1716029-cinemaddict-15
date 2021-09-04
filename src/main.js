@@ -76,7 +76,7 @@ const handleSiteMenuClick = (menuItem) => {
 };
 siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
 filterPresenter.init();
-// moviesPresenter.init();
+//moviesPresenter.init();
 
 render(siteMainContainer, new StatisticsView(moviesModel.getMovies()));
 

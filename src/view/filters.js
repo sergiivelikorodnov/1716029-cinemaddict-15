@@ -38,6 +38,8 @@ export default class SiteMenuFiltersTemplate extends AbstractView {
       return;
     }
 
+    document.querySelector('a[data-menu="statistics"]').classList.remove('main-navigation__item--active');
+
     evt.preventDefault();
     this._callback.filterTypeChange(evt.target.dataset.filterType);
   }

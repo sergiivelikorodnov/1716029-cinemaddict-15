@@ -2,7 +2,7 @@ import AbstractView from './abstract.js';
 import { MenuItem } from '../const.js';
 
 const createSiteMenuTemplate = () => `<nav class="main-navigation">
-  <a href="#stats" class="main-navigation__additional" data-menu="${MenuItem.STATISTICS}">Stats</a>
+  <a href="#${MenuItem.STATISTICS}" class="main-navigation__additional" data-menu="${MenuItem.STATISTICS}">Stats</a>
 </nav>`;
 
 export default class SiteMenuFiltersTemplate extends AbstractView {
@@ -19,6 +19,13 @@ export default class SiteMenuFiltersTemplate extends AbstractView {
     if (evt.target.tagName !== 'A') {
       return;
     }
+
+    const currentMenu = evt.target;
+    if (evt.target.getAttribute('href') === `#${MenuItem.STATISTICS}`) {
+      this.getElement().querySelectorAll('.main-navigation__item').forEach((menuItem) => menuItem.classList.remove('main-navigation__item--active'));
+      currentMenu.classList.add('main-navigation__item--active');
+    }
+
     evt.preventDefault();
     this._callback.menuClick(evt.target.dataset.menu);
   }

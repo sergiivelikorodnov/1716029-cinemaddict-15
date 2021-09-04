@@ -41,3 +41,9 @@ export const MenuItem = {
   FAVORITES: 'favorites',
   STATISTICS: 'statistics',
 };
+
+export const UserRang = {
+  NOVICE: 'Novice',
+  FAN: 'Fan',
+  MOVIE_BUFF: 'Movie buff',
+};

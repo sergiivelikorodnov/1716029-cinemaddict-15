@@ -7,7 +7,8 @@ export const timeConvertor = (totalMinutes) => {
   return `${hours}h ${minutes} min`;
 };
 
-export const minutesToHours = (totalMinutes) => {
+export const minutesToHours = (movies) => {
+  const totalMinutes = movies.reduce((total, movie) => total + movie.runTime, 0);
   const hours = Math.floor(totalMinutes / MINUTES_IN_HOUR);
   const minutes = totalMinutes % MINUTES_IN_HOUR;
   return { hours, minutes};
