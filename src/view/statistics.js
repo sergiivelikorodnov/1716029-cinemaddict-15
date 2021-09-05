@@ -24,19 +24,22 @@ const createStatsFilterTemplate = (statsFilterItems, currentFilterType) => {
   </form>`);
 };
 
-const createChart = (statisticCtx, movies) => {
+const createChart = (statisticCtx, state, currentFilterType) => {
   const BAR_HEIGHT = 50;
+  const { movies } = state;
+  const filteredMovies = watchedMoviesByDateRange(movies, currentFilterType);
+  const topGenres = calcPopularGenres(filteredMovies);
 
   //Обязательно рассчитайте высоту canvas, она зависит от количества элементов диаграммы
-  statisticCtx.height = BAR_HEIGHT * 5;
+  statisticCtx.height = BAR_HEIGHT * Object.keys(topGenres).length;
 
   return new Chart(statisticCtx, {
     plugins: [ChartDataLabels],
     type: 'horizontalBar',
     data: {
-      labels: ['Sci-Fi', 'Animation', 'Fantasy', 'Comedy', 'TV Series'],
+      labels: Object.keys(topGenres),
       datasets: [{
-        data: [11, 8, 7, 4, 3],
+        data: Object.values(topGenres),
         backgroundColor: '#ffe800',
         hoverBackgroundColor: '#ffe800',
         anchor: 'start',
@@ -148,7 +151,7 @@ const createStatsLayout = (state, currentFilterType) => {
   </ul>
 
   <div class="statistic__chart-wrap">
-    <canvas class="statistic__chart" width="1000">${createChart()}</canvas>
+    <canvas class="statistic__chart" width="1000"></canvas>
   </div>
 
 </section>`
@@ -164,6 +167,7 @@ export default class ListMovieLayout extends Smart {
     };
     this._currentFilterType = StatsFilterType.ALL;
     this._filterChooseHandler = this._filterChooseHandler.bind(this);
+    this._setChart();
     this._setInnerHandlers();
   }
 
@@ -192,14 +196,12 @@ export default class ListMovieLayout extends Smart {
       this._genresCharts = null;
     }
     const statisticCtx = this.getElement().querySelector('.statistic__chart');
-
-    this._genresCharts = createChart(statisticCtx, this.state);
+    this._genresCharts = createChart(statisticCtx, this.state, this._currentFilterType);
   }
-
 
   restoreHandlers() {
     this._setInnerHandlers();
-
+    this._setChart();
   }
 
 }

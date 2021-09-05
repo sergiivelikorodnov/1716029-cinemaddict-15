@@ -21,13 +21,13 @@ export default class MoviePresenter {
     this._removePopup = this._removePopup.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleAddToWatchlistClick =
-      this._handleAddToWatchlistClick.bind(this);
+    this._handleAddToWatchlistClick.bind(this);
     this._handleMarkAsWatchedClick = this._handleMarkAsWatchedClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handlePopupAddToWatchlistClick =
-      this._handlePopupAddToWatchlistClick.bind(this);
+    this._handlePopupAddToWatchlistClick.bind(this);
     this._handlePopupMarkAsWatchedClick =
-      this._handlePopupMarkAsWatchedClick.bind(this);
+    this._handlePopupMarkAsWatchedClick.bind(this);
     this._handlePopupFavoriteClick = this._handlePopupFavoriteClick.bind(this);
     this._handleDeleteCommentClick = this._handleDeleteCommentClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
@@ -85,20 +85,13 @@ export default class MoviePresenter {
 
     this._popupComponent = new FilmDetailsView(movie);
     this._popupComponent.setCloseFilmDetailsPopupHandler(this._removePopup);
-    this._popupComponent.setAddToWatchlistHandler(
-      this._handlePopupAddToWatchlistClick,
-    );
-    this._popupComponent.setMarkAsWatchedHandler(
-      this._handlePopupMarkAsWatchedClick,
-    );
+    this._popupComponent.setAddToWatchlistHandler(this._handlePopupAddToWatchlistClick);
+    this._popupComponent.setMarkAsWatchedHandler(this._handlePopupMarkAsWatchedClick);
     this._popupComponent.setAddFavoriteHandler(this._handlePopupFavoriteClick);
-    this._popupComponent.setDeleteCommentHandler(
-      this._handleDeleteCommentClick,
-    );
+    this._popupComponent.setDeleteCommentHandler(this._handleDeleteCommentClick);
     this._popupComponent.setCommentSubmitHandler(this._handleFormSubmit);
 
-    this._renderedMovieContainer =
-      this._bodyElement.querySelector('.film-details');
+    this._renderedMovieContainer = this._bodyElement.querySelector('.film-details');
     if (this._renderedMovieContainer !== null) {
       this._bodyElement.removeChild(this._renderedMovieContainer);
     }
@@ -120,8 +113,7 @@ export default class MoviePresenter {
     this._popupComponent.setDeleteCommentHandler(this._handleDeleteCommentClick);
     this._popupComponent.setCommentSubmitHandler(this._handleFormSubmit);
 
-    this._renderedMovieContainer =
-      this._bodyElement.querySelector('.film-details');
+    this._renderedMovieContainer = this._bodyElement.querySelector('.film-details');
     if (this._renderedMovieContainer !== null) {
       this._bodyElement.removeChild(this._renderedMovieContainer);
     }
