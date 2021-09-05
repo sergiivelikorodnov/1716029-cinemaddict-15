@@ -94,8 +94,9 @@ const createChart = (statisticCtx, state, currentFilterType) => {
 const createStatsLayout = (state, currentFilterType) => {
   const { movies } = state;
   const filteredMovies = watchedMoviesByDateRange(movies, currentFilterType);
+  const topGenres = Object.keys(calcPopularGenres(filteredMovies))[0];
+  //const topGenres = Object.keys(allGenres).filter((element) => allGenres[element] === Math.max.apply(null, Object.values(allGenres))).join(', ');
 
-  const topGenre = Object.keys(calcPopularGenres(filteredMovies))[0];
   const watchedStats = filteredMovies.length;
   const watchedTimeStats = minutesToHours(filteredMovies);
 
@@ -138,7 +139,7 @@ const createStatsLayout = (state, currentFilterType) => {
   <ul class="statistic__text-list">
     <li class="statistic__text-item">
       <h4 class="statistic__item-title">You watched</h4>
-      <p class="statistic__item-text">${watchedStats} <span class="statistic__item-description">movies</span></p>
+      <p class="statistic__item-text">${watchedStats} <span class="statistic__item-description">${watchedStats < 2 ? 'movie': 'movies'}</span></p>
     </li>
     <li class="statistic__text-item">
       <h4 class="statistic__item-title">Total duration</h4>
@@ -146,7 +147,7 @@ const createStatsLayout = (state, currentFilterType) => {
     </li>
     <li class="statistic__text-item">
       <h4 class="statistic__item-title">Top genre</h4>
-      <p class="statistic__item-text">${topGenre === undefined? '': topGenre}</p>
+      <p class="statistic__item-text">${topGenres === undefined? '': topGenres}</p>
     </li>
   </ul>
 
