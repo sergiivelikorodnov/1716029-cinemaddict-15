@@ -39,6 +39,7 @@ const moviesPresenter = new ListMoviesPresenter(
   moviesModel,
   filterModel,
   commentsModel,
+  api,
 );
 
 

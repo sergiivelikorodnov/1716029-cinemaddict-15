@@ -6,8 +6,9 @@ export default class Comments extends AbstractObserver {
     this._comments = [];
   }
 
-  setComments(comments) {
+  setComments(updateType, comments) {
     this._comments = comments.slice();
+    this._notify(updateType);
   }
 
   getComments() {
@@ -36,7 +37,7 @@ export default class Comments extends AbstractObserver {
       },
     );
 
-    delete adaptedComment.emotion;
+    //delete adaptedComment.emotion;
 
     return adaptedComment;
   }

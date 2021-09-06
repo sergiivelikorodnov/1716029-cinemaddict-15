@@ -9,28 +9,25 @@ const Mode = {
   OPENED: 'OPENED',
 };
 export default class MoviePresenter {
-  constructor(listMoviesContainer, changeData, changeMode, commentsModel) {
+  constructor(listMoviesContainer, changeData, changeMode, commentsModel, api) {
     this._changeMode = changeMode;
     this._changeData = changeData;
+    this._api = api;
     this._commentsModel = commentsModel;
-    this._listMoviesComponent = listMoviesContainer
-      .getElement()
-      .querySelector('.films-list__container');
+    this._listMoviesComponent = listMoviesContainer.getElement().querySelector('.films-list__container');
     this._bodyElement = document.querySelector('body');
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
     this._openPopupHandler = this._openPopupHandler.bind(this);
     this._removePopup = this._removePopup.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
-    this._handleAddToWatchlistClick =
-    this._handleAddToWatchlistClick.bind(this);
+    this._handleAddToWatchlistClick =  this._handleAddToWatchlistClick.bind(this);
     this._handleMarkAsWatchedClick = this._handleMarkAsWatchedClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
-    this._handlePopupAddToWatchlistClick =
-    this._handlePopupAddToWatchlistClick.bind(this);
-    this._handlePopupMarkAsWatchedClick =
-    this._handlePopupMarkAsWatchedClick.bind(this);
+    this._handlePopupAddToWatchlistClick = this._handlePopupAddToWatchlistClick.bind(this);
+    this._handlePopupMarkAsWatchedClick = this._handlePopupMarkAsWatchedClick.bind(this);
     this._handlePopupFavoriteClick = this._handlePopupFavoriteClick.bind(this);
     this._handleDeleteCommentClick = this._handleDeleteCommentClick.bind(this);
+    this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._movieComponent = null;
     this._popupComponent = null;
@@ -44,13 +41,10 @@ export default class MoviePresenter {
     this._movieComponent = new FilmCardView(movie);
 
     this._movieComponent.setOpenFilmDetailsPopupHandler(this._openPopupHandler);
-    this._movieComponent.setAddToWatchlistHandler(
-      this._handleAddToWatchlistClick,
-    );
-    this._movieComponent.setMarkAsWatchedHandler(
-      this._handleMarkAsWatchedClick,
-    );
+    this._movieComponent.setAddToWatchlistHandler(this._handleAddToWatchlistClick);
+    this._movieComponent.setMarkAsWatchedHandler(this._handleMarkAsWatchedClick);
     this._movieComponent.setAddFavoriteHandler(this._handleFavoriteClick);
+    this._commentsModel.addObserver(this._handleModelEvent);
 
     if (prevMovieComponent === null || prevPopupComponent === null) {
       render(this._listMoviesComponent, this._movieComponent);
@@ -80,6 +74,17 @@ export default class MoviePresenter {
     }
   }
 
+  _handleModelEvent(){
+
+    const prevPopupScrollHeight = this._getScrollY();
+
+    this._removePopup();
+    this._renderPopup();
+
+    this._setScrollY(prevPopupScrollHeight);
+
+  }
+
   _rerenderPopup(movie) {
     this._changeMode();
     this._mode = Mode.OPENED;
@@ -103,6 +108,20 @@ export default class MoviePresenter {
   }
 
   _openPopupHandler() {
+    this._api.getComments(this._movie.id)
+      .then((comments) => {
+        this._commentsModel.setComments(UpdateType.INIT, comments);
+        // console.log(this._commentsModel);
+
+        this._renderPopup();
+      })
+      .catch(() => {
+        this._commentsModel.setComments(UpdateType.INIT, []);
+        this._renderPopup();
+      });
+  }
+
+  _renderPopup() {
     this._changeMode();
     this._mode = Mode.OPENED;
 

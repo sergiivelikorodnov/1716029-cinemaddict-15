@@ -80,6 +80,7 @@ const createFilmDetails = (data) => {
     ? 'film-details__control-button--active'
     : '';
 
+
   const commentsTemplate = createCommentTemplate(commentDetails);
 
   const commentsNumber = commentDetails.length;
@@ -200,6 +201,8 @@ export default class FilmDetails extends Smart {
   constructor(movie, comments) {
     super();
     this._data = FilmDetails.parseMovieToData(movie, comments);
+    console.log(comments);
+
     this._closeFilmDetailsPopupHandler = this._closeFilmDetailsPopupHandler.bind(this);
     this._addToWatchlistHandler = this._addToWatchlistHandler.bind(this);
     this._markAsWatchedHandler = this._markAsWatchedHandler.bind(this);
@@ -385,8 +388,14 @@ export default class FilmDetails extends Smart {
     );
   }
 
-  static parseMovieToData(movie) {
-    return Object.assign({}, movie);
+  static parseMovieToData(movie, comments) {
+    return Object.assign(
+      {},
+      movie,
+      {
+        commentDetails: comments.getComments(),
+      },
+    );
   }
 
   static parseDataToMovie(data) {

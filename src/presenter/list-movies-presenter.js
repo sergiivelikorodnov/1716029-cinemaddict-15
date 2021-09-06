@@ -21,11 +21,12 @@ import { filter } from '../utils/filter.js';
 import { getWatchedMoviesCount } from '../utils/statistics.js';
 
 export default class ListMoviesPresenter {
-  constructor(siteMainContainer, moviesModel, filtersModel, commentsModel) {
+  constructor(siteMainContainer, moviesModel, filtersModel, commentsModel, api) {
     this._commentsModel = commentsModel;
     this._moviesModel = moviesModel;
     this._filtersModel = filtersModel;
     this._siteMainContainer = siteMainContainer;
+    this._api = api;
     this._renderedMoviesCount = MOVIES_COUNT_PER_STEP;
     this._filterType = FilterType.ALL;
     this._headerProfileComponent = new HeaderProfileView(getWatchedMoviesCount(this._moviesModel.getMovies()));
@@ -151,6 +152,7 @@ export default class ListMoviesPresenter {
       this._handleViewAction,
       this._handlePopupMode,
       this._commentsModel,
+      this._api,
     );
     moviePresenter.init(movie);
     this._moviePresenter.set(movie.id, moviePresenter);
