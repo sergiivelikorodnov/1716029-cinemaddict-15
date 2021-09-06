@@ -26,4 +26,32 @@ export default class Comments extends AbstractObserver {
     );
     this._notify(updateType);
   }
+
+  static adaptToClient(comment) {
+    const adaptedComment = Object.assign(
+      {},
+      comment,
+      {
+        emotion: comment.emotion,
+      },
+    );
+
+    delete adaptedComment.emotion;
+
+    return adaptedComment;
+  }
+
+  static adaptToServer(comment) {
+    const adaptedComment = Object.assign(
+      {},
+      comment,
+      {
+        emotion: comment.emotion,
+      },
+    );
+
+    delete adaptedComment.emoji;
+
+    return adaptedComment;
+  }
 }

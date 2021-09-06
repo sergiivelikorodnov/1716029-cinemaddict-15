@@ -7,6 +7,7 @@ import {
   FilterType
 } from '../const.js';
 import ListMoviesView from '../view/list-movies.js';
+import LoadingView from '../view/loading.js';
 import MoviesContainerView from '../view/movies-container.js';
 import NoFilmView from '../view//no-film.js';
 import ListExtraMoviesView from '../view/list-extra-movies.js';
@@ -38,11 +39,13 @@ export default class ListMoviesPresenter {
     );
     this._siteSortComponent = null;
     this._moviePresenter = new Map();
+    this._isLoading = true;
     this._handleShowMoreButtonClick = this._handleShowMoreButtonClick.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
     this._handlePopupMode = this._handlePopupMode.bind(this);
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
+    this._loadingComponent = new LoadingView();
     this._currentSortType = SortType.DEFAULT;
     this._renderfooterStatistics();
   }
@@ -66,9 +69,13 @@ export default class ListMoviesPresenter {
     this._filtersModel.removeObserver(this._handleModelEvent);
   }
 
+  _renderLoading() {
+    render(this._listMoviesComponent, this._loadingComponent);
+  }
 
   _getMovies() {
     this._filterType = this._filtersModel.getFilter();
+
     const movies = this._moviesModel.getMovies().slice();
     const filteredMovies = filter[this._filterType](movies);
 
@@ -115,6 +122,11 @@ export default class ListMoviesPresenter {
         });
         this._renderAllMovies();
         break;
+      case UpdateType.INIT:
+        this._isLoading = false;
+        remove(this._loadingComponent);
+        this._renderAllMovies();
+        break;
     }
   }
 
@@ -133,22 +145,14 @@ export default class ListMoviesPresenter {
     render(this._headerProfileContainer, this._headerProfileComponent);
   }
 
-  _movieWithComments(movie) {
-    movie = Object.assign({}, movie, {
-      commentDetails: this._commentsModel._comments.filter((element) =>
-        movie.comments.has(element.id),
-      ),
-    });
-    return movie;
-  }
-
   _renderMovie(movie) {
     const moviePresenter = new MoviePresenter(
       this._listMoviesComponent,
       this._handleViewAction,
       this._handlePopupMode,
+      this._commentsModel,
     );
-    moviePresenter.init(this._movieWithComments(movie));
+    moviePresenter.init(movie);
     this._moviePresenter.set(movie.id, moviePresenter);
   }
 
@@ -166,6 +170,7 @@ export default class ListMoviesPresenter {
     this._moviePresenter.clear();
 
     remove(this._siteSortComponent);
+    remove(this._loadingComponent);
     remove(this._showMoreComponent);
 
     if (this._noFilmComponent) {
@@ -254,6 +259,11 @@ export default class ListMoviesPresenter {
   }
 
   _renderAllMovies() {
+    if (this._isLoading) {
+      this._renderLoading();
+      return;
+    }
+
     const movies = this._getMovies();
     const moviesCount = movies.length;
 

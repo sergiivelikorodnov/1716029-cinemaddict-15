@@ -197,12 +197,10 @@ const createFilmDetails = (data) => {
 };
 
 export default class FilmDetails extends Smart {
-  constructor(movie) {
+  constructor(movie, comments) {
     super();
-    this._data = FilmDetails.parseMovieToData(movie);
-    this._comments = this._data.commentDetails;
-    this._closeFilmDetailsPopupHandler =
-    this._closeFilmDetailsPopupHandler.bind(this);
+    this._data = FilmDetails.parseMovieToData(movie, comments);
+    this._closeFilmDetailsPopupHandler = this._closeFilmDetailsPopupHandler.bind(this);
     this._addToWatchlistHandler = this._addToWatchlistHandler.bind(this);
     this._markAsWatchedHandler = this._markAsWatchedHandler.bind(this);
     this._addFavoriteHandler = this._addFavoriteHandler.bind(this);

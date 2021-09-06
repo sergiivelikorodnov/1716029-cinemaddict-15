@@ -9,9 +9,10 @@ const Mode = {
   OPENED: 'OPENED',
 };
 export default class MoviePresenter {
-  constructor(listMoviesContainer, changeData, changeMode) {
+  constructor(listMoviesContainer, changeData, changeMode, commentsModel) {
     this._changeMode = changeMode;
     this._changeData = changeData;
+    this._commentsModel = commentsModel;
     this._listMoviesComponent = listMoviesContainer
       .getElement()
       .querySelector('.films-list__container');
@@ -83,7 +84,7 @@ export default class MoviePresenter {
     this._changeMode();
     this._mode = Mode.OPENED;
 
-    this._popupComponent = new FilmDetailsView(movie);
+    this._popupComponent = new FilmDetailsView(movie, this._commentsModel);
     this._popupComponent.setCloseFilmDetailsPopupHandler(this._removePopup);
     this._popupComponent.setAddToWatchlistHandler(this._handlePopupAddToWatchlistClick);
     this._popupComponent.setMarkAsWatchedHandler(this._handlePopupMarkAsWatchedClick);
@@ -105,7 +106,7 @@ export default class MoviePresenter {
     this._changeMode();
     this._mode = Mode.OPENED;
 
-    this._popupComponent = new FilmDetailsView(this._movie, this._comments);
+    this._popupComponent = new FilmDetailsView(this._movie, this._commentsModel);
     this._popupComponent.setCloseFilmDetailsPopupHandler(this._removePopup);
     this._popupComponent.setAddToWatchlistHandler(this._handlePopupAddToWatchlistClick);
     this._popupComponent.setMarkAsWatchedHandler(this._handlePopupMarkAsWatchedClick);
