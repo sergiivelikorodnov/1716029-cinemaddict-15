@@ -9,9 +9,25 @@ import { MenuItem } from './const.js';
 import SiteMenuView from './view/site-menu.js';
 import StatisticsView from './view/statistics.js';
 import { remove, render, RenderPosition } from './utils/render.js';
+import Api from './api/api.js';
 
 const COMMENTS_TOTAL_COUNT = 20;
 const MOVIES_TOTAL_COUNT = 18;
+
+const AUTHORIZATION = 'Basic sdsacascasa3csacsacas';
+const END_POINT = 'https://15.ecmascript.pages.academy/cinemaddict';
+
+const api = new Api(END_POINT, AUTHORIZATION);
+
+api.getMovies().then((movies) => {
+  console.log(movies);
+  // Есть проблема: cтруктура объекта похожа, но некоторые ключи называются иначе,
+  // а ещё на сервере используется snake_case, а у нас camelCase.
+  // Можно, конечно, переписать часть нашего клиентского приложения, но зачем?
+  // Есть вариант получше - паттерн "Адаптер"
+});
+
+api.getMovies().then((movies) => console.log(movies));
 
 const allComments = generateComments(COMMENTS_TOTAL_COUNT);
 const allMovies = generateMovies(allComments, MOVIES_TOTAL_COUNT);
