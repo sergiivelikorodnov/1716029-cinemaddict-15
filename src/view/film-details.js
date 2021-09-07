@@ -201,8 +201,6 @@ export default class FilmDetails extends Smart {
   constructor(movie, comments) {
     super();
     this._data = FilmDetails.parseMovieToData(movie, comments);
-    console.log(comments);
-
     this._closeFilmDetailsPopupHandler = this._closeFilmDetailsPopupHandler.bind(this);
     this._addToWatchlistHandler = this._addToWatchlistHandler.bind(this);
     this._markAsWatchedHandler = this._markAsWatchedHandler.bind(this);
@@ -312,7 +310,7 @@ export default class FilmDetails extends Smart {
   }
 
   _submitNewCommentHandler(evt) {
-    if (evt.key === 'Enter' && evt.ctrlKey) {
+    if (evt.key === 'Enter' && (evt.metaKey || evt.ctrlKey)) {
       evt.preventDefault();
       const id = nanoid();
 

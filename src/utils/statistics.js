@@ -65,16 +65,16 @@ export const generateStatsData = (films) => Object.entries(movieToFilterMap).map
 );
 
 export const userRang = (moviesCount) => {
-  if (moviesCount === 0) {
-    return '';
+  if (moviesCount === UserRang.NEWBEE.WATCHED_MOVIES) {
+    return UserRang.NEWBEE.RANG;
   }
-  if (moviesCount < 11) {
-    return UserRang.NOVICE;
+  if (moviesCount < UserRang.NOVICE.WATCHED_MOVIES) {
+    return UserRang.NOVICE.RANG;
   }
-  if (moviesCount < 21) {
-    return UserRang.FAN;
+  if (moviesCount < UserRang.FAN.WATCHED_MOVIES) {
+    return UserRang.FAN.RANG;
   } else {
-    return UserRang.MOVIE_BUFF;
+    return UserRang.MOVIE_BUFF.RANG;
   }
 };
 

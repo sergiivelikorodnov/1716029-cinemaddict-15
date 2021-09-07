@@ -48,7 +48,6 @@ export default class ListMoviesPresenter {
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._loadingComponent = new LoadingView();
     this._currentSortType = SortType.DEFAULT;
-    this._renderfooterStatistics();
   }
 
   init() {
@@ -57,7 +56,6 @@ export default class ListMoviesPresenter {
     this._moviesModel.addObserver(this._handleModelEvent);
     this._filtersModel.addObserver(this._handleModelEvent);
 
-    this._renderHeaderProfile();
     this._renderAllMovies();
 
   }
@@ -127,6 +125,7 @@ export default class ListMoviesPresenter {
         this._isLoading = false;
         remove(this._loadingComponent);
         this._renderAllMovies();
+        this._renderfooterStatistics();
         break;
     }
   }
@@ -274,6 +273,7 @@ export default class ListMoviesPresenter {
       return;
     }
 
+    this._renderHeaderProfile();
     this._renderSort();
 
     this._renderFeaturedMoviesList(

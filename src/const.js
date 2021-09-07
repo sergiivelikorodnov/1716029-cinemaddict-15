@@ -44,7 +44,20 @@ export const MenuItem = {
 };
 
 export const UserRang = {
-  NOVICE: 'Novice',
-  FAN: 'Fan',
-  MOVIE_BUFF: 'Movie buff',
+  NEWBEE: {
+    RANG: '',
+    WATCHED_MOVIES: 0,
+  },
+  NOVICE: {
+    RANG: 'Novice',
+    WATCHED_MOVIES: 11,
+  },
+  FAN: {
+    RANG: 'Fan',
+    WATCHED_MOVIES: 21,
+  },
+  MOVIE_BUFF: {
+    RANG: 'Movie buff',
+    WATCHED_MOVIES: 22,
+  },
 };
