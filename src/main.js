@@ -9,7 +9,7 @@ import StatisticsView from './view/statistics.js';
 import { remove, render, RenderPosition } from './utils/render.js';
 import Api from './api/api.js';
 
-const AUTHORIZATION = 'Basic sdsacascasa3csacsacas';
+const AUTHORIZATION = 'Basic 3232xx2';
 const END_POINT = 'https://15.ecmascript.pages.academy/cinemaddict';
 
 const api = new Api(END_POINT, AUTHORIZATION);

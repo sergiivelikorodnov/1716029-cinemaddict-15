@@ -54,7 +54,7 @@ export default class Api {
   deleteComment(commentId) {
     return this._load({
       url: `comments/${commentId}`,
-      method: Method.PUT,
+      method: Method.DELETE,
     });
   }
 
@@ -68,7 +68,7 @@ export default class Api {
 
     return fetch(
       `${this._endPoint}/${url}`,
-      {method, body, headers},
+      { method, body, headers },
     )
       .then(Api.checkStatus)
       .catch(Api.catchError);

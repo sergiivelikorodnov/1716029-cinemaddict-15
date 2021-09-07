@@ -90,15 +90,25 @@ export default class ListMoviesPresenter {
   _handleViewAction(actionType, updateType, update, comment) {
     switch (actionType) {
       case UserAction.UPDATE_MOVIE:
-        this._moviesModel.updateMovie(updateType, update);
+        this._api.updateMovie(update)
+          .then((response) => {
+            this._moviesModel.updateMovie(updateType, response);
+          });
         break;
       case UserAction.ADD_COMMENT:
         this._commentsModel.addComment(updateType, update, comment);
         this._moviesModel.updateMovie(updateType, update);
         break;
       case UserAction.DELETE_COMMENT:
-        this._commentsModel.deleteComment(update, comment);
-        this._moviesModel.updateMovie(updateType, update);
+        this._api.deleteComment(comment)
+          .then(() => {
+            this._commentsModel.deleteComment(update, comment);
+            this._moviesModel.updateMovie(updateType, update);
+          })
+          .catch(() => {
+            new Error('Cant remove comment');
+          });
+
         break;
     }
   }

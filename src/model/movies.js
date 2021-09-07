@@ -35,7 +35,7 @@ export default class Movies extends AbstractObserver {
       {},
       movie,
       {
-        'comments': new Set (movie.comments),
+        'comments': movie.comments,
         'title': movie.film_info.title,
         'alternativeTitle': movie.film_info.alternative_title,
         'totalRating': movie.film_info.total_rating,
@@ -70,7 +70,7 @@ export default class Movies extends AbstractObserver {
       movie,
       {
         'film_info': {
-          'comments': Array.from (movie.comments),
+          'comments': movie.comments,
           'title': movie.title,
           'alternative_title': movie.alternativeTitle,
           'total_rating': movie.totalRating,

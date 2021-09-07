@@ -1,4 +1,4 @@
-import { humanTime, removeObjectFromSet, timeConvertor } from '../utils/common.js';
+import { humanTime, timeConvertor } from '../utils/common.js';
 import he from 'he';
 import { nanoid } from 'nanoid';
 import Smart from './smart.js';
@@ -63,7 +63,7 @@ const createFilmDetails = (data) => {
     isAlreadyWatched,
     isFavorite,
     isWatchList,
-    commentDetails,
+    isComments,
     emojiData,
     commentData,
   } = data;
@@ -81,9 +81,9 @@ const createFilmDetails = (data) => {
     : '';
 
 
-  const commentsTemplate = createCommentTemplate(commentDetails);
+  const commentsTemplate = createCommentTemplate(isComments);
 
-  const commentsNumber = commentDetails.length;
+  const commentsNumber = isComments.length;
   const runTimeMins = timeConvertor(runTime);
   const renderGenre = (arr) => {
     let text = '';
@@ -311,6 +311,7 @@ export default class FilmDetails extends Smart {
 
   _submitNewCommentHandler(evt) {
     if (evt.key === 'Enter' && (evt.metaKey || evt.ctrlKey)) {
+
       evt.preventDefault();
       const id = nanoid();
 
@@ -327,7 +328,7 @@ export default class FilmDetails extends Smart {
       }
 
       this._data.comments.add(id);
-      const addedComment = this._data.commentDetails.push(newComment);
+      const addedComment = this._data.isComments.push(newComment);
 
       this._callback.commentSubmit(FilmDetails.parseDataToMovie(addedComment));
       newComment.emojiData = null;
@@ -338,14 +339,11 @@ export default class FilmDetails extends Smart {
   _deleteCommentHandler(evt) {
     evt.preventDefault();
 
-    this.updateState({
-      comments: removeObjectFromSet(this._data.comments, evt.target.dataset.id),
-      commentDetails: this._data.commentDetails.filter(
-        (comment) => comment.id !== evt.target.dataset.id,
-      ),
-    });
-
     this._callback.deleteCommentClick(evt.target.dataset.id);
+
+    this.updateState({
+      isComments: this._data.isComments.filter((comment) => comment.id !== evt.target.dataset.id),
+    });
   }
 
   _closeFilmDetailsPopupHandler(evt) {
@@ -391,9 +389,10 @@ export default class FilmDetails extends Smart {
       {},
       movie,
       {
-        commentDetails: comments.getComments(),
+        isComments: comments.getComments().filter((comment) => movie.comments.includes(comment.id)),
       },
     );
+
   }
 
   static parseDataToMovie(data) {
@@ -401,6 +400,7 @@ export default class FilmDetails extends Smart {
     data = Object.assign({}, data);
 
     delete data.emojiData;
+    delete data.isComments;
     delete data.commentData;
 
     return data;

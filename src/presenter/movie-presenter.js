@@ -1,6 +1,5 @@
 import dayjs from 'dayjs';
 import { UpdateType, UserAction } from '../const.js';
-import { removeObjectFromSet } from '../utils/common.js';
 import { remove, render, replace } from '../utils/render.js';
 import FilmCardView from '../view/film-card.js';
 import FilmDetailsView from '../view/film-details.js';
@@ -8,6 +7,17 @@ const Mode = {
   CLOSED: 'CLOSED',
   OPENED: 'OPENED',
 };
+let scrollPosition;
+
+const positionScrollY = {
+  getY() {
+    return scrollPosition;
+  },
+  setY(newScrollPosition) {
+    scrollPosition = newScrollPosition;
+  },
+};
+
 export default class MoviePresenter {
   constructor(listMoviesContainer, changeData, changeMode, commentsModel, api) {
     this._changeMode = changeMode;
@@ -27,7 +37,6 @@ export default class MoviePresenter {
     this._handlePopupMarkAsWatchedClick = this._handlePopupMarkAsWatchedClick.bind(this);
     this._handlePopupFavoriteClick = this._handlePopupFavoriteClick.bind(this);
     this._handleDeleteCommentClick = this._handleDeleteCommentClick.bind(this);
-    this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._movieComponent = null;
     this._popupComponent = null;
@@ -44,7 +53,6 @@ export default class MoviePresenter {
     this._movieComponent.setAddToWatchlistHandler(this._handleAddToWatchlistClick);
     this._movieComponent.setMarkAsWatchedHandler(this._handleMarkAsWatchedClick);
     this._movieComponent.setAddFavoriteHandler(this._handleFavoriteClick);
-    this._commentsModel.addObserver(this._handleModelEvent);
 
     if (prevMovieComponent === null || prevPopupComponent === null) {
       render(this._listMoviesComponent, this._movieComponent);
@@ -59,6 +67,7 @@ export default class MoviePresenter {
 
     if (this._mode === Mode.OPENED) {
       this._rerenderPopup(this._movie);
+      this._popupComponent.getElement().scrollTop = positionScrollY.getY();
     }
 
     remove(prevMovieComponent);
@@ -75,20 +84,12 @@ export default class MoviePresenter {
   }
 
   _handleModelEvent(){
-
-    const prevPopupScrollHeight = this._getScrollY();
-
-    this._removePopup();
-    this._renderPopup();
-
-    this._setScrollY(prevPopupScrollHeight);
-
+    positionScrollY.setY(this._popupComponent.getElement().scrollTop);
   }
 
   _rerenderPopup(movie) {
     this._changeMode();
     this._mode = Mode.OPENED;
-
     this._popupComponent = new FilmDetailsView(movie, this._commentsModel);
     this._popupComponent.setCloseFilmDetailsPopupHandler(this._removePopup);
     this._popupComponent.setAddToWatchlistHandler(this._handlePopupAddToWatchlistClick);
@@ -96,6 +97,8 @@ export default class MoviePresenter {
     this._popupComponent.setAddFavoriteHandler(this._handlePopupFavoriteClick);
     this._popupComponent.setDeleteCommentHandler(this._handleDeleteCommentClick);
     this._popupComponent.setCommentSubmitHandler(this._handleFormSubmit);
+    this._handleModelEvent = this._handleModelEvent.bind(this);
+    this._commentsModel.addObserver(this._handleModelEvent);
 
     this._renderedMovieContainer = this._bodyElement.querySelector('.film-details');
     if (this._renderedMovieContainer !== null) {
@@ -111,8 +114,6 @@ export default class MoviePresenter {
     this._api.getComments(this._movie.id)
       .then((comments) => {
         this._commentsModel.setComments(UpdateType.INIT, comments);
-        // console.log(this._commentsModel);
-
         this._renderPopup();
       })
       .catch(() => {
@@ -124,8 +125,9 @@ export default class MoviePresenter {
   _renderPopup() {
     this._changeMode();
     this._mode = Mode.OPENED;
-
     this._popupComponent = new FilmDetailsView(this._movie, this._commentsModel);
+    this._handleModelEvent = this._handleModelEvent.bind(this);
+    this._commentsModel.addObserver(this._handleModelEvent);
     this._popupComponent.setCloseFilmDetailsPopupHandler(this._removePopup);
     this._popupComponent.setAddToWatchlistHandler(this._handlePopupAddToWatchlistClick);
     this._popupComponent.setMarkAsWatchedHandler(this._handlePopupMarkAsWatchedClick);
@@ -144,23 +146,21 @@ export default class MoviePresenter {
   }
 
   _handleDeleteCommentClick(commentId) {
-    const prevPopupScrollHeight = this._popupComponent.getElement().scrollTop;
     this._changeData(
       UserAction.DELETE_COMMENT,
       UpdateType.PATCH,
       Object.assign({}, this._movie, {
-        comments: removeObjectFromSet(this._movie.comments, commentId),
-        commentDetails: this._movie.commentDetails.filter((comment) => comment.id !== commentId),
+        comments: this._movie.comments.filter((comment) => comment !== commentId),
       }),
       commentId,
     );
-    this._popupComponent.getElement().scrollTop = prevPopupScrollHeight;
   }
 
   _removePopup() {
     remove(this._popupComponent);
     this._bodyElement.classList.remove('hide-overflow');
     document.removeEventListener('keydown', this._escKeyDownHandler);
+    this._commentsModel.removeObserver(this._handleModelEvent);
     this._mode = Mode.CLOSED;
   }
 
@@ -189,6 +189,8 @@ export default class MoviePresenter {
     if (this._mode === Mode.CLOSED) {
       return;
     }
+
+
     return (this._popupComponent.getElement().scrollTop = value);
   }
 
