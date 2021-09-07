@@ -1,8 +1,4 @@
-import {
-  getRandomFloat,
-  getRandomInteger,
-  shuffle
-} from './utils.js';
+import { getRandomFloat, getRandomInteger, shuffle } from './utils.js';
 import dayjs from 'dayjs';
 
 const TEXT_DESCRIPTION =
@@ -175,31 +171,27 @@ const generateMovie = (allCommentsList) => {
   return {
     id: generateID(),
     comments: generateComments(allCommentsList),
-    filmInfo: {
-      title: generateMovieTitle(),
-      alternativeTitle: generateAltMovieTitle(),
-      totalRating: generateRating(),
-      poster: generateMoviePoster(),
-      ageRating: generateAgeRating(),
-      director: generateDirector(),
-      writers: generateScreenWriters(),
-      actors: generateActors(),
-      release: {
-        date: generateDateRelease(),
-        country: generateCountry(),
-      },
-      runTime: generateRuntime(),
-      genres: generateGenres(),
-      description: generateMovieDescription(textGenerator),
-    },
-    userDetails: {
-      isWatchList: Boolean(getRandomInteger()),
-      watchingDate: dueDate,
-      isAlreadyWatched: isWatchedStatus,
-      isFavorite: Boolean(getRandomInteger()),
-    },
+    title: generateMovieTitle(),
+    alternativeTitle: generateAltMovieTitle(),
+    totalRating: generateRating(),
+    poster: generateMoviePoster(),
+    ageRating: generateAgeRating(),
+    director: generateDirector(),
+    writers: generateScreenWriters(),
+    actors: generateActors(),
+    date: generateDateRelease(),
+    country: generateCountry(),
+
+    runTime: generateRuntime(),
+    genres: generateGenres(),
+    description: generateMovieDescription(textGenerator),
+
+    isWatchList: Boolean(getRandomInteger()),
+    watchingDate: dueDate,
+    isAlreadyWatched: isWatchedStatus,
+    isFavorite: Boolean(getRandomInteger()),
   };
 };
 
-export const generateMovies = (allComments, moviesTotalCount) => new Array(moviesTotalCount).fill().map(() => generateMovie(allComments));
-
+export const generateMovies = (allComments, moviesTotalCount) =>
+  new Array(moviesTotalCount).fill().map(() => generateMovie(allComments));

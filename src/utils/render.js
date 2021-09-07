@@ -5,7 +5,11 @@ export const RenderPosition = {
   BEFOREBEGIN: 'beforebegin',
 };
 
-export const render = (container, child, place = RenderPosition.BEFOREBEGIN) => {
+export const render = (
+  container,
+  child,
+  place = RenderPosition.BEFOREBEGIN,
+) => {
   if (container instanceof Abstract) {
     container = container.getElement();
   }
@@ -50,9 +54,14 @@ export const createElement = (template) => {
 };
 
 export const remove = (component) => {
+  if (component === null) {
+    return;
+  }
+
   if (!(component instanceof Abstract)) {
     throw new Error('Can remove only components');
   }
+
   component.getElement().remove();
   component.removeElement();
 };

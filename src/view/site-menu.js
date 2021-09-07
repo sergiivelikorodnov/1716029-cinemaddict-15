@@ -1,22 +1,37 @@
 import AbstractView from './abstract.js';
+import { MenuItem } from '../const.js';
 
-const createSiteMenuFiltersTemplate = (filters) => `<nav class="main-navigation">
-  <div class="main-navigation__items">
-    <a href="#all" class="main-navigation__item main-navigation__item--active">All movies</a>
-    <a href="#watchlist" class="main-navigation__item">Watchlist <span class="main-navigation__item-count">${filters.find((filter) => filter.name === 'watchedMovies').count}</span></a>
-    <a href="#history" class="main-navigation__item">History <span class="main-navigation__item-count">${filters.find((filter) => filter.name === 'historyList').count}</span></a>
-    <a href="#favorites" class="main-navigation__item">Favorites <span class="main-navigation__item-count">${filters.find((filter) => filter.name === 'favoriteMovies').count}</span></a>
-  </div>
-  <a href="#stats" class="main-navigation__additional">Stats</a>
+const createSiteMenuTemplate = () => `<nav class="main-navigation">
+  <a href="#${MenuItem.STATISTICS}" class="main-navigation__additional" data-menu="${MenuItem.STATISTICS}">Stats</a>
 </nav>`;
 
 export default class SiteMenuFiltersTemplate extends AbstractView {
-  constructor(filters) {
+  constructor() {
     super();
-    this._filters = filters;
+    this._menuClickHandler = this._menuClickHandler.bind(this);
   }
 
   getTemplate() {
-    return createSiteMenuFiltersTemplate(this._filters);
+    return createSiteMenuTemplate();
+  }
+
+  _menuClickHandler(evt) {
+    if (evt.target.tagName !== 'A') {
+      return;
+    }
+
+    const currentMenu = evt.target;
+    if (evt.target.getAttribute('href') === `#${MenuItem.STATISTICS}`) {
+      this.getElement().querySelectorAll('.main-navigation__item').forEach((menuItem) => menuItem.classList.remove('main-navigation__item--active'));
+      currentMenu.classList.add('main-navigation__item--active');
+    }
+
+    evt.preventDefault();
+    this._callback.menuClick(evt.target.dataset.menu);
+  }
+
+  setMenuClickHandler(callback) {
+    this._callback.menuClick = callback;
+    this.getElement().addEventListener('click', this._menuClickHandler);
   }
 }
