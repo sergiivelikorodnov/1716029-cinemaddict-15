@@ -36,9 +36,6 @@ export default class Comments extends AbstractObserver {
         emotion: comment.emotion,
       },
     );
-
-    //delete adaptedComment.emotion;
-
     return adaptedComment;
   }
 
@@ -50,9 +47,6 @@ export default class Comments extends AbstractObserver {
         emotion: comment.emotion,
       },
     );
-
-    delete adaptedComment.emoji;
-
     return adaptedComment;
   }
 }

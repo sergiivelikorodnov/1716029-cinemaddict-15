@@ -4,6 +4,8 @@ import CommentsModel from '../model/comments.js';
 const Method = {
   GET: 'GET',
   PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE',
 };
 
 export default class Api {
@@ -18,7 +20,7 @@ export default class Api {
       .then((movies) => movies.map(MoviesModel.adaptToClient));
   }
 
-  updateMovies(movie) {
+  updateMovie(movie) {
     return this._load({
       url: `movies/${movie.id}`,
       method: Method.PUT,
@@ -38,17 +40,20 @@ export default class Api {
   }
 
   addComment(movie, comment) {
+    // console.log(JSON.stringify(CommentsModel.adaptToServer(comment)));
+
     return this._load({
       url: `comments/${movie.id}`,
-      method: Method.PUT,
+      method: Method.POST,
       body: JSON.stringify(CommentsModel.adaptToServer(comment)),
       headers: new Headers({'Content-Type': 'application/json'}),
     })
       .then(Api.toJSON)
-      .then((data) => ({
-        film: MoviesModel.adaptToClient(data.movie),
+      .then((data) =>({
+        movie: MoviesModel.adaptToClient(data.movie),
         comments: data.comments.map(CommentsModel.adaptToClient),
-      }));
+      }),
+      );
   }
 
   deleteComment(commentId) {
@@ -75,6 +80,8 @@ export default class Api {
   }
 
   static checkStatus(response) {
+    // console.log(response);
+
     if (
       response.status.ok
     ){

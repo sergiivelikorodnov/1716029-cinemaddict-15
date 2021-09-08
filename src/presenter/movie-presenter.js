@@ -278,14 +278,13 @@ export default class MoviePresenter {
   }
 
   _handleFormSubmit(newComment) {
-    const prevPopupScrollHeight = this._getScrollY();
-
+    // const prevPopupScrollHeight = this._getScrollY();
     this._changeData(
       UserAction.ADD_COMMENT,
       UpdateType.PATCH,
       this._movie,
       newComment,
     );
-    this._setScrollY(prevPopupScrollHeight);
+    // this._setScrollY(prevPopupScrollHeight);
   }
 }

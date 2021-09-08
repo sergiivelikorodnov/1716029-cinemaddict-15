@@ -96,8 +96,11 @@ export default class ListMoviesPresenter {
           });
         break;
       case UserAction.ADD_COMMENT:
-        this._commentsModel.addComment(updateType, update, comment);
-        this._moviesModel.updateMovie(updateType, update);
+        this._api.addComment(update, comment)
+          .then((response) => {
+            this._moviesModel.updateMovie(updateType, response.movie);
+            this._commentsModel.addComment(updateType, response.movie, response.comments);
+          });
         break;
       case UserAction.DELETE_COMMENT:
         this._api.deleteComment(comment)
