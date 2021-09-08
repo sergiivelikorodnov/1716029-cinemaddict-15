@@ -199,6 +199,7 @@ export default class FilmDetails extends Smart {
   constructor(movie, comments) {
     super();
     this._data = FilmDetails.parseMovieToData(movie, comments);
+
     this._closeFilmDetailsPopupHandler = this._closeFilmDetailsPopupHandler.bind(this);
     this._addToWatchlistHandler = this._addToWatchlistHandler.bind(this);
     this._markAsWatchedHandler = this._markAsWatchedHandler.bind(this);
@@ -323,8 +324,9 @@ export default class FilmDetails extends Smart {
       newComment.date = new Date;
       this._callback.commentSubmit(FilmDetails.parseDataToMovie(newComment));
 
-      newComment.emojiData = null;
-      newComment.commentData = null;
+      this._data.emojiData = null;
+      this._data.commentData = null;
+
     }
   }
 
@@ -377,23 +379,22 @@ export default class FilmDetails extends Smart {
   }
 
   static parseMovieToData(movie, comments) {
+    delete movie.isComments;
+
     return Object.assign(
       {},
       movie,
       {
-        isComments: comments.getComments().filter((comment) => movie.comments.includes(comment.id)),
+        isComments: comments.getComments(),
       },
     );
 
   }
 
   static parseDataToMovie(data) {
-
     data = Object.assign({}, data);
-    console.log(data);
 
     delete data.emojiData;
-    delete data.isComments;
     delete data.commentData;
 
     return data;

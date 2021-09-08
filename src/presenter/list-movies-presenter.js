@@ -98,8 +98,8 @@ export default class ListMoviesPresenter {
       case UserAction.ADD_COMMENT:
         this._api.addComment(update, comment)
           .then((response) => {
-            this._moviesModel.updateMovie(updateType, response.movie);
             this._commentsModel.addComment(updateType, response.movie, response.comments);
+            this._moviesModel.updateMovie(updateType, response.movie);
           });
         break;
       case UserAction.DELETE_COMMENT:
