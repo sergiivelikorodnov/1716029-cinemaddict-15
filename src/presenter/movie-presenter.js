@@ -83,7 +83,7 @@ export default class MoviePresenter {
     }
   }
 
-  _handleModelEvent(){
+  _handleModelEvent() {
     positionScrollY.setY(this._popupComponent.getElement().scrollTop);
   }
 
@@ -178,24 +178,11 @@ export default class MoviePresenter {
     this._popupComponent.getElement().remove();
   }
 
-  _getScrollY() {
-    if (this._mode === Mode.CLOSED) {
-      return;
-    }
-    return this._popupComponent.getElement().scrollTop;
-  }
-
-  _setScrollY(value) {
-    if (this._mode === Mode.CLOSED) {
-      return;
-    }
-
-
-    return (this._popupComponent.getElement().scrollTop = value);
-  }
 
   _handleAddToWatchlistClick() {
-    const prevPopupScrollHeight = this._getScrollY();
+    if (this._mode === Mode.OPENED) {
+      positionScrollY.setY(this._popupComponent.getElement().scrollTop);
+    }
     this._changeData(
       UserAction.UPDATE_MOVIE,
       this._mode === Mode.CLOSED ? UpdateType.MINOR : UpdateType.PATCH,
@@ -204,11 +191,12 @@ export default class MoviePresenter {
         isWatchList: !this._movie.isWatchList,
       }),
     );
-    this._setScrollY(prevPopupScrollHeight);
   }
 
   _handleMarkAsWatchedClick() {
-    const prevPopupScrollHeight = this._getScrollY();
+    if (this._mode === Mode.OPENED) {
+      positionScrollY.setY(this._popupComponent.getElement().scrollTop);
+    }
     this._changeData(
       UserAction.UPDATE_MOVIE,
       this._mode === Mode.CLOSED ? UpdateType.MINOR : UpdateType.PATCH,
@@ -217,11 +205,12 @@ export default class MoviePresenter {
         watchingDate : dayjs(),
       }),
     );
-    this._setScrollY(prevPopupScrollHeight);
   }
 
   _handleFavoriteClick() {
-    const prevPopupScrollHeight = this._getScrollY();
+    if (this._mode === Mode.OPENED) {
+      positionScrollY.setY(this._popupComponent.getElement().scrollTop);
+    }
     this._changeData(
       UserAction.UPDATE_MOVIE,
       this._mode === Mode.CLOSED ? UpdateType.MINOR : UpdateType.PATCH,
@@ -231,11 +220,10 @@ export default class MoviePresenter {
         (this._movie.isFavorite = !this._movie.isFavorite),
       ),
     );
-    this._setScrollY(prevPopupScrollHeight);
   }
 
   _handlePopupAddToWatchlistClick() {
-    const prevPopupScrollHeight = this._getScrollY();
+    positionScrollY.setY(this._popupComponent.getElement().scrollTop);
     this._changeData(
       UserAction.UPDATE_MOVIE,
       UpdateType.PATCH,
@@ -245,11 +233,10 @@ export default class MoviePresenter {
         (this._movie.isWatchList = !this._movie.isWatchList),
       ),
     );
-    this._setScrollY(prevPopupScrollHeight);
   }
 
   _handlePopupMarkAsWatchedClick() {
-    const prevPopupScrollHeight = this._getScrollY();
+    positionScrollY.setY(this._popupComponent.getElement().scrollTop);
     this._changeData(
       UserAction.UPDATE_MOVIE,
       UpdateType.PATCH,
@@ -260,11 +247,10 @@ export default class MoviePresenter {
         (this._movie.watchingDate = dayjs()),
       ),
     );
-    this._setScrollY(prevPopupScrollHeight);
   }
 
   _handlePopupFavoriteClick() {
-    const prevPopupScrollHeight = this._getScrollY();
+    positionScrollY.setY(this._popupComponent.getElement().scrollTop);
     this._changeData(
       UserAction.UPDATE_MOVIE,
       UpdateType.PATCH,
@@ -274,17 +260,14 @@ export default class MoviePresenter {
         (this._movie.isFavorite = !this._movie.isFavorite),
       ),
     );
-    this._setScrollY(prevPopupScrollHeight);
   }
 
   _handleFormSubmit(newComment) {
-    // const prevPopupScrollHeight = this._getScrollY();
     this._changeData(
       UserAction.ADD_COMMENT,
       UpdateType.PATCH,
       this._movie,
       newComment,
     );
-    // this._setScrollY(prevPopupScrollHeight);
   }
 }
