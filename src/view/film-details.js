@@ -180,8 +180,7 @@ const createFilmDetails = (data) => {
           </div>
 
           <label class="film-details__comment-label">
-            <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment" ${isDisabled ? 'disabled' : ''}> ${ commentData ? `${commentData}` : ''
-} </textarea>
+            <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment" ${isDisabled ? 'disabled' : ''}>${ commentData ? `${commentData}` : ''}</textarea>
           </label>
 
           <div class="film-details__emoji-list ${isDisabled ? 'disabled' : ''}">

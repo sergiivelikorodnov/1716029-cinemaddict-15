@@ -27,7 +27,7 @@ export const humanTime = (time) => {
     return `${now.diff(time, 'weeks')} weeks ago`;
   } else if (now.diff(time, 'days') < 8 && now.diff(time, 'days') > 1) {
     return `${now.diff(time, 'days')} days ago`;
-  } else {
-    return 'Today';
   }
+
+  return 'Today';
 };

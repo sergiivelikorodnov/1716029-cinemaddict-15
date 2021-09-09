@@ -41,32 +41,14 @@ const filterPresenter = new FilterPresenter(
 let statisticsComponent = null;
 
 const handleSiteMenuClick = (menuItem) => {
-  switch (menuItem) {
-    case MenuItem.ALL:
-      moviesPresenter.hideMoviesList();
-      remove(statisticsComponent);
-      moviesPresenter.init();
-      break;
-    case MenuItem.WATCHLIST:
-      moviesPresenter.hideMoviesList();
-      remove(statisticsComponent);
-      moviesPresenter.init();
-      break;
-    case MenuItem.HISTORY:
-      moviesPresenter.hideMoviesList();
-      remove(statisticsComponent);
-      moviesPresenter.init();
-      break;
-    case MenuItem.FAVORITES:
-      moviesPresenter.hideMoviesList();
-      remove(statisticsComponent);
-      moviesPresenter.init();
-      break;
-    case MenuItem.STATISTICS:
-      moviesPresenter.hideMoviesList();
-      statisticsComponent = new StatisticsView(moviesModel.getMovies());
-      render(siteMainContainer, statisticsComponent);
-      break;
+  if (menuItem !== MenuItem.STATISTICS) {
+    moviesPresenter.hideMoviesList();
+    remove(statisticsComponent);
+    moviesPresenter.init();
+  } else {
+    moviesPresenter.hideMoviesList();
+    statisticsComponent = new StatisticsView(moviesModel.getMovies());
+    render(siteMainContainer, statisticsComponent);
   }
 };
 
