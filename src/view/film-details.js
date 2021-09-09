@@ -5,7 +5,7 @@ import Smart from './smart.js';
 const EMOJI = ['smile', 'sleeping', 'puke', 'angry'];
 
 const createEmojiTemplate = (choosedDataEmoji, isDisabled) =>
-  Object.values(EMOJI)
+  EMOJI
     .map(
       (
         emotion,
@@ -18,7 +18,7 @@ const createEmojiTemplate = (choosedDataEmoji, isDisabled) =>
     .join('');
 
 const createCommentTemplate = (allComments, isDisabled, isDeleting) =>
-  Object.values(allComments)
+  allComments
     .map(
       ({
         id,
