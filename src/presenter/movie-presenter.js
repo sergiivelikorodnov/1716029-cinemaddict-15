@@ -3,10 +3,18 @@ import { UpdateType, UserAction } from '../const.js';
 import { remove, render, replace } from '../utils/render.js';
 import FilmCardView from '../view/film-card.js';
 import FilmDetailsView from '../view/film-details.js';
+
 const Mode = {
   CLOSED: 'CLOSED',
   OPENED: 'OPENED',
 };
+
+export const State = {
+  SAVING: 'SAVING',
+  DELETING: 'DELETING',
+  ABORTING: 'ABORTING',
+};
+
 let scrollPosition;
 
 const positionScrollY = {
@@ -75,6 +83,42 @@ export default class MoviePresenter {
 
   removeCardMovie() {
     remove(this._movieComponent);
+  }
+
+  setViewState(state) {
+    if (this._mode === 'CLOSED') {
+      return;
+    }
+
+    const resetFormState = () => {
+      this._popupComponent.updateState({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    switch (state) {
+      case State.SAVING:
+        this._popupComponent.updateState({
+          isDisabled: true,
+          isDeleting: false,
+          isSaving: true,
+        });
+        break;
+
+      case State.DELETING:
+        this._popupComponent.updateState({
+          isDisabled: true,
+          isSaving: false,
+          isDeleting: true,
+        });
+        break;
+
+      case State.ABORTING:
+        this._popupComponent.shake(resetFormState);
+        break;
+    }
   }
 
   resetView() {
@@ -150,7 +194,7 @@ export default class MoviePresenter {
       UserAction.DELETE_COMMENT,
       UpdateType.PATCH,
       Object.assign({}, this._movie, {
-        comments: this._movie.comments.filter((comment) => comment !== commentId),
+        comments: this._movie.comments.filter((movieCommentId) => movieCommentId !== commentId),
       }),
       commentId,
     );

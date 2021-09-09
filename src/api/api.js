@@ -40,8 +40,6 @@ export default class Api {
   }
 
   addComment(movie, comment) {
-    // console.log(JSON.stringify(CommentsModel.adaptToServer(comment)));
-
     return this._load({
       url: `comments/${movie.id}`,
       method: Method.POST,
@@ -80,8 +78,6 @@ export default class Api {
   }
 
   static checkStatus(response) {
-    // console.log(response);
-
     if (
       response.status.ok
     ){

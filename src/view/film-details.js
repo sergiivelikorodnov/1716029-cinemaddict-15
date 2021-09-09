@@ -4,21 +4,20 @@ import Smart from './smart.js';
 
 const EMOJI = ['smile', 'sleeping', 'puke', 'angry'];
 
-const createEmojiTemplate = (choosedDataEmoji) =>
+const createEmojiTemplate = (choosedDataEmoji, isDisabled) =>
   Object.values(EMOJI)
     .map(
       (
         emotion,
-      ) => `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emotion}" value="${emotion}"  ${
-        emotion === choosedDataEmoji ? 'checked' : ''
-      }>
+      ) => `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emotion}" value="${emotion}"
+      ${emotion === choosedDataEmoji ? 'checked' : '' } ${isDisabled ? 'disabled' : ''}>
     <label class="film-details__emoji-label" for="emoji-${emotion}">
       <img src="./images/emoji/${emotion}.png" width="30" height="30" alt="emoji">
     </label>`,
     )
     .join('');
 
-const createCommentTemplate = (allComments) =>
+const createCommentTemplate = (allComments, isDisabled, isDeleting) =>
   Object.values(allComments)
     .map(
       ({
@@ -36,7 +35,7 @@ const createCommentTemplate = (allComments) =>
       <p class="film-details__comment-info">
         <span class="film-details__comment-author">${author}</span>
         <span class="film-details__comment-day">${humanTime(date)}</span>
-        <button class="film-details__comment-delete" data-id="${id}">Delete</button>
+        <button class="film-details__comment-delete" data-id="${id}" ${isDisabled ? 'disabled' : ''}>${isDeleting ? 'Deleting' : 'Delete'}</button>
       </p>
     </div>
   </li>`,
@@ -64,9 +63,14 @@ const createFilmDetails = (data) => {
     isComments,
     emojiData,
     commentData,
+    isDisabled,
+    isDeleting,
   } = data;
 
   const emojiTemplate = createEmojiTemplate(emojiData);
+  const commentsTemplate = createCommentTemplate(isComments, isDisabled, isDeleting);
+  const commentsNumber = isComments.length;
+  const runTimeMins = timeConvertor(runTime);
 
   const alreadyWatchedActive = isAlreadyWatched
     ? 'film-details__control-button--active'
@@ -78,11 +82,6 @@ const createFilmDetails = (data) => {
     ? 'film-details__control-button--active'
     : '';
 
-
-  const commentsTemplate = createCommentTemplate(isComments);
-
-  const commentsNumber = isComments.length;
-  const runTimeMins = timeConvertor(runTime);
   const renderGenre = (arr) => {
     let text = '';
     arr.forEach(
@@ -181,11 +180,11 @@ const createFilmDetails = (data) => {
           </div>
 
           <label class="film-details__comment-label">
-            <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"> ${ commentData ? `${commentData}` : ''
+            <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment" ${isDisabled ? 'disabled' : ''}> ${ commentData ? `${commentData}` : ''
 } </textarea>
           </label>
 
-          <div class="film-details__emoji-list">
+          <div class="film-details__emoji-list ${isDisabled ? 'disabled' : ''}">
             ${emojiTemplate}
           </div>
         </div>
@@ -386,6 +385,8 @@ export default class FilmDetails extends Smart {
       movie,
       {
         isComments: comments.getComments(),
+        isDeleting: false,
+        isDisabled:false,
       },
     );
 
@@ -396,6 +397,9 @@ export default class FilmDetails extends Smart {
 
     delete data.emojiData;
     delete data.commentData;
+    delete data.isComments;
+    delete data.isDisabled;
+    delete data.isDeleting;
 
     return data;
   }

@@ -15,7 +15,7 @@ import ShowMoreButtonView from '../view/show-more-button.js';
 import SiteSortView from '../view/site-sort.js';
 import FooterStatisticsView from '../view/footer-statistics.js';
 import HeaderProfileView from '../view/header-profile.js';
-import MoviePresenter from './movie-presenter.js';
+import MoviePresenter, {State as TaskPresenterViewState}from './movie-presenter.js';
 import { sortMoviesByDate, sortMoviesByRating } from '../utils/sort.js';
 import { filter } from '../utils/filter.js';
 import { getWatchedMoviesCount } from '../utils/statistics.js';
@@ -90,26 +90,31 @@ export default class ListMoviesPresenter {
   _handleViewAction(actionType, updateType, update, comment) {
     switch (actionType) {
       case UserAction.UPDATE_MOVIE:
+        this._moviePresenter.get(update.id).setViewState(TaskPresenterViewState.SAVING);
         this._api.updateMovie(update)
           .then((response) => {
             this._moviesModel.updateMovie(updateType, response);
           });
         break;
       case UserAction.ADD_COMMENT:
+        this._moviePresenter.get(update.id).setViewState(TaskPresenterViewState.SAVING);
         this._api.addComment(update, comment)
           .then((response) => {
             this._commentsModel.addComment(updateType, response.movie, response.comments);
             this._moviesModel.updateMovie(updateType, response.movie);
+          }).catch(() => {
+            this._moviePresenter.get(update.id).setViewState(TaskPresenterViewState.ABORTING);
           });
         break;
       case UserAction.DELETE_COMMENT:
+        this._moviePresenter.get(update.id).setViewState(TaskPresenterViewState.DELETING);
         this._api.deleteComment(comment)
           .then(() => {
             this._commentsModel.deleteComment(update, comment);
             this._moviesModel.updateMovie(updateType, update);
           })
           .catch(() => {
-            new Error('Cant remove comment');
+            this._moviePresenter.get(update.id).setViewState(TaskPresenterViewState.ABORTING);
           });
 
         break;
