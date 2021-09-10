@@ -27,11 +27,13 @@ const positionScrollY = {
 };
 
 export default class MoviePresenter {
-  constructor(listMoviesContainer, changeData, changeMode, commentsModel, api) {
+  constructor(listMoviesContainer, moviePresenter, changeMode, moviesModel, commentsModel, api) {
     this._changeMode = changeMode;
-    this._changeData = changeData;
+    this._moviePresenter = moviePresenter;
+    this._moviesModel = moviesModel;
     this._api = api;
     this._commentsModel = commentsModel;
+    this._listMoviesContainer = listMoviesContainer;
     this._listMoviesComponent = listMoviesContainer.getElement().querySelector('.films-list__container');
     this._bodyElement = document.querySelector('body');
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
@@ -46,6 +48,7 @@ export default class MoviePresenter {
     this._handlePopupFavoriteClick = this._handlePopupFavoriteClick.bind(this);
     this._handleDeleteCommentClick = this._handleDeleteCommentClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
+    this._handleViewAction = this._handleViewAction.bind(this);
     this._movieComponent = null;
     this._popupComponent = null;
     this._mode = Mode.CLOSED;
@@ -62,12 +65,15 @@ export default class MoviePresenter {
     this._movieComponent.setMarkAsWatchedHandler(this._handleMarkAsWatchedClick);
     this._movieComponent.setAddFavoriteHandler(this._handleFavoriteClick);
 
-    if (prevMovieComponent === null || prevPopupComponent === null) {
+    if (prevMovieComponent === null && prevPopupComponent === null) {
       render(this._listMoviesComponent, this._movieComponent);
       return;
     }
 
-    replace(this._movieComponent, prevMovieComponent);
+    if (this._listMoviesContainer.getElement().contains(prevMovieComponent.getElement())){
+      replace(this._movieComponent, prevMovieComponent);
+    }
+
 
     if (prevPopupComponent) {
       replace(this._popupComponent, prevPopupComponent);
@@ -79,6 +85,7 @@ export default class MoviePresenter {
     }
 
     remove(prevMovieComponent);
+    remove(prevPopupComponent);
   }
 
   removeCardMovie() {
@@ -124,6 +131,40 @@ export default class MoviePresenter {
   resetView() {
     if (this._mode !== Mode.CLOSED) {
       this._removePopup();
+    }
+  }
+
+  _handleViewAction(actionType, updateType, update, comment) {
+    switch (actionType) {
+      case UserAction.UPDATE_MOVIE:
+        this._moviePresenter.get(update.id).setViewState(State.SAVING);
+        this._api.updateMovie(update)
+          .then((response) => {
+            this._moviesModel.updateMovie(updateType, response);
+          });
+        break;
+      case UserAction.ADD_COMMENT:
+        this._moviePresenter.get(update.id).setViewState(State.SAVING);
+        this._api.addComment(update, comment)
+          .then((response) => {
+            this._commentsModel.addComment(updateType, response.movie, response.comments);
+            this._moviesModel.updateMovie(updateType, response.movie);
+          }).catch(() => {
+            this._moviePresenter.get(update.id).setViewState(State.ABORTING, comment);
+          });
+        break;
+      case UserAction.DELETE_COMMENT:
+        this._moviePresenter.get(update.id).setViewState(State.DELETING);
+        this._api.deleteComment(comment)
+          .then(() => {
+            this._commentsModel.deleteComment(update, comment);
+            this._moviesModel.updateMovie(updateType, update);
+          })
+          .catch(() => {
+            this._moviePresenter.get(update.id).setViewState(State.ABORTING, comment);
+          });
+
+        break;
     }
   }
 
@@ -190,7 +231,7 @@ export default class MoviePresenter {
   }
 
   _handleDeleteCommentClick(commentId) {
-    this._changeData(
+    this._handleViewAction(
       UserAction.DELETE_COMMENT,
       UpdateType.PATCH,
       Object.assign({}, this._movie, {
@@ -227,7 +268,7 @@ export default class MoviePresenter {
     if (this._mode === Mode.OPENED) {
       positionScrollY.setY(this._popupComponent.getElement().scrollTop);
     }
-    this._changeData(
+    this._handleViewAction(
       UserAction.UPDATE_MOVIE,
       this._mode === Mode.CLOSED ? UpdateType.MINOR : UpdateType.PATCH,
 
@@ -241,7 +282,7 @@ export default class MoviePresenter {
     if (this._mode === Mode.OPENED) {
       positionScrollY.setY(this._popupComponent.getElement().scrollTop);
     }
-    this._changeData(
+    this._handleViewAction(
       UserAction.UPDATE_MOVIE,
       this._mode === Mode.CLOSED ? UpdateType.MINOR : UpdateType.PATCH,
       Object.assign({}, this._movie, {
@@ -255,7 +296,7 @@ export default class MoviePresenter {
     if (this._mode === Mode.OPENED) {
       positionScrollY.setY(this._popupComponent.getElement().scrollTop);
     }
-    this._changeData(
+    this._handleViewAction(
       UserAction.UPDATE_MOVIE,
       this._mode === Mode.CLOSED ? UpdateType.MINOR : UpdateType.PATCH,
       Object.assign(
@@ -268,7 +309,7 @@ export default class MoviePresenter {
 
   _handlePopupAddToWatchlistClick() {
     positionScrollY.setY(this._popupComponent.getElement().scrollTop);
-    this._changeData(
+    this._handleViewAction(
       UserAction.UPDATE_MOVIE,
       UpdateType.PATCH,
       Object.assign(
@@ -281,7 +322,7 @@ export default class MoviePresenter {
 
   _handlePopupMarkAsWatchedClick() {
     positionScrollY.setY(this._popupComponent.getElement().scrollTop);
-    this._changeData(
+    this._handleViewAction(
       UserAction.UPDATE_MOVIE,
       UpdateType.PATCH,
       Object.assign(
@@ -295,7 +336,7 @@ export default class MoviePresenter {
 
   _handlePopupFavoriteClick() {
     positionScrollY.setY(this._popupComponent.getElement().scrollTop);
-    this._changeData(
+    this._handleViewAction(
       UserAction.UPDATE_MOVIE,
       UpdateType.PATCH,
       Object.assign(
@@ -307,7 +348,7 @@ export default class MoviePresenter {
   }
 
   _handleFormSubmit(newComment) {
-    this._changeData(
+    this._handleViewAction(
       UserAction.ADD_COMMENT,
       UpdateType.PATCH,
       this._movie,

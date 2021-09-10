@@ -6,12 +6,13 @@ export default class Abstract {
     if (new.target === Abstract) {
       throw new Error('Can\'t instantiate Abstract, only concrete one.');
     }
+
     this._element = null;
     this._callback = {};
   }
 
   getTemplate() {
-    throw new Error('Abstract method not implemented: getTemplate.');
+    throw new Error('Abstract method not implemented: getTemplate');
   }
 
   getElement() {
@@ -27,11 +28,6 @@ export default class Abstract {
   }
 
   shake(callback, commentId) {
-    console.log(this.getElement());
-    console.log(this.getElement().querySelector(`[data-id="${commentId}"]`));
-    console.log(`[data-id="${commentId}"]`);
-
-
     this.getElement().querySelector(`[data-id="${commentId}"]`).style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
     setTimeout(() => {
       this.getElement().style.animation = '';
