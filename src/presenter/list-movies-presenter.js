@@ -40,6 +40,7 @@ export default class ListMoviesPresenter {
     );
     this._siteSortComponent = null;
     this._moviePresenter = new Map();
+    this._movieTopPresenter = new Map();
     this._isLoading = true;
     this._handleShowMoreButtonClick = this._handleShowMoreButtonClick.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
@@ -53,6 +54,8 @@ export default class ListMoviesPresenter {
   init() {
     render(this._siteMainContainer, this._moviesContainer);
     render(this._moviesContainer, this._listMoviesComponent);
+    // render(this._moviesContainer, this._topRatedListComponent);
+    // render(this._moviesContainer, this._mostCommentedListComponent);
     this._moviesModel.addObserver(this._handleModelEvent);
     this._filtersModel.addObserver(this._handleModelEvent);
 
@@ -103,7 +106,7 @@ export default class ListMoviesPresenter {
             this._commentsModel.addComment(updateType, response.movie, response.comments);
             this._moviesModel.updateMovie(updateType, response.movie);
           }).catch(() => {
-            this._moviePresenter.get(update.id).setViewState(TaskPresenterViewState.ABORTING);
+            this._moviePresenter.get(update.id).setViewState(TaskPresenterViewState.ABORTING, comment);
           });
         break;
       case UserAction.DELETE_COMMENT:
@@ -114,7 +117,7 @@ export default class ListMoviesPresenter {
             this._moviesModel.updateMovie(updateType, update);
           })
           .catch(() => {
-            this._moviePresenter.get(update.id).setViewState(TaskPresenterViewState.ABORTING);
+            this._moviePresenter.get(update.id).setViewState(TaskPresenterViewState.ABORTING, comment);
           });
 
         break;
@@ -125,6 +128,7 @@ export default class ListMoviesPresenter {
     switch (updateType) {
       case UpdateType.PATCH:
         this._moviePresenter.get(data.id).init(data);
+        // this._movieTopPresenter.get(data.id).init(data);
         this._renderHeaderProfile();
         break;
       case UpdateType.MINOR:
@@ -175,8 +179,24 @@ export default class ListMoviesPresenter {
     this._moviePresenter.set(movie.id, moviePresenter);
   }
 
+  // _renderTopMovie(movie) {
+  //   const moviePresenter = new MoviePresenter(
+  //     this._topRatedListComponent,
+  //     this._handleViewAction,
+  //     this._handlePopupMode,
+  //     this._commentsModel,
+  //     this._api,
+  //   );
+  //   moviePresenter.init(movie);
+  //   this._movieTopPresenter.set(movie.id, moviePresenter);
+  // }
+
   _renderFeaturedMoviesList(movies) {
     movies.forEach((movie) => this._renderMovie(movie));
+  }
+
+  _renderTopMoviesList(movies) {
+    movies.forEach((movie) => this._renderTopMovie(movie));
   }
 
   _clearMovieList({
@@ -187,6 +207,9 @@ export default class ListMoviesPresenter {
 
     this._moviePresenter.forEach((presenter) => presenter.removeCardMovie());
     this._moviePresenter.clear();
+
+    // this._movieTopPresenter.forEach((presenter) => presenter.removeCardMovie());
+    // this._movieTopPresenter.clear();
 
     remove(this._siteSortComponent);
     remove(this._loadingComponent);
@@ -297,6 +320,10 @@ export default class ListMoviesPresenter {
     this._renderFeaturedMoviesList(
       movies.slice(0, Math.min(moviesCount, this._renderedMoviesCount)),
     );
+
+    // this._renderTopMoviesList(
+    //   movies.slice(0, 2),
+    // );
 
     if (moviesCount > this._renderedMoviesCount) {
       this._renderShowMoreButton();

@@ -332,10 +332,6 @@ export default class FilmDetails extends Smart {
     evt.preventDefault();
 
     this._callback.deleteCommentClick(evt.target.dataset.id);
-
-    this.updateState({
-      isComments: this._data.isComments.filter((comment) => comment.id !== evt.target.dataset.id),
-    });
   }
 
   _closeFilmDetailsPopupHandler(evt) {

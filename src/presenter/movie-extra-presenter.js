@@ -85,7 +85,7 @@ export default class MoviePresenter {
     remove(this._movieComponent);
   }
 
-  setViewState(state, commentId) {
+  setViewState(state) {
     if (this._mode === 'CLOSED') {
       return;
     }
@@ -116,7 +116,7 @@ export default class MoviePresenter {
         break;
 
       case State.ABORTING:
-        this._popupComponent.shake(resetFormState, commentId);
+        this._popupComponent.shake(resetFormState);
         break;
     }
   }
