@@ -150,7 +150,8 @@ export default class MoviePresenter {
             this._commentsModel.addComment(updateType, response.movie, response.comments);
             this._moviesModel.updateMovie(updateType, response.movie);
           }).catch(() => {
-            this._moviePresenter.get(update.id).setViewState(State.ABORTING, comment);
+            const container = '.film-details__new-comment';
+            this._moviePresenter.get(update.id).setViewState(State.ABORTING, container);
           });
         break;
       case UserAction.DELETE_COMMENT:
@@ -161,7 +162,8 @@ export default class MoviePresenter {
             this._moviesModel.updateMovie(updateType, update);
           })
           .catch(() => {
-            this._moviePresenter.get(update.id).setViewState(State.ABORTING, comment);
+            const container = `[data-id="${comment}"]`;
+            this._moviePresenter.get(update.id).setViewState(State.ABORTING, container);
           });
 
         break;

@@ -27,8 +27,8 @@ export default class Abstract {
     this._element = null;
   }
 
-  shake(callback, commentId) {
-    this.getElement().querySelector(`[data-id="${commentId}"]`).style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+  shake(callback, container) {
+    this.getElement().querySelector(container).style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
     setTimeout(() => {
       this.getElement().style.animation = '';
       callback();
