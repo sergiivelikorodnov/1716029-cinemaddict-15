@@ -3,11 +3,14 @@ import dayjs from 'dayjs';
 export const sortTopMoviesList = (allMovies) =>
   allMovies
     .filter((movie) => movie.totalRating > 0)
-    .sort((a, b) => a.totalRating < b.totalRating);
+    .sort((a, b) => a.totalRating < b.totalRating)
+    .slice(0, 2);
+
 export const sortMostCommentedMoviesList = (allMovies) =>
   allMovies
-    .filter((movie) => movie.comments.size > 0)
-    .sort((a, b) => a.comments.size < b.comments.size);
+    .filter((movie) => movie.comments.length > 0)
+    .sort((a, b) => a.comments.length < b.comments.length)
+    .slice(0, 2);
 
 export const sortMoviesByDate = (MovieA, MovieB) => {
   if (MovieB.dueDate === null) {

@@ -16,7 +16,7 @@ import SiteSortView from '../view/site-sort.js';
 import FooterStatisticsView from '../view/footer-statistics.js';
 import HeaderProfileView from '../view/header-profile.js';
 import MoviePresenter/* , {State as TaskPresenterViewState} */from './movie-presenter.js';
-import { sortMoviesByDate, sortMoviesByRating } from '../utils/sort.js';
+import { sortMostCommentedMoviesList, sortMoviesByDate, sortMoviesByRating, sortTopMoviesList } from '../utils/sort.js';
 import { filter } from '../utils/filter.js';
 import { getWatchedMoviesCount } from '../utils/statistics.js';
 
@@ -35,12 +35,11 @@ export default class ListMoviesPresenter {
     this._listMoviesComponent = new ListMoviesView();
     this._showMoreComponent = null;
     this._topRatedListComponent = new ListExtraMoviesView('Top rated');
-    this._mostCommentedListComponent = new ListExtraMoviesView(
-      'Most commented',
-    );
+    this._mostCommentedListComponent = new ListExtraMoviesView('Most commented');
     this._siteSortComponent = null;
     this._moviePresenter = new Map();
     this._movieTopPresenter = new Map();
+    this._movieMostCommentedPresenter = new Map();
     this._isLoading = true;
     this._handleShowMoreButtonClick = this._handleShowMoreButtonClick.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
@@ -55,7 +54,7 @@ export default class ListMoviesPresenter {
     render(this._siteMainContainer, this._moviesContainer);
     render(this._moviesContainer, this._listMoviesComponent);
     render(this._moviesContainer, this._topRatedListComponent);
-    // render(this._moviesContainer, this._mostCommentedListComponent);
+    render(this._moviesContainer, this._mostCommentedListComponent);
     this._moviesModel.addObserver(this._handleModelEvent);
     this._filtersModel.addObserver(this._handleModelEvent);
 
@@ -127,8 +126,18 @@ export default class ListMoviesPresenter {
   _handleModelEvent(updateType, data) {
     switch (updateType) {
       case UpdateType.PATCH:
-        this._moviePresenter.get(data.id).init(data);
-        this._movieTopPresenter.get(data.id).init(data);
+        if (this._moviePresenter.get(data.id)) {
+          this._moviePresenter.get(data.id).init(data);
+        }
+
+        if (this._movieTopPresenter.get(data.id)) {
+          this._movieTopPresenter.get(data.id).init(data);
+        }
+
+        if (this._movieMostCommentedPresenter.get(data.id)) {
+          this._movieMostCommentedPresenter.get(data.id).init(data);
+        }
+
         this._renderHeaderProfile();
         break;
       case UpdateType.MINOR:
@@ -193,12 +202,29 @@ export default class ListMoviesPresenter {
     this._movieTopPresenter.set(movie.id, moviePresenter);
   }
 
+  _renderMostCommentedMovie(movie) {
+    const moviePresenter = new MoviePresenter(
+      this._mostCommentedListComponent,
+      this._movieMostCommentedPresenter,
+      this._handlePopupMode,
+      this._moviesModel,
+      this._commentsModel,
+      this._api,
+    );
+    moviePresenter.init(movie);
+    this._movieMostCommentedPresenter.set(movie.id, moviePresenter);
+  }
+
   _renderFeaturedMoviesList(movies) {
     movies.forEach((movie) => this._renderMovie(movie));
   }
 
   _renderTopMoviesList(movies) {
     movies.forEach((movie) => this._renderTopMovie(movie));
+  }
+
+  _renderMostCommentedMoviesList(movies) {
+    movies.forEach((movie) => this._renderMostCommentedMovie(movie));
   }
 
   _clearMovieList({
@@ -212,6 +238,9 @@ export default class ListMoviesPresenter {
 
     this._movieTopPresenter.forEach((presenter) => presenter.removeCardMovie());
     this._movieTopPresenter.clear();
+
+    this._movieMostCommentedPresenter.forEach((presenter) => presenter.removeCardMovie());
+    this._movieMostCommentedPresenter.clear();
 
     remove(this._siteSortComponent);
     remove(this._loadingComponent);
@@ -324,7 +353,11 @@ export default class ListMoviesPresenter {
     );
 
     this._renderTopMoviesList(
-      movies.slice(0, 2),
+      sortTopMoviesList(movies),
+    );
+
+    this._renderMostCommentedMoviesList(
+      sortMostCommentedMoviesList(movies),
     );
 
     if (moviesCount > this._renderedMoviesCount) {
