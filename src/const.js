@@ -63,3 +63,5 @@ export const UserRang = {
     WATCHED_MOVIES: 22,
   },
 };
+
+export const isOnline = () => window.navigator.onLine;
