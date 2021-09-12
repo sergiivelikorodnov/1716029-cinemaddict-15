@@ -40,7 +40,7 @@ const createCommentTemplate = (allComments, isDisabled, isDeleting) =>
       <p class="film-details__comment-info">
         <span class="film-details__comment-author">${author}</span>
         <span class="film-details__comment-day">${humanTime(date)}</span>
-        <button class="film-details__comment-delete" data-id="${id}" ${isDisabled ? 'disabled' : ''}>${isDeleting} ? ${ DELETE.DELETING } : ${ DELETE.DELETE }</button>
+        <button class="film-details__comment-delete" data-id="${id}" ${isDisabled ? 'disabled' : ''}>${isDeleting ? `${ DELETE.DELETING }` : `${ DELETE.DELETE }`}</button>
       </p>
     </div>
   </li>`,
