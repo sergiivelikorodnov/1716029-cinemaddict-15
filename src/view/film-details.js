@@ -6,7 +6,7 @@ const EMOJI = ['smile', 'sleeping', 'puke', 'angry'];
 
 const DELETE = {
   DELETE: 'Delete',
-  DELETING: 'Deleting',
+  DELETING: 'Deleting...',
 };
 
 const createEmojiTemplate = (choosedDataEmoji, isDisabled) =>
