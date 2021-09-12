@@ -167,6 +167,9 @@ export default class MoviePresenter {
             const container = `[data-id="${comment}"]`;
             this._moviePresenter.get(update.id).setViewState(State.ABORTING, container);
           });
+        break;
+      case UserAction.ABORT_COMMENT:
+        this._moviePresenter.get(update.id).setViewState(State.ABORTING, `[data-id="${comment}"]`);
 
         break;
     }
@@ -237,6 +240,7 @@ export default class MoviePresenter {
   _handleDeleteCommentClick(commentId) {
     if (!isOnline()) {
       toast('You can\'t delete comment offline');
+      this._moviePresenter.get(this._movie.id).setViewState(State.ABORTING, `[data-id="${commentId}"]`);
       return;
     }
     this._handleViewAction(
@@ -273,7 +277,6 @@ export default class MoviePresenter {
 
 
   _handleAddToWatchlistClick() {
-
     if (this._mode === Mode.OPENED) {
       positionScrollY.setY(this._popupComponent.getElement().scrollTop);
     }
@@ -288,8 +291,6 @@ export default class MoviePresenter {
   }
 
   _handleMarkAsWatchedClick() {
-
-
     if (this._mode === Mode.OPENED) {
       positionScrollY.setY(this._popupComponent.getElement().scrollTop);
     }
@@ -304,8 +305,6 @@ export default class MoviePresenter {
   }
 
   _handleFavoriteClick() {
-
-
     if (this._mode === Mode.OPENED) {
       positionScrollY.setY(this._popupComponent.getElement().scrollTop);
     }
@@ -321,11 +320,6 @@ export default class MoviePresenter {
   }
 
   _handlePopupAddToWatchlistClick() {
-    if (!isOnline()) {
-      toast('You can\'t update movie offline');
-      return;
-    }
-
     positionScrollY.setY(this._popupComponent.getElement().scrollTop);
     this._handleViewAction(
       UserAction.UPDATE_MOVIE,
@@ -339,11 +333,6 @@ export default class MoviePresenter {
   }
 
   _handlePopupMarkAsWatchedClick() {
-    if (!isOnline()) {
-      toast('You can\'t update movie offline');
-      return;
-    }
-
     positionScrollY.setY(this._popupComponent.getElement().scrollTop);
     this._handleViewAction(
       UserAction.UPDATE_MOVIE,
@@ -358,10 +347,6 @@ export default class MoviePresenter {
   }
 
   _handlePopupFavoriteClick() {
-    if (!isOnline()) {
-      toast('You can\'t update movie offline');
-      return;
-    }
 
     positionScrollY.setY(this._popupComponent.getElement().scrollTop);
     this._handleViewAction(
@@ -378,6 +363,12 @@ export default class MoviePresenter {
   _handleFormSubmit(newComment) {
     if (!isOnline()) {
       toast('You can\'t add comment offline');
+      this._handleViewAction(
+        UserAction.ADD_COMMENT,
+        UpdateType.PATCH,
+        this._movie,
+        newComment,
+      );
       return;
     }
 
