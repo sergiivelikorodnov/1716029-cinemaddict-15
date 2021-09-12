@@ -63,6 +63,8 @@ export default class ListMoviesPresenter {
   hideMoviesList() {
     this._clearMovieList({ resetRenderedMoviesCount: true, resetSortType: true });
     remove(this._listMoviesComponent);
+    remove(this._topRatedListComponent);
+    remove(this._mostCommentedListComponent);
 
     this._moviesModel.removeObserver(this._handleModelEvent);
     this._filtersModel.removeObserver(this._handleModelEvent);
