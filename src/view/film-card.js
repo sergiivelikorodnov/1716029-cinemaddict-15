@@ -29,7 +29,7 @@ const createFilmCard = (movie) => {
     MAX_SHORT_DESCRIPTION_LENGTH,
   )}...`;
 
-  const comments = movie.comments.size;
+  const comments = movie.comments.length;
   const releaseDate = new Date(date).getFullYear();
   const humanRunTime = timeConvertor(runTime);
 

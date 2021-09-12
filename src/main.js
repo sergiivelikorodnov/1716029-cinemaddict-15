@@ -1,28 +1,25 @@
-import { generateComments } from './mock/comments.js';
-import { generateMovies } from './mock/movie.js';
 import ListMoviesPresenter from './presenter/list-movies-presenter.js';
 import FilterPresenter from './presenter/filter-presenter.js';
-import Movies from './model/movies.js';
+import MoviesModel from './model/movies.js';
 import FiltersModel from './model/filters.js';
-import Comments from './model/comments.js';
-import { MenuItem } from './const.js';
+import CommentsModel from './model/comments.js';
+import { MenuItem, UpdateType } from './const.js';
 import SiteMenuView from './view/site-menu.js';
 import StatisticsView from './view/statistics.js';
 import { remove, render, RenderPosition } from './utils/render.js';
+import Api from './api/api.js';
 
-const COMMENTS_TOTAL_COUNT = 20;
-const MOVIES_TOTAL_COUNT = 18;
+const AUTHORIZATION = 'Basic 3232xx2';
+const END_POINT = 'https://15.ecmascript.pages.academy/cinemaddict';
 
-const allComments = generateComments(COMMENTS_TOTAL_COUNT);
-const allMovies = generateMovies(allComments, MOVIES_TOTAL_COUNT);
+const api = new Api(END_POINT, AUTHORIZATION);
 
 const siteMainContainer = document.querySelector('.main');
 
-const commentsModel = new Comments();
-commentsModel.setComments(allComments);
+const commentsModel = new CommentsModel();
 
-const moviesModel = new Movies();
-moviesModel.setMovies(allMovies);
+const moviesModel = new MoviesModel();
+const siteMenuComponent = new SiteMenuView();
 
 const filterModel = new FiltersModel();
 
@@ -31,11 +28,9 @@ const moviesPresenter = new ListMoviesPresenter(
   moviesModel,
   filterModel,
   commentsModel,
+  api,
 );
 
-
-const siteMenuComponent = new SiteMenuView();
-render(siteMainContainer, siteMenuComponent, RenderPosition.AFTERBEGIN);
 
 const filterPresenter = new FilterPresenter(
   siteMenuComponent,
@@ -46,37 +41,29 @@ const filterPresenter = new FilterPresenter(
 let statisticsComponent = null;
 
 const handleSiteMenuClick = (menuItem) => {
-  switch (menuItem) {
-    case MenuItem.ALL:
-      moviesPresenter.hideMoviesList();
-      remove(statisticsComponent);
-      moviesPresenter.init();
-      break;
-    case MenuItem.WATCHLIST:
-      moviesPresenter.hideMoviesList();
-      remove(statisticsComponent);
-      moviesPresenter.init();
-      break;
-    case MenuItem.HISTORY:
-      moviesPresenter.hideMoviesList();
-      remove(statisticsComponent);
-      moviesPresenter.init();
-      break;
-    case MenuItem.FAVORITES:
-      moviesPresenter.hideMoviesList();
-      remove(statisticsComponent);
-      moviesPresenter.init();
-      break;
-    case MenuItem.STATISTICS:
-      moviesPresenter.hideMoviesList();
-      statisticsComponent = new StatisticsView(moviesModel.getMovies());
-      render(siteMainContainer, statisticsComponent);
-      break;
+  if (menuItem !== MenuItem.STATISTICS) {
+    moviesPresenter.hideMoviesList();
+    remove(statisticsComponent);
+    moviesPresenter.init();
+  } else {
+    moviesPresenter.hideMoviesList();
+    statisticsComponent = new StatisticsView(moviesModel.getMovies());
+    render(siteMainContainer, statisticsComponent);
   }
 };
-siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
+
 filterPresenter.init();
 moviesPresenter.init();
 
-// render(siteMainContainer, new StatisticsView(moviesModel.getMovies()));
+api.getMovies()
+  .then((movies) => {
+    moviesModel.setMovies(UpdateType.INIT, movies);
+    render(siteMainContainer, siteMenuComponent, RenderPosition.AFTERBEGIN);
+    siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
+  })
+  .catch(() => {
+    moviesModel.setMovies(UpdateType.INIT, []);
+    render(siteMainContainer, siteMenuComponent, RenderPosition.AFTERBEGIN);
+    siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
+  });
 

@@ -1,34 +1,31 @@
-import { humanTime, removeObjectFromSet, timeConvertor } from '../utils/common.js';
+import { humanTime, timeConvertor } from '../utils/common.js';
 import he from 'he';
-import { nanoid } from 'nanoid';
 import Smart from './smart.js';
-import dayjs from 'dayjs';
 
 const EMOJI = ['smile', 'sleeping', 'puke', 'angry'];
 
-const createEmojiTemplate = (choosedDataEmoji) =>
-  Object.values(EMOJI)
+const createEmojiTemplate = (choosedDataEmoji, isDisabled) =>
+  EMOJI
     .map(
       (
         emotion,
-      ) => `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emotion}" value="${emotion}"  ${
-        emotion === choosedDataEmoji ? 'checked' : ''
-      }>
+      ) => `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emotion}" value="${emotion}"
+      ${emotion === choosedDataEmoji ? 'checked' : '' } ${isDisabled ? 'disabled' : ''}>
     <label class="film-details__emoji-label" for="emoji-${emotion}">
       <img src="./images/emoji/${emotion}.png" width="30" height="30" alt="emoji">
     </label>`,
     )
     .join('');
 
-const createCommentTemplate = (allComments) =>
-  Object.values(allComments)
+const createCommentTemplate = (allComments, isDisabled, isDeleting) =>
+  allComments
     .map(
       ({
         id,
         author,
         comment,
         emotion,
-        dateComment,
+        date,
       }) => `<li class="film-details__comment" data-id="${id}">
     <span class="film-details__comment-emoji">
       <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">
@@ -37,8 +34,8 @@ const createCommentTemplate = (allComments) =>
       <p class="film-details__comment-text">${he.encode(comment)}</p>
       <p class="film-details__comment-info">
         <span class="film-details__comment-author">${author}</span>
-        <span class="film-details__comment-day">${humanTime(dateComment)}</span>
-        <button class="film-details__comment-delete" data-id="${id}">Delete</button>
+        <span class="film-details__comment-day">${humanTime(date)}</span>
+        <button class="film-details__comment-delete" data-id="${id}" ${isDisabled ? 'disabled' : ''}>${isDeleting ? 'Deleting' : 'Delete'}</button>
       </p>
     </div>
   </li>`,
@@ -63,12 +60,17 @@ const createFilmDetails = (data) => {
     isAlreadyWatched,
     isFavorite,
     isWatchList,
-    commentDetails,
+    isComments,
     emojiData,
     commentData,
+    isDisabled,
+    isDeleting,
   } = data;
 
   const emojiTemplate = createEmojiTemplate(emojiData);
+  const commentsTemplate = createCommentTemplate(isComments, isDisabled, isDeleting);
+  const commentsNumber = isComments.length;
+  const runTimeMins = timeConvertor(runTime);
 
   const alreadyWatchedActive = isAlreadyWatched
     ? 'film-details__control-button--active'
@@ -80,10 +82,6 @@ const createFilmDetails = (data) => {
     ? 'film-details__control-button--active'
     : '';
 
-  const commentsTemplate = createCommentTemplate(commentDetails);
-
-  const commentsNumber = commentDetails.length;
-  const runTimeMins = timeConvertor(runTime);
   const renderGenre = (arr) => {
     let text = '';
     arr.forEach(
@@ -182,11 +180,10 @@ const createFilmDetails = (data) => {
           </div>
 
           <label class="film-details__comment-label">
-            <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"> ${ commentData ? `${commentData}` : ''
-} </textarea>
+            <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment" ${isDisabled ? 'disabled' : ''}>${ commentData ? `${commentData}` : ''}</textarea>
           </label>
 
-          <div class="film-details__emoji-list">
+          <div class="film-details__emoji-list ${isDisabled ? 'disabled' : ''}">
             ${emojiTemplate}
           </div>
         </div>
@@ -197,12 +194,11 @@ const createFilmDetails = (data) => {
 };
 
 export default class FilmDetails extends Smart {
-  constructor(movie) {
+  constructor(movie, comments) {
     super();
-    this._data = FilmDetails.parseMovieToData(movie);
-    this._comments = this._data.commentDetails;
-    this._closeFilmDetailsPopupHandler =
-    this._closeFilmDetailsPopupHandler.bind(this);
+    this._data = FilmDetails.parseMovieToData(movie, comments);
+
+    this._closeFilmDetailsPopupHandler = this._closeFilmDetailsPopupHandler.bind(this);
     this._addToWatchlistHandler = this._addToWatchlistHandler.bind(this);
     this._markAsWatchedHandler = this._markAsWatchedHandler.bind(this);
     this._addFavoriteHandler = this._addFavoriteHandler.bind(this);
@@ -311,40 +307,29 @@ export default class FilmDetails extends Smart {
   }
 
   _submitNewCommentHandler(evt) {
-    if (evt.key === 'Enter' && evt.ctrlKey) {
+    if (evt.key === 'Enter' && (evt.metaKey || evt.ctrlKey)) {
+
       evt.preventDefault();
-      const id = nanoid();
 
       const newComment = {
         emotion: this._data.emojiData,
         comment: this._data.commentData,
-        dateComment: dayjs(),
-        id: id,
-        author: 'Velykorodnov',
       };
 
       if (newComment.emotion === undefined || newComment.comment === undefined || newComment.emotion === null || newComment.comment === null) {
         return;
       }
+      newComment.date = new Date;
+      this._callback.commentSubmit(FilmDetails.parseDataToMovie(newComment));
 
-      this._data.comments.add(id);
-      const addedComment = this._data.commentDetails.push(newComment);
+      this._data.emojiData = null;
+      this._data.commentData = null;
 
-      this._callback.commentSubmit(FilmDetails.parseDataToMovie(addedComment));
-      newComment.emojiData = null;
-      newComment.commentData = null;
     }
   }
 
   _deleteCommentHandler(evt) {
     evt.preventDefault();
-
-    this.updateState({
-      comments: removeObjectFromSet(this._data.comments, evt.target.dataset.id),
-      commentDetails: this._data.commentDetails.filter(
-        (comment) => comment.id !== evt.target.dataset.id,
-      ),
-    });
 
     this._callback.deleteCommentClick(evt.target.dataset.id);
   }
@@ -387,16 +372,29 @@ export default class FilmDetails extends Smart {
     );
   }
 
-  static parseMovieToData(movie) {
-    return Object.assign({}, movie);
+  static parseMovieToData(movie, comments) {
+    delete movie.isComments;
+
+    return Object.assign(
+      {},
+      movie,
+      {
+        isComments: comments.getComments(),
+        isDeleting: false,
+        isDisabled:false,
+      },
+    );
+
   }
 
   static parseDataToMovie(data) {
-
     data = Object.assign({}, data);
 
     delete data.emojiData;
     delete data.commentData;
+    delete data.isComments;
+    delete data.isDisabled;
+    delete data.isDeleting;
 
     return data;
   }
