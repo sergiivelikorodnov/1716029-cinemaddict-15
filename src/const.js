@@ -64,4 +64,3 @@ export const UserRang = {
   },
 };
 
-export const isOnline = () => window.navigator.onLine;

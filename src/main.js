@@ -8,11 +8,18 @@ import SiteMenuView from './view/site-menu.js';
 import StatisticsView from './view/statistics.js';
 import { remove, render, RenderPosition } from './utils/render.js';
 import Api from './api/api.js';
+import Store from './api/store.js';
+import Provider from './api/provider.js';
 
 const AUTHORIZATION = 'Basic 3232xx2';
 const END_POINT = 'https://15.ecmascript.pages.academy/cinemaddict';
+const STORE_PREFIX = 'cinema-localstorage';
+const STORE_VER = 'v15';
+const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
 
 const api = new Api(END_POINT, AUTHORIZATION);
+const store = new Store(STORE_NAME, window.localStorage);
+const apiWithProvider = new Provider(api, store);
 
 const siteMainContainer = document.querySelector('.main');
 
@@ -28,7 +35,7 @@ const moviesPresenter = new ListMoviesPresenter(
   moviesModel,
   filterModel,
   commentsModel,
-  api,
+  apiWithProvider,
 );
 
 
@@ -55,7 +62,7 @@ const handleSiteMenuClick = (menuItem) => {
 filterPresenter.init();
 moviesPresenter.init();
 
-api.getMovies()
+apiWithProvider.getMovies()
   .then((movies) => {
     moviesModel.setMovies(UpdateType.INIT, movies);
     render(siteMainContainer, siteMenuComponent, RenderPosition.AFTERBEGIN);
@@ -67,3 +74,15 @@ api.getMovies()
     siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
   });
 
+window.addEventListener('load', () => {
+  navigator.serviceWorker.register('/sw.js');
+});
+
+window.addEventListener('online', () => {
+  document.title = document.title.replace(' [offline]', '');
+  apiWithProvider.sync();
+});
+
+window.addEventListener('offline', () => {
+  document.title += ' [offline]';
+});

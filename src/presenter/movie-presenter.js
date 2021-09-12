@@ -3,6 +3,8 @@ import { UpdateType, UserAction } from '../const.js';
 import { remove, render, replace } from '../utils/render.js';
 import FilmCardView from '../view/film-card.js';
 import FilmDetailsView from '../view/film-details.js';
+import { isOnline } from '../utils/common.js';
+import {toast} from '../utils/toast.js';
 
 const Mode = {
   CLOSED: 'CLOSED',
@@ -27,11 +29,11 @@ const positionScrollY = {
 };
 
 export default class MoviePresenter {
-  constructor(listMoviesContainer, moviePresenter, changeMode, moviesModel, commentsModel, api) {
+  constructor(listMoviesContainer, moviePresenter, changeMode, moviesModel, commentsModel, apiWithProvider) {
     this._changeMode = changeMode;
     this._moviePresenter = moviePresenter;
     this._moviesModel = moviesModel;
-    this._api = api;
+    this._apiWithProvider = apiWithProvider;
     this._commentsModel = commentsModel;
     this._listMoviesContainer = listMoviesContainer;
     this._listMoviesComponent = listMoviesContainer.getElement().querySelector('.films-list__container');
@@ -138,14 +140,14 @@ export default class MoviePresenter {
     switch (actionType) {
       case UserAction.UPDATE_MOVIE:
         this._moviePresenter.get(update.id).setViewState(State.SAVING);
-        this._api.updateMovie(update)
+        this._apiWithProvider.updateMovie(update)
           .then((response) => {
             this._moviesModel.updateMovie(updateType, response);
           });
         break;
       case UserAction.ADD_COMMENT:
         this._moviePresenter.get(update.id).setViewState(State.SAVING);
-        this._api.addComment(update, comment)
+        this._apiWithProvider.addComment(update, comment)
           .then((response) => {
             this._commentsModel.addComment(updateType, response.movie, response.comments);
             this._moviesModel.updateMovie(updateType, response.movie);
@@ -156,7 +158,7 @@ export default class MoviePresenter {
         break;
       case UserAction.DELETE_COMMENT:
         this._moviePresenter.get(update.id).setViewState(State.DELETING);
-        this._api.deleteComment(comment)
+        this._apiWithProvider.deleteComment(comment)
           .then(() => {
             this._commentsModel.deleteComment(update, comment);
             this._moviesModel.updateMovie(updateType, update);
@@ -198,7 +200,7 @@ export default class MoviePresenter {
   }
 
   _openPopupHandler() {
-    this._api.getComments(this._movie.id)
+    this._apiWithProvider.getComments(this._movie.id)
       .then((comments) => {
         this._commentsModel.setComments(UpdateType.INIT, comments);
         this._renderPopup();
@@ -233,6 +235,10 @@ export default class MoviePresenter {
   }
 
   _handleDeleteCommentClick(commentId) {
+    if (!isOnline()) {
+      toast('You can\'t delete comment offline');
+      return;
+    }
     this._handleViewAction(
       UserAction.DELETE_COMMENT,
       UpdateType.PATCH,
@@ -267,6 +273,7 @@ export default class MoviePresenter {
 
 
   _handleAddToWatchlistClick() {
+
     if (this._mode === Mode.OPENED) {
       positionScrollY.setY(this._popupComponent.getElement().scrollTop);
     }
@@ -281,6 +288,8 @@ export default class MoviePresenter {
   }
 
   _handleMarkAsWatchedClick() {
+
+
     if (this._mode === Mode.OPENED) {
       positionScrollY.setY(this._popupComponent.getElement().scrollTop);
     }
@@ -295,6 +304,8 @@ export default class MoviePresenter {
   }
 
   _handleFavoriteClick() {
+
+
     if (this._mode === Mode.OPENED) {
       positionScrollY.setY(this._popupComponent.getElement().scrollTop);
     }
@@ -310,6 +321,11 @@ export default class MoviePresenter {
   }
 
   _handlePopupAddToWatchlistClick() {
+    if (!isOnline()) {
+      toast('You can\'t update movie offline');
+      return;
+    }
+
     positionScrollY.setY(this._popupComponent.getElement().scrollTop);
     this._handleViewAction(
       UserAction.UPDATE_MOVIE,
@@ -323,6 +339,11 @@ export default class MoviePresenter {
   }
 
   _handlePopupMarkAsWatchedClick() {
+    if (!isOnline()) {
+      toast('You can\'t update movie offline');
+      return;
+    }
+
     positionScrollY.setY(this._popupComponent.getElement().scrollTop);
     this._handleViewAction(
       UserAction.UPDATE_MOVIE,
@@ -337,6 +358,11 @@ export default class MoviePresenter {
   }
 
   _handlePopupFavoriteClick() {
+    if (!isOnline()) {
+      toast('You can\'t update movie offline');
+      return;
+    }
+
     positionScrollY.setY(this._popupComponent.getElement().scrollTop);
     this._handleViewAction(
       UserAction.UPDATE_MOVIE,
@@ -350,6 +376,11 @@ export default class MoviePresenter {
   }
 
   _handleFormSubmit(newComment) {
+    if (!isOnline()) {
+      toast('You can\'t add comment offline');
+      return;
+    }
+
     this._handleViewAction(
       UserAction.ADD_COMMENT,
       UpdateType.PATCH,

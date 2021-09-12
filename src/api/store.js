@@ -34,7 +34,6 @@ export default class Store {
 
   removeItem(key) {
     const store = this.getItems();
-
     delete store[key];
 
     this._storage.setItem(

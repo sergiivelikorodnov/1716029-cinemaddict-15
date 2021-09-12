@@ -27,10 +27,10 @@ const positionScrollY = {
 };
 
 export default class MoviePresenter {
-  constructor(listMoviesContainer, changeData, changeMode, commentsModel, api) {
+  constructor(listMoviesContainer, changeData, changeMode, commentsModel, apiWithProvider) {
     this._changeMode = changeMode;
     this._changeData = changeData;
-    this._api = api;
+    this._apiWithProvider = apiWithProvider;
     this._commentsModel = commentsModel;
     this._listMoviesComponent = listMoviesContainer.getElement().querySelector('.films-list__container');
     this._bodyElement = document.querySelector('body');
@@ -155,7 +155,7 @@ export default class MoviePresenter {
   }
 
   _openPopupHandler() {
-    this._api.getComments(this._movie.id)
+    this._apiWithProvider.getComments(this._movie.id)
       .then((comments) => {
         this._commentsModel.setComments(UpdateType.INIT, comments);
         this._renderPopup();
