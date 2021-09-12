@@ -275,7 +275,6 @@ export default class MoviePresenter {
     this._popupComponent.getElement().remove();
   }
 
-
   _handleAddToWatchlistClick() {
     if (this._mode === Mode.OPENED) {
       positionScrollY.setY(this._popupComponent.getElement().scrollTop);

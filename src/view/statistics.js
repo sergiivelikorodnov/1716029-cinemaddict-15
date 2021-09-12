@@ -174,6 +174,12 @@ export default class ListMovieLayout extends Smart {
     return createStatsLayout(this.state, this._currentFilterType );
   }
 
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this._setChart();
+  }
+
   _setInnerHandlers() {
     this.getElement()
       .querySelector('.statistic__filters')
@@ -197,10 +203,4 @@ export default class ListMovieLayout extends Smart {
     const statisticCtx = this.getElement().querySelector('.statistic__chart');
     this._genresCharts = createChart(statisticCtx, this.state, this._currentFilterType);
   }
-
-  restoreHandlers() {
-    this._setInnerHandlers();
-    this._setChart();
-  }
-
 }

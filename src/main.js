@@ -38,7 +38,6 @@ const moviesPresenter = new ListMoviesPresenter(
   apiWithProvider,
 );
 
-
 const filterPresenter = new FilterPresenter(
   siteMenuComponent,
   filterModel,

@@ -268,6 +268,11 @@ export default class FilmDetails extends Smart {
     });
   }
 
+  setCommentSubmitHandler(callback) {
+    this._callback.commentSubmit = callback;
+    document.addEventListener('keydown', this._submitNewCommentHandler);
+  }
+
   _setInnerHandlers() {
     this.getElement()
       .querySelectorAll('.film-details__emoji-item')
@@ -304,11 +309,6 @@ export default class FilmDetails extends Smart {
       },
       true,
     );
-  }
-
-  setCommentSubmitHandler(callback) {
-    this._callback.commentSubmit = callback;
-    document.addEventListener('keydown', this._submitNewCommentHandler);
   }
 
   _submitNewCommentHandler(evt) {
