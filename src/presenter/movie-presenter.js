@@ -4,7 +4,7 @@ import { remove, render, replace } from '../utils/render.js';
 import FilmCardView from '../view/film-card.js';
 import FilmDetailsView from '../view/film-details.js';
 import { isOnline } from '../utils/common.js';
-import {toast} from '../utils/toast.js';
+import { toast } from '../utils/toast.js';
 
 const Mode = {
   CLOSED: 'CLOSED',
@@ -109,7 +109,6 @@ export default class MoviePresenter {
       this._popupComponent.updateState({
         isDisabled: false,
         isSaving: false,
-        isDeleting: false,
       });
     };
 
@@ -117,16 +116,12 @@ export default class MoviePresenter {
       case State.SAVING:
         this._popupComponent.updateState({
           isDisabled: true,
-          isDeleting: false,
-          isSaving: true,
         });
         break;
 
       case State.DELETING:
         this._popupComponent.updateState({
           isDisabled: true,
-          isSaving: false,
-          isDeleting: true,
         });
         break;
 
@@ -158,7 +153,7 @@ export default class MoviePresenter {
           });
         break;
       case UserAction.DELETE_COMMENT:
-        this._moviePresenter.get(update.id)._setViewState(State.DELETING);
+        this._moviePresenter.get(update.id)._setViewState(State.DELETING, comment);
         this._apiWithProvider.deleteComment(comment)
           .then(() => {
             this._commentsModel.deleteComment(update, comment);
@@ -171,7 +166,6 @@ export default class MoviePresenter {
         break;
       case UserAction.ABORT_COMMENT:
         this._moviePresenter.get(update.id)._setViewState(State.ABORTING, `[data-id="${comment}"]`);
-
         break;
     }
   }
@@ -201,6 +195,10 @@ export default class MoviePresenter {
     render(this._bodyElement, this._popupComponent);
     this._bodyElement.classList.add('hide-overflow');
     document.addEventListener('keydown', this._escKeyDownHandler);
+
+    if (!isOnline()) {
+      this._popupComponent.hideForm();
+    }
   }
 
   _openPopupHandler() {
@@ -236,6 +234,10 @@ export default class MoviePresenter {
     render(this._bodyElement, this._popupComponent);
     this._bodyElement.classList.add('hide-overflow');
     document.addEventListener('keydown', this._escKeyDownHandler);
+
+    if (!isOnline()) {
+      this._popupComponent.hideForm();
+    }
   }
 
   _handleDeleteCommentClick(commentId) {
