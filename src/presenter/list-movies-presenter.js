@@ -3,7 +3,6 @@ import {
   MOVIES_COUNT_PER_STEP,
   SortType,
   UpdateType,
-  //UserAction,
   FilterType
 } from '../const.js';
 import ListMoviesView from '../view/list-movies.js';
@@ -15,18 +14,18 @@ import ShowMoreButtonView from '../view/show-more-button.js';
 import SiteSortView from '../view/site-sort.js';
 import FooterStatisticsView from '../view/footer-statistics.js';
 import HeaderProfileView from '../view/header-profile.js';
-import MoviePresenter/* , {State as TaskPresenterViewState} */from './movie-presenter.js';
+import MoviePresenter from './movie-presenter.js';
 import { sortMostCommentedMoviesList, sortMoviesByDate, sortMoviesByRating, sortTopMoviesList } from '../utils/sort.js';
 import { filter } from '../utils/filter.js';
 import { getWatchedMoviesCount } from '../utils/statistics.js';
 
 export default class ListMoviesPresenter {
-  constructor(siteMainContainer, moviesModel, filtersModel, commentsModel, api) {
+  constructor(siteMainContainer, moviesModel, filtersModel, commentsModel, apiWithProvider) {
     this._commentsModel = commentsModel;
     this._moviesModel = moviesModel;
     this._filtersModel = filtersModel;
     this._siteMainContainer = siteMainContainer;
-    this._api = api;
+    this._apiWithProvider = apiWithProvider;
     this._renderedMoviesCount = MOVIES_COUNT_PER_STEP;
     this._filterType = FilterType.ALL;
     this._headerProfileComponent = new HeaderProfileView(getWatchedMoviesCount(this._moviesModel.getMovies()));
@@ -44,7 +43,6 @@ export default class ListMoviesPresenter {
     this._handleShowMoreButtonClick = this._handleShowMoreButtonClick.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
     this._handlePopupMode = this._handlePopupMode.bind(this);
-    // this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._loadingComponent = new LoadingView();
     this._currentSortType = SortType.DEFAULT;
@@ -65,6 +63,8 @@ export default class ListMoviesPresenter {
   hideMoviesList() {
     this._clearMovieList({ resetRenderedMoviesCount: true, resetSortType: true });
     remove(this._listMoviesComponent);
+    remove(this._topRatedListComponent);
+    remove(this._mostCommentedListComponent);
 
     this._moviesModel.removeObserver(this._handleModelEvent);
     this._filtersModel.removeObserver(this._handleModelEvent);
@@ -88,40 +88,6 @@ export default class ListMoviesPresenter {
     }
     return filteredMovies;
   }
-
-  /* _handleViewAction(actionType, updateType, update, comment) {
-    switch (actionType) {
-      case UserAction.UPDATE_MOVIE:
-        this._moviePresenter.get(update.id).setViewState(TaskPresenterViewState.SAVING);
-        this._api.updateMovie(update)
-          .then((response) => {
-            this._moviesModel.updateMovie(updateType, response);
-          });
-        break;
-      case UserAction.ADD_COMMENT:
-        this._moviePresenter.get(update.id).setViewState(TaskPresenterViewState.SAVING);
-        this._api.addComment(update, comment)
-          .then((response) => {
-            this._commentsModel.addComment(updateType, response.movie, response.comments);
-            this._moviesModel.updateMovie(updateType, response.movie);
-          }).catch(() => {
-            this._moviePresenter.get(update.id).setViewState(TaskPresenterViewState.ABORTING, comment);
-          });
-        break;
-      case UserAction.DELETE_COMMENT:
-        this._moviePresenter.get(update.id).setViewState(TaskPresenterViewState.DELETING);
-        this._api.deleteComment(comment)
-          .then(() => {
-            this._commentsModel.deleteComment(update, comment);
-            this._moviesModel.updateMovie(updateType, update);
-          })
-          .catch(() => {
-            this._moviePresenter.get(update.id).setViewState(TaskPresenterViewState.ABORTING, comment);
-          });
-
-        break;
-    }
-  } */
 
   _handleModelEvent(updateType, data) {
     switch (updateType) {
@@ -183,7 +149,7 @@ export default class ListMoviesPresenter {
       this._handlePopupMode,
       this._moviesModel,
       this._commentsModel,
-      this._api,
+      this._apiWithProvider,
     );
     moviePresenter.init(movie);
     this._moviePresenter.set(movie.id, moviePresenter);
@@ -196,7 +162,7 @@ export default class ListMoviesPresenter {
       this._handlePopupMode,
       this._moviesModel,
       this._commentsModel,
-      this._api,
+      this._apiWithProvider,
     );
     moviePresenter.init(movie);
     this._movieTopPresenter.set(movie.id, moviePresenter);
@@ -209,7 +175,7 @@ export default class ListMoviesPresenter {
       this._handlePopupMode,
       this._moviesModel,
       this._commentsModel,
-      this._api,
+      this._apiWithProvider,
     );
     moviePresenter.init(movie);
     this._movieMostCommentedPresenter.set(movie.id, moviePresenter);

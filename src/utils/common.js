@@ -31,3 +31,5 @@ export const humanTime = (time) => {
 
   return 'Today';
 };
+
+export const isOnline = () => window.navigator.onLine;

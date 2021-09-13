@@ -30,7 +30,6 @@ const createChart = (statisticCtx, state, currentFilterType) => {
   const filteredMovies = watchedMoviesByDateRange(movies, currentFilterType);
   const topGenres = calcPopularGenres(filteredMovies);
 
-  //Обязательно рассчитайте высоту canvas, она зависит от количества элементов диаграммы
   statisticCtx.height = BAR_HEIGHT * Object.keys(topGenres).length;
 
   return new Chart(statisticCtx, {
@@ -95,7 +94,6 @@ const createStatsLayout = (state, currentFilterType) => {
   const { movies } = state;
   const filteredMovies = watchedMoviesByDateRange(movies, currentFilterType);
   const topGenres = Object.keys(calcPopularGenres(filteredMovies))[0];
-  //const topGenres = Object.keys(allGenres).filter((element) => allGenres[element] === Math.max.apply(null, Object.values(allGenres))).join(', ');
 
   const watchedStats = filteredMovies.length;
   const watchedTimeStats = minutesToHours(filteredMovies);
@@ -176,6 +174,12 @@ export default class ListMovieLayout extends Smart {
     return createStatsLayout(this.state, this._currentFilterType );
   }
 
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this._setChart();
+  }
+
   _setInnerHandlers() {
     this.getElement()
       .querySelector('.statistic__filters')
@@ -199,10 +203,4 @@ export default class ListMovieLayout extends Smart {
     const statisticCtx = this.getElement().querySelector('.statistic__chart');
     this._genresCharts = createChart(statisticCtx, this.state, this._currentFilterType);
   }
-
-  restoreHandlers() {
-    this._setInnerHandlers();
-    this._setChart();
-  }
-
 }

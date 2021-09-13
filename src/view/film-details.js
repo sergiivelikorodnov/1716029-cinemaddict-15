@@ -4,6 +4,11 @@ import Smart from './smart.js';
 
 const EMOJI = ['smile', 'sleeping', 'puke', 'angry'];
 
+const DELETE = {
+  DELETE: 'Delete',
+  DELETING: 'Deleting...',
+};
+
 const createEmojiTemplate = (choosedDataEmoji, isDisabled) =>
   EMOJI
     .map(
@@ -35,7 +40,7 @@ const createCommentTemplate = (allComments, isDisabled, isDeleting) =>
       <p class="film-details__comment-info">
         <span class="film-details__comment-author">${author}</span>
         <span class="film-details__comment-day">${humanTime(date)}</span>
-        <button class="film-details__comment-delete" data-id="${id}" ${isDisabled ? 'disabled' : ''}>${isDeleting ? 'Deleting' : 'Delete'}</button>
+        <button class="film-details__comment-delete" data-id="${id}" ${isDisabled ? 'disabled' : ''}>${isDeleting ? `${ DELETE.DELETING }` : `${ DELETE.DELETE }`}</button>
       </p>
     </div>
   </li>`,
@@ -263,6 +268,11 @@ export default class FilmDetails extends Smart {
     });
   }
 
+  setCommentSubmitHandler(callback) {
+    this._callback.commentSubmit = callback;
+    document.addEventListener('keydown', this._submitNewCommentHandler);
+  }
+
   _setInnerHandlers() {
     this.getElement()
       .querySelectorAll('.film-details__emoji-item')
@@ -299,11 +309,6 @@ export default class FilmDetails extends Smart {
       },
       true,
     );
-  }
-
-  setCommentSubmitHandler(callback) {
-    this._callback.commentSubmit = callback;
-    document.addEventListener('keydown', this._submitNewCommentHandler);
   }
 
   _submitNewCommentHandler(evt) {
