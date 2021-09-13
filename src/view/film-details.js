@@ -22,7 +22,7 @@ const createEmojiTemplate = (choosedDataEmoji, isDisabled) =>
     )
     .join('');
 
-const createCommentTemplate = (allComments, isDisabled) =>
+const createCommentTemplate = (allComments) =>
   allComments
     .map(
       ({
@@ -40,7 +40,7 @@ const createCommentTemplate = (allComments, isDisabled) =>
       <p class="film-details__comment-info">
         <span class="film-details__comment-author">${author}</span>
         <span class="film-details__comment-day">${humanTime(date)}</span>
-        <button class="film-details__comment-delete" data-id="${id}" ${isDisabled ? 'disabled' : ''}>Delete</button>
+        <button class="film-details__comment-delete" data-id="${id}">Delete</button>
       </p>
     </div>
   </li>`,
@@ -69,11 +69,10 @@ const createFilmDetails = (data) => {
     emojiData,
     commentData,
     isDisabled,
-    isDeleting,
   } = data;
 
   const emojiTemplate = createEmojiTemplate(emojiData);
-  const commentsTemplate = createCommentTemplate(isComments, isDisabled, isDeleting);
+  const commentsTemplate = createCommentTemplate(isComments);
   const commentsNumber = isComments.length;
   const runTimeMins = timeConvertor(runTime);
 
@@ -177,11 +176,8 @@ const createFilmDetails = (data) => {
 
         <div class="film-details__new-comment">
           <div class="film-details__add-emoji-label">
-          ${
-  emojiData
-    ? `<img src="images/emoji/${emojiData}.png" width="55" height="55" alt="emoji-${emojiData}"></img>`
-    : ''
-}
+          ${ emojiData ? `<img src="images/emoji/${emojiData}.png" width="55" height="55" alt="emoji-${emojiData}"></img>`
+    : ''}
           </div>
 
           <label class="film-details__comment-label">
@@ -211,7 +207,6 @@ export default class FilmDetails extends Smart {
     this._emojiChooseHandler = this._emojiChooseHandler.bind(this);
     this._commentInputTextHandler = this._commentInputTextHandler.bind(this);
     this._submitNewCommentHandler = this._submitNewCommentHandler.bind(this);
-    this.disableDeleteButton = this.disableDeleteButton.bind(this);
     this._setInnerHandlers();
   }
 
@@ -275,6 +270,9 @@ export default class FilmDetails extends Smart {
     document.addEventListener('keydown', this._submitNewCommentHandler);
   }
 
+  hideForm() {
+    this.getElement().querySelector('.film-details__bottom-container').classList.add('visually-hidden');
+  }
 
   _setInnerHandlers() {
     this.getElement()
@@ -338,7 +336,7 @@ export default class FilmDetails extends Smart {
 
   _deleteCommentHandler(evt) {
     evt.preventDefault();
-
+    this._disableDeleteButton(evt.target.dataset.id);
     this._callback.deleteCommentClick(evt.target.dataset.id);
   }
 
@@ -380,10 +378,10 @@ export default class FilmDetails extends Smart {
     );
   }
 
-  disableDeleteButton(commentId) {
+  _disableDeleteButton(commentId) {
     const container = `[data-id="${commentId}"]`;
-    const deleteButton = this.getElement().querySelector(container);
-    deleteButton.disable = true;
+    const deleteButton = this.getElement().querySelector(container).querySelector('.film-details__comment-delete');
+    deleteButton.disabled = true;
     deleteButton.textContent = DELETE_TEXT_BUTTON.DELETING;
   }
 
@@ -395,7 +393,6 @@ export default class FilmDetails extends Smart {
       movie,
       {
         isComments: comments.getComments(),
-        isDeleting: false,
         isDisabled:false,
       },
     );
@@ -409,9 +406,7 @@ export default class FilmDetails extends Smart {
     delete data.commentData;
     delete data.isComments;
     delete data.isDisabled;
-    delete data.isDeleting;
 
     return data;
   }
-
 }
