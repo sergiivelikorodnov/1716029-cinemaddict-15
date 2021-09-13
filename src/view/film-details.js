@@ -4,7 +4,7 @@ import Smart from './smart.js';
 
 const EMOJI = ['smile', 'sleeping', 'puke', 'angry'];
 
-const DELETE = {
+const DELETE_TEXT_BUTTON = {
   DELETE: 'Delete',
   DELETING: 'Deleting...',
 };
@@ -22,7 +22,7 @@ const createEmojiTemplate = (choosedDataEmoji, isDisabled) =>
     )
     .join('');
 
-const createCommentTemplate = (allComments, isDisabled, isDeleting) =>
+const createCommentTemplate = (allComments, isDisabled) =>
   allComments
     .map(
       ({
@@ -40,7 +40,7 @@ const createCommentTemplate = (allComments, isDisabled, isDeleting) =>
       <p class="film-details__comment-info">
         <span class="film-details__comment-author">${author}</span>
         <span class="film-details__comment-day">${humanTime(date)}</span>
-        <button class="film-details__comment-delete" data-id="${id}" ${isDisabled ? 'disabled' : ''}>${isDeleting ? `${ DELETE.DELETING }` : `${ DELETE.DELETE }`}</button>
+        <button class="film-details__comment-delete" data-id="${id}" ${isDisabled ? 'disabled' : ''}>Delete</button>
       </p>
     </div>
   </li>`,
@@ -211,6 +211,7 @@ export default class FilmDetails extends Smart {
     this._emojiChooseHandler = this._emojiChooseHandler.bind(this);
     this._commentInputTextHandler = this._commentInputTextHandler.bind(this);
     this._submitNewCommentHandler = this._submitNewCommentHandler.bind(this);
+    this.disableDeleteButton = this.disableDeleteButton.bind(this);
     this._setInnerHandlers();
   }
 
@@ -268,10 +269,12 @@ export default class FilmDetails extends Smart {
     });
   }
 
+
   setCommentSubmitHandler(callback) {
     this._callback.commentSubmit = callback;
     document.addEventListener('keydown', this._submitNewCommentHandler);
   }
+
 
   _setInnerHandlers() {
     this.getElement()
@@ -377,6 +380,13 @@ export default class FilmDetails extends Smart {
     );
   }
 
+  disableDeleteButton(commentId) {
+    const container = `[data-id="${commentId}"]`;
+    const deleteButton = this.getElement().querySelector(container);
+    deleteButton.disable = true;
+    deleteButton.textContent = DELETE_TEXT_BUTTON.DELETING;
+  }
+
   static parseMovieToData(movie, comments) {
     delete movie.isComments;
 
@@ -403,4 +413,5 @@ export default class FilmDetails extends Smart {
 
     return data;
   }
+
 }
