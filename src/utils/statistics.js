@@ -6,10 +6,6 @@ import { StatsFilterType, UserRang } from '../const.js';
 dayjs.extend(isToday);
 dayjs.extend(isBetween);
 
-const movieToFilterMap = {
-  runTime: 'isAlreadyWatched',
-};
-
 const now = dayjs();
 const week = dayjs().subtract(1, 'week');
 const month = dayjs().subtract(1, 'month');
@@ -57,14 +53,7 @@ export const calcPopularGenres = (movies) => {
 
 export const getWatchedMoviesCount = (movies) => movies.reduce((total, movie) => total + movie.isAlreadyWatched, 0);
 
-export const generateStatsData = (films) => Object.entries(movieToFilterMap).map(
-  ([filterName, filterValue]) => ({
-    runTime: films.filter((movie) => movie[filterValue] === true).reduce((total, movie) => total + movie[filterName], 0),
-    watched: films.reduce((total, movie) => total + movie[filterValue], 0),
-  }),
-);
-
-export const userRang = (moviesCount) => {
+export const getUserRang = (moviesCount) => {
   if (moviesCount === UserRang.NEWBEE.WATCHED_MOVIES) {
     return UserRang.NEWBEE.RANG;
   }
@@ -73,8 +62,7 @@ export const userRang = (moviesCount) => {
   }
   if (moviesCount < UserRang.FAN.WATCHED_MOVIES) {
     return UserRang.FAN.RANG;
-  } else {
-    return UserRang.MOVIE_BUFF.RANG;
   }
+  return UserRang.MOVIE_BUFF.RANG;
 };
 

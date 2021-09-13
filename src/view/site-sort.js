@@ -14,7 +14,7 @@ const createSiteSortTemplate = (currentSortType) =>
 }"  data-sort-type="${SortType.BY_RATING}">Sort by rating</a></li>
 </ul>`;
 
-export default class SiteSortTemplate extends AbstractView {
+export default class SiteSort extends AbstractView {
   constructor(currentSortType) {
     super();
     this._currentSortType = currentSortType;

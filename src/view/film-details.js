@@ -1,8 +1,8 @@
-import { humanTime, timeConvertor } from '../utils/common.js';
+import { getHumanTime, getHoursMinsTime, getReleaseDate } from '../utils/common.js';
 import he from 'he';
 import Smart from './smart.js';
 
-const EMOJI = ['smile', 'sleeping', 'puke', 'angry'];
+const EMOJIS = ['smile', 'sleeping', 'puke', 'angry'];
 
 const DELETE_TEXT_BUTTON = {
   DELETE: 'Delete',
@@ -10,7 +10,7 @@ const DELETE_TEXT_BUTTON = {
 };
 
 const createEmojiTemplate = (choosedDataEmoji, isDisabled) =>
-  EMOJI
+  EMOJIS
     .map(
       (
         emotion,
@@ -39,7 +39,7 @@ const createCommentTemplate = (allComments) =>
       <p class="film-details__comment-text">${he.encode(comment)}</p>
       <p class="film-details__comment-info">
         <span class="film-details__comment-author">${author}</span>
-        <span class="film-details__comment-day">${humanTime(date)}</span>
+        <span class="film-details__comment-day">${getHumanTime(date)}</span>
         <button class="film-details__comment-delete" data-id="${id}">Delete</button>
       </p>
     </div>
@@ -74,7 +74,7 @@ const createFilmDetails = (data) => {
   const emojiTemplate = createEmojiTemplate(emojiData);
   const commentsTemplate = createCommentTemplate(isComments);
   const commentsNumber = isComments.length;
-  const runTimeMins = timeConvertor(runTime);
+  const runTimeMins = getHoursMinsTime(runTime);
 
   const alreadyWatchedActive = isAlreadyWatched
     ? 'film-details__control-button--active'
@@ -86,9 +86,9 @@ const createFilmDetails = (data) => {
     ? 'film-details__control-button--active'
     : '';
 
-  const renderGenre = (arr) => {
+  const renderGenre = (genresList) => {
     let text = '';
-    arr.forEach(
+    genresList.forEach(
       (name) => (text += `<span class="film-details__genre">${name}</span>`),
     );
     return text;
@@ -136,7 +136,7 @@ const createFilmDetails = (data) => {
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Release Date</td>
-              <td class="film-details__cell">${date}</td>
+              <td class="film-details__cell">${getReleaseDate(date)}</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Runtime</td>

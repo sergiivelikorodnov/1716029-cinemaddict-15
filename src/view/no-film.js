@@ -15,7 +15,7 @@ const createNoMovies = (filterType) => {
   </h2>`;
 };
 
-export default class NoMovies extends AbstractView {
+export default class NoFilm extends AbstractView {
   constructor(data) {
     super();
     this._data = data;

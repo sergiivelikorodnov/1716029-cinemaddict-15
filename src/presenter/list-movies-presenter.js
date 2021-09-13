@@ -193,10 +193,7 @@ export default class ListMoviesPresenter {
     movies.forEach((movie) => this._renderMostCommentedMovie(movie));
   }
 
-  _clearMovieList({
-    resetRenderedMoviesCount = false,
-    resetSortType = false,
-  } = {}) {
+  _clearMovieList({ resetRenderedMoviesCount = false, resetSortType = false } = {}) {
     const moviesCount = this._getMovies().length;
 
     this._moviePresenter.forEach((presenter) => presenter.removeCardMovie());
@@ -217,9 +214,9 @@ export default class ListMoviesPresenter {
     }
 
     if (resetRenderedMoviesCount) {
-      this._renderedTaskCount = MOVIES_COUNT_PER_STEP;
+      this._renderedMoviesCount = MOVIES_COUNT_PER_STEP;
     } else {
-      this._renderedTaskCount = Math.min(
+      this._renderedMoviesCount = Math.min(
         moviesCount,
         this._renderedMoviesCount,
       );

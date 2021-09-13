@@ -8,7 +8,7 @@ const createExtraListMoviesLayout = (title) => (
     </section>`
 );
 
-export default class ExtraListMovieLayout extends AbstractView {
+export default class ListExtraMovies extends AbstractView {
   constructor(title) {
     super();
     this._title = title;

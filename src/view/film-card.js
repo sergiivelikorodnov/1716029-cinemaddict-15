@@ -1,5 +1,5 @@
 import { MAX_SHORT_DESCRIPTION_LENGTH } from '../const.js';
-import { timeConvertor } from '../utils/common.js';
+import { getHoursMinsTime } from '../utils/common.js';
 
 import AbstractView from './abstract.js';
 
@@ -31,7 +31,7 @@ const createFilmCard = (movie) => {
 
   const comments = movie.comments.length;
   const releaseDate = new Date(date).getFullYear();
-  const humanRunTime = timeConvertor(runTime);
+  const humanRunTime = getHoursMinsTime(runTime);
 
   return `<article class="film-card">
   <h3 class="film-card__title">${title}</h3>

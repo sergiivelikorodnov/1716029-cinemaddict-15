@@ -1,8 +1,8 @@
 import {Chart} from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { StatsFilterType } from '../const.js';
-import { minutesToHours } from '../utils/common.js';
-import { calcPopularGenres, userRang, watchedMoviesByDateRange } from '../utils/statistics.js';
+import { getMinutesFromHours } from '../utils/common.js';
+import { calcPopularGenres, getUserRang, watchedMoviesByDateRange } from '../utils/statistics.js';
 import Smart from './smart.js';
 
 const createStatsFilters = (filter, currentFilterType) => {
@@ -96,13 +96,13 @@ const createStatsLayout = (state, currentFilterType) => {
   const topGenres = Object.keys(calcPopularGenres(filteredMovies))[0];
 
   const watchedStats = filteredMovies.length;
-  const watchedTimeStats = minutesToHours(filteredMovies);
+  const watchedTimeStats = getMinutesFromHours(filteredMovies);
 
   const createStatsRank = () =>(
     `<p class="statistic__rank">
     Your rank
     <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
-    <span class="statistic__rank-label">${userRang(watchedStats)}</span>
+    <span class="statistic__rank-label">${getUserRang(watchedStats)}</span>
   </p>`);
 
   const filters = [
@@ -157,7 +157,7 @@ const createStatsLayout = (state, currentFilterType) => {
   );
 };
 
-export default class ListMovieLayout extends Smart {
+export default class Statistics extends Smart {
   constructor(movies) {
     super();
 

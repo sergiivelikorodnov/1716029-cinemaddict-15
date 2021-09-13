@@ -1,23 +1,20 @@
 import dayjs from 'dayjs';
 import { MINUTES_IN_HOUR } from '../const.js';
 
-export const timeConvertor = (totalMinutes) => {
+export const getHoursMinsTime = (totalMinutes) => {
   const hours = Math.floor(totalMinutes / MINUTES_IN_HOUR);
   const minutes = totalMinutes % MINUTES_IN_HOUR;
   return `${hours}h ${minutes} min`;
 };
 
-export const minutesToHours = (movies) => {
+export const getMinutesFromHours = (movies) => {
   const totalMinutes = movies.reduce((total, movie) => total + movie.runTime, 0);
   const hours = Math.floor(totalMinutes / MINUTES_IN_HOUR);
   const minutes = totalMinutes % MINUTES_IN_HOUR;
   return { hours, minutes};
 };
 
-export const removeObjectFromSet = (set, obj) =>
-  new Set([...set].filter((el) => JSON.stringify(el) !== JSON.stringify(obj)));
-
-export const humanTime = (time) => {
+export const getHumanTime = (time) => {
   const now = dayjs();
   if (now.diff(time, 'years') > 1) {
     return `${now.diff(time, 'years')} years ago`;
@@ -31,5 +28,7 @@ export const humanTime = (time) => {
 
   return 'Today';
 };
+
+export const getReleaseDate = (date) => dayjs(date).format('DD MMMM YYYY');
 
 export const isOnline = () => window.navigator.onLine;

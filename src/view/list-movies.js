@@ -9,7 +9,7 @@ const createListMoviesLayout = () => (
     </section>`
 );
 
-export default class ListMovieLayout extends AbstractView {
+export default class ListMovies extends AbstractView {
   getTemplate() {
     return createListMoviesLayout();
   }

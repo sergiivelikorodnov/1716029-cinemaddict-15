@@ -5,7 +5,7 @@ const createSiteMenuTemplate = () => `<nav class="main-navigation">
   <a href="#${MenuItem.STATISTICS}" class="main-navigation__additional" data-menu="${MenuItem.STATISTICS}">Stats</a>
 </nav>`;
 
-export default class SiteMenuFiltersTemplate extends AbstractView {
+export default class SiteMenu extends AbstractView {
   constructor() {
     super();
     this._menuClickHandler = this._menuClickHandler.bind(this);
